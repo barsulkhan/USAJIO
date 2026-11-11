@@ -1,23 +1,16 @@
 # USAJIO — Make Smarter Money Decisions
 
-USAJIO is a global-first personal finance education and calculator project.
+A mobile-first global personal finance calculator and education website prototype.
 
-## Project status
+## Included
+- Responsive homepage and clean light design
+- Compound interest, loan payment, monthly budget, savings goal, emergency fund and debt payoff calculators
+- Currency display selector (USD, EUR, GBP, CAD, AUD, INR)
+- About, Contact, Privacy, Terms, Financial Disclaimer and Editorial Policy pages
+- SVG brand logo and favicon
 
-Repository initialized. Website package upload and Cloudflare staging deployment are pending.
+## Run
+Open `index.html` in a modern browser. No build step is required.
 
-## Planned tools
-- Compound Interest Calculator
-- Loan EMI Calculator
-- Monthly Budget Planner
-- Savings Goal Calculator
-- Emergency Fund Calculator
-- Debt Payoff Planner
-
-## Principles
-- Educational estimates only; not individualized financial advice.
-- Currency selection is display formatting, not country-specific financial localization.
-- No sensitive financial data should be collected.
-- Country-specific financial rules must be sourced and labelled by jurisdiction.
-
-The approved visual direction is clean, light and minimal, with navy typography and restrained teal accents.
+## Important
+Educational estimates only; not individualized financial, investment, tax or legal advice. Currency selection changes display formatting only and does not localize country rules. Review policy text and add verified contact details before public launch.
