@@ -217,3 +217,16 @@ Recorded in the package notes:
 
 ### New-chat starter prompt
 আমাদের USAJIO Main Smart Project File `USAJIO_MASTER_PROJECT_2026-11-11.md` আগে Library থেকে খুঁজে সম্পূর্ণ পড়ে নাও। আগের কাজ নতুন করে শুরু করবে না। USAJIO আলাদা প্রজেক্ট; InfoJano-র কোনো ফাইল বা কোড পরিবর্তন করবে না। Live website: https://barsulkhan.github.io/USAJIO/ । GitHub repository: https://github.com/barsulkhan/USAJIO । GitHub Pages deployment সফল এবং আমার Android-এ homepage দেখা গেছে; কিন্তু ছয়টি Calculator-এর functional QA এখনো বাকি। Master File-এর সর্বশেষ checkpoint থেকে ছয়টি Calculator-এর structured QA শুরু করো। প্রতিটি নতুন feature-এর আগে Research → Competitor Analysis → Improvement Plan → Development → Testing অনুসরণ করবে। কাজের শেষে একই Master File আপডেট করবে। সহজ বাংলায় কথা বলবে; আমি Android ব্যবহার করি। আমার অনুমতি ছাড়া কোনো paid domain, hosting, API বা subscription নেবে না। যাচাই না করে কোনো কাজকে সফল বলবে না।
+
+---
+
+## 15. Migration verification update — 12 November 2026
+
+This section supersedes earlier checkpoint statements in Sections 7 and 11–14 that said the separate USAJIO repository did not yet exist.
+
+- Confirmed repository: https://github.com/barsulkhan/USAJIO (public; default branch `main`).
+- The complete 219-line Library master file has been transferred to this repository at `docs/USAJIO_MASTER_PROJECT_2026-11-11.md` and fetched back successfully (21,368 characters).
+- The original Library master remains unchanged.
+- The previously recorded GitHub Pages deployment remains successful: workflow run `43022301635`, commit `bcdff727c235161c10967590f45dea8f98b03e2d`. The user's Android screenshot had confirmed the homepage top section visually; this does not prove calculator functional QA.
+- A new Pages workflow was queued after the documentation transfer (run `43180954264`, commit `54cdfec8c1fdff9e848ae7b52b1d9d91df06a148`). Recheck its final status; a docs-only transfer is not proof of a successful new deployment.
+- Keep USAJIO separate from InfoJano. Do not switch hosting or add paid services. Next product task remains structured QA of the six live calculators and navigation/policy pages.
