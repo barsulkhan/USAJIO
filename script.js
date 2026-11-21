@@ -18,7 +18,7 @@
   if ($("year")) $("year").textContent = new Date().getFullYear();
   if ($("currency")) $("currency").addEventListener("change", event => {
     currency = event.target.value;
-    ["ci-calc","loan-calc","budget-calc","save-calc","ef-calc","debt-calc"].forEach(id => { if ($(id)) $(id).click(); });
+    ["ci-calc","loan-calc","budget-calc","save-calc","ef-calc","debt-calc","mortgage-calc","auto-calc","card-calc"].forEach(id => { if ($(id)) $(id).click(); });
   });
 
   bind("ci-calc", () => {
@@ -91,5 +91,39 @@
     put("debt-interest",months>=1200?"—":fmt(interest));
   });
 
-  ["ci-calc","loan-calc","budget-calc","save-calc","ef-calc","debt-calc"].forEach(id=>{if($(id))$(id).click();});
+
+  bind("mortgage-calc", () => {
+    const price=read("mortgage-price",1,1e12), down=read("mortgage-down",0,100), annual=read("mortgage-rate",0,100), years=read("mortgage-years",1,50), tax=read("mortgage-tax",0,1e12), insurance=read("mortgage-insurance",0,1e12), hoa=read("mortgage-hoa",0,1e12);
+    if([price,down,annual,years,tax,insurance,hoa].some(v=>v===null)||down>100){invalid(["mortgage-pi","mortgage-monthly","mortgage-interest"]);return;}
+    const principal=price*(1-down/100), rate=annual/1200, months=years*12;
+    const pi=rate?principal*rate/(1-Math.pow(1+rate,-months)):principal/months;
+    const monthly=pi+tax/12+insurance/12+hoa, interest=pi*months-principal;
+    if(![pi,monthly,interest].every(Number.isFinite)){invalid(["mortgage-pi","mortgage-monthly","mortgage-interest"]);return;}
+    put("mortgage-pi",fmt(pi));put("mortgage-monthly",fmt(monthly));put("mortgage-interest",fmt(Math.max(0,interest)));
+  });
+
+  bind("auto-calc", () => {
+    const amount=read("auto-amount",1,1e12), annual=read("auto-rate",0,100), months=read("auto-months",1,600), extra=read("auto-extra",0,1e12);
+    if([amount,annual,months,extra].some(v=>v===null)){invalid(["auto-payment","auto-interest","auto-total","auto-duration"]);return;}
+    const rate=annual/1200, base=rate?amount*rate/(1-Math.pow(1+rate,-months)):amount/months;
+    let balance=amount, interest=0, total=0, count=0;
+    while(balance>0.005&&count<600){const charge=balance*rate;const paid=Math.min(balance+charge,base+extra);interest+=charge;total+=paid;balance=Math.max(0,balance+charge-paid);count++;}
+    if(balance>0.005){invalid(["auto-payment","auto-interest","auto-total","auto-duration"]);return;}
+    put("auto-payment",fmt(base));put("auto-interest",fmt(interest));put("auto-total",fmt(total));put("auto-duration",String(count)+" months");
+  });
+
+  bind("card-calc", () => {
+    const balance0=read("card-balance",0,1e12), annual=read("card-rate",0,100), payment=read("card-payment",0,1e12);
+    if([balance0,annual,payment].some(v=>v===null)){invalid(["card-months","card-interest","card-total"]);return;}
+    if(balance0===0){put("card-months","0");put("card-interest",fmt(0));put("card-total",fmt(0));return;}
+    if(payment<=0){put("card-months","Enter a payment");put("card-interest","—");put("card-total","—");return;}
+    const rate=annual/1200;
+    if(rate>0&&payment<=balance0*rate){put("card-months","Payment too low");put("card-interest","—");put("card-total","—");return;}
+    let balance=balance0,interest=0,total=0,months=0;
+    while(balance>0.005&&months<1200){const charge=balance*rate;const paid=Math.min(balance+charge,payment);interest+=charge;total+=paid;balance=Math.max(0,balance+charge-paid);months++;}
+    put("card-months",months>=1200?"Over 100 years":String(months)+" months");
+    put("card-interest",months>=1200?"—":fmt(interest));put("card-total",months>=1200?"—":fmt(total));
+  });
+
+  ["ci-calc","loan-calc","budget-calc","save-calc","ef-calc","debt-calc","mortgage-calc","auto-calc","card-calc"].forEach(id=>{if($(id))$(id).click();});
 })();
