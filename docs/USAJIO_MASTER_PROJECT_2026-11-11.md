@@ -230,3 +230,41 @@ This section supersedes earlier checkpoint statements in Sections 7 and 11–14 
 - The previously recorded GitHub Pages deployment remains successful: workflow run `43022301635`, commit `bcdff727c235161c10967590f45dea8f98b03e2d`. The user's Android screenshot had confirmed the homepage top section visually; this does not prove calculator functional QA.
 - A new Pages workflow was queued after the documentation transfer (run `43180954264`, commit `54cdfec8c1fdff9e848ae7b52b1d9d91df06a148`). Recheck its final status; a docs-only transfer is not proof of a successful new deployment.
 - Keep USAJIO separate from InfoJano. Do not switch hosting or add paid services. Next product task remains structured QA of the six live calculators and navigation/policy pages.
+
+
+## 16. Calculator Hub and standalone pages — 21 November 2026
+
+### Decision and rationale
+- Adopt a Calculator Hub homepage plus six standalone calculator pages. The previous homepage displayed six tool cards that jumped to six sections in one long document; this was confusing on mobile.
+- Competitor-inspired patterns used as product ideas (not copied content/code): category-led calculator discovery and dedicated tool pages; clear result summaries; visible assumptions/disclaimers; links back to related tools.
+- Keep existing free GitHub Pages hosting and avoid paid services.
+
+### Implementation on branch
+- Branch: `feature/calculator-hub-separate-pages` (created from latest `main`).
+- Updated `index.html` to present six cards linking to separate pages.
+- Added `calculator-pages.css` for responsive standalone calculator layouts.
+- Updated `script.js` so shared initialization and calculator handlers tolerate pages where unrelated calculator fields are absent.
+- Added: `compound-interest.html`, `loan-calculator.html`, `monthly-budget.html`, `savings-goal.html`, `emergency-fund.html`, `debt-payoff.html`.
+- Each page has a unique title/description, shared navigation, its own calculator form, return-to-hub link, and related-tool links.
+
+### Verification status
+- GitHub write calls returned commits for all changed/new files on the feature branch.
+- Full live-browser/Android QA has not been performed in this environment. Do not call the change production-ready or deployed until links, calculations, responsive layouts, and console behavior are checked.
+- Existing calculator formulas were retained in principle; this change is primarily page structure and shared-script initialization. Formula correctness remains subject to the separate calculator QA work.
+- Existing open PRs #1 and #2 were left untouched; no PR was merged.
+
+### Next steps
+1. Fetch back every changed/new file from the feature branch and confirm the expected contents.
+2. Run available static checks and inspect page-to-script element IDs.
+3. Open a PR against `main` with explicit remaining QA notes; do not merge until browser/mobile checks and user approval.
+4. After merge and successful GitHub Pages deployment, verify the live hub and all six URLs on Android.
+
+
+## 17. Independent code-level QA checkpoint — 21 November 2026
+- Reviewed the feature branch's six standalone calculator pages, shared JavaScript, shared CSS, homepage links, and documentation.
+- Static structure check: each page loads the shared script, has its corresponding calculation button ID, and has no duplicate form IDs. Existing policy/contact/about page targets were confirmed to exist on `main`; the suspected `about.html` missing link is not a defect.
+- Independently checked sample/default arithmetic: compound interest monthly mode ≈ $17,175.24 future value; loan ≈ $198.01/month, $1,880.72 interest, 60 months; budget $1,150 remaining; savings goal $250/month; emergency fund $10,800 target / $9,800 remaining; debt payoff 23 months / ≈ $606.74 interest.
+- Defects/limitations: compound-interest quarterly/annual frequency batches monthly contributions into larger periodic deposits, inconsistent with the monthly-contribution label; validation is not consistently enforced in JavaScript for zero/out-of-range values; zero-payment debt edge cases need robust handling. Currency selector is formatting-only, not FX conversion.
+- PR #3 status checked: open, unmerged, mergeable. No changes merged or deployed.
+- This was code/static and independent arithmetic QA only. No real browser, console, responsive visual, or Android Chrome session was available; full QA is still pending. Keep PR #3 unmerged until fixes and further testing are complete.
+- Detailed results are in `docs/RESEARCH_AND_QA.md`, section “Independent code-level QA pass”.
