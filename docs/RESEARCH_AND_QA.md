@@ -101,3 +101,15 @@ Educational estimates only; no guaranteed returns or unverified rates. Do not co
 - Source review confirmed all eleven calculator buttons are wired into both the currency-format refresh and initial calculation loops in the PR #10 branch. Mortgage, auto, card, retirement and student handlers include finite-value guards and payoff termination limits.
 - Important QA gap: browser/Android interaction, actual rendered mobile layout, accessibility/screen-reader, console and live HTTP response tests remain unperformed. Static review cannot certify production readiness.
 - This branch is based on PR #10 and remains a separate review PR. No merge or production deployment.
+
+
+## Integrated QA checkpoint — 2026-11-21
+
+- Integrated the premium visual layer from the design review into the consolidated QA branch and linked it from the homepage, calculator pages and guides.
+- Added canonical URLs to the calculator pages and guides; added editorial-page description and canonical metadata.
+- Added polite live regions to calculator result groups for assistive technology.
+- Standardized mobile navigation and footer policy links on retirement and student-loan calculator pages.
+- Static checks: 11 calculator pages have unique IDs, expected calculator button IDs, viewport metadata and script references; internal page links inspected in the 11 calculator pages, guides and policy pages had no missing local HTML targets; sitemap contains all 11 calculators and 8 guides plus policy pages.
+- Independent arithmetic spot checks matched the documented outputs for compound growth, personal loan amortization, debt payoff and auto-loan amortization.
+- Not performed: real Chrome/Android browser interaction, screen-reader testing, Lighthouse/Core Web Vitals and visual regression. Do not mark these as passed.
+- Integration is staged in `quality/integrated-final-qa-2026-11-21`; no merge or live deployment has been performed.
