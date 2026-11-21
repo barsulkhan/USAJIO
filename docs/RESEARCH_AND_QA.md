@@ -54,3 +54,11 @@ Educational estimates only; no guaranteed returns or unverified rates. Do not co
   3. Currency selection changes formatting only; it does not convert currencies (already disclosed in the project limitations).
 - PR #3 currently reports open, unmerged, and mergeable. No merge or deployment was performed.
 - Not performed: live browser rendering, JavaScript console inspection in a real browser, Android Chrome touch/keyboard/accessibility checks, and full boundary/negative/large-input test matrix. Do not describe this pass as full QA or production approval.
+
+
+## 2026-11-21 — Technical SEO baseline
+- Created branch `seo/technical-baseline-2026-11-21`.
+- Added canonical URLs and Open Graph metadata to homepage and six calculator pages, using the current GitHub Pages project URL.
+- Added `sitemap.xml` listing the seven current public pages and `robots.txt` allowing crawling with a sitemap reference.
+- PR #7 opened for review. No deployment.
+- After merge, verify live sitemap/robots responses, canonical tags and Search Console indexing. Add guide/tool URLs as they are published.
