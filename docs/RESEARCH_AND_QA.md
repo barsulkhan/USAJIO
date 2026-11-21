@@ -84,3 +84,10 @@ Educational estimates only; no guaranteed returns or unverified rates. Do not co
 - Mortgage and auto guides emphasize full borrowing cost, loan terms, fees and ownership costs rather than monthly payment alone.
 - Added the six guide URLs to sitemap.xml. Content is general education and requires periodic source/date review as rules and products change.
 - Static read-back of all six pages and homepage links completed. Real browser/mobile QA and external-link validation remain pending; no merge or deployment.
+
+
+## 2026-11-21 — Retirement and student-loan calculator expansion
+- Added Retirement Savings Calculator with current balance, monthly contributions, assumed annual return, horizon and optional user-entered employer-match percentage.
+- Retirement projection uses monthly equivalent rate, current balance compounding and month-end contributions; discloses no inflation, tax, fees, contribution limits, vesting, volatility or withdrawals.
+- Added Student Loan Payoff Calculator using fixed monthly payment and APR/12 approximation; flags payments that do not exceed monthly interest and discloses that federal income-driven repayment, forgiveness and other program rules are not modeled.
+- Added both tools to homepage and sitemap. Static read-back checks follow; browser/mobile QA remains pending.
