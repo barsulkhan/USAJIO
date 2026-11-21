@@ -63,3 +63,6 @@ Educational estimates only; no guaranteed returns or unverified rates. Do not co
 - Budget, savings, emergency-fund and debt inputs now share finite numeric bounds. Debt payoff handles zero balance, zero payment, insufficient payment and 100-year simulation limits distinctly.
 - Independent arithmetic check for a $1,000 starting balance, $100 month-end contribution, 5% nominal annual rate over one year: monthly ≈ $2,279.05; quarterly ≈ $2,278.71; annual ≈ $2,277.26 using equivalent monthly rates.
 - Static source checks and independent formula calculations only; no real-browser/Android testing has been performed. Changes remain in PR review and are not live.
+
+- Added a plain-language “How this estimate works” methodology section to each of the six calculator pages, including the main calculation method and key exclusions/assumptions. Added responsive styling for those sections.
+- The calculator pages now disclose that the currency selector changes display formatting only (project limitation remains; no exchange-rate conversion is performed).
