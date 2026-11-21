@@ -72,8 +72,8 @@ const server = http.createServer((req,res) => {
       const source=fs.readFileSync(path.join(root,f),'utf8');
       for(const match of source.matchAll(/href=["']([^"'#]+\.html)(?:#[^"']*)?["']/g)){
         const href=match[1].split('?')[0];
-        if(/^https?:\\/\\//i.test(href)) continue;
-        const target=href.replace(/^\\.\\//,'').split('#')[0];
+        if(/^https?:\/\//i.test(href)) continue;
+        const target=href.replace(/^\.\//,'').split('#')[0];
         if(target && !fs.existsSync(path.join(root,target))) missing.push(f+' -> '+target);
       }
     }
