@@ -113,3 +113,5 @@ Educational estimates only; no guaranteed returns or unverified rates. Do not co
 - Independent arithmetic spot checks matched the documented outputs for compound growth, personal loan amortization, debt payoff and auto-loan amortization.
 - Not performed: real Chrome/Android browser interaction, screen-reader testing, Lighthouse/Core Web Vitals and visual regression. Do not mark these as passed.
 - Integration is staged in `quality/integrated-final-qa-2026-11-21`; no merge or live deployment has been performed.
+
+- Integrated the competitor research report from the former research PR into this consolidated branch so the research record and implementation now travel together.
