@@ -310,3 +310,8 @@ This section supersedes earlier checkpoint statements in Sections 7 and 11–14 
 - Expanded sitemap for both new guides, added homepage canonical/Open Graph metadata, and added responsive keyboard-focus, touch-target, reduced-motion and guide-reading styles.
 - Integration note: PR #10 does not include the separate premium visual stylesheet work from PR #5 or the competitor research report from PR #4. Do not close or merge stacked PRs blindly; compare and integrate deliberately.
 - QA remains source/static only. No real browser, Android, screen-reader, Lighthouse or live HTTP verification has been performed. No production merge/deployment; explicit user approval is still required.
+
+
+## Integrated QA checkpoint — 2026-11-21
+
+Consolidated integration branch: `quality/integrated-final-qa-2026-11-21`. Premium visual CSS, canonical metadata, calculator result live regions, and consistent mobile navigation/footer links have been staged. Static source and arithmetic checks have been performed. Real-browser, Android, assistive-technology and Lighthouse validation remain outstanding. No merge or production deployment has been performed.
