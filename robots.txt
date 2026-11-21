@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://barsulkhan.github.io/USAJIO/sitemap.xml
