@@ -25,10 +25,10 @@
     const p=read("ci-principal"), m=read("ci-monthly"), r=read("ci-rate",0,100), y=read("ci-years",1,80);
     const f=Number($("ci-frequency")?.value);
     if ([p,m,r,y].some(v=>v===null) || ![1,4,12].includes(f)) { invalid(["ci-result","ci-paid","ci-interest"]); return; }
-    const monthsPerPeriod=12/f, periodRate=(r/100)/f, totalMonths=y*12;
+    const monthlyRate=Math.pow(1+(r/100)/f,f/12)-1, totalMonths=y*12;
     let balance=p;
-    for(let month=1;month<=totalMonths;month++){
-      if(month%monthsPerPeriod===0) balance*=1+periodRate;
+    for(let month=0;month<totalMonths;month++){
+      balance*=1+monthlyRate;
       balance+=m;
       if(!Number.isFinite(balance)){ invalid(["ci-result","ci-paid","ci-interest"]); return; }
     }
