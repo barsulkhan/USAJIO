@@ -230,3 +230,16 @@ This section supersedes earlier checkpoint statements in Sections 7 and 11–14 
 - The previously recorded GitHub Pages deployment remains successful: workflow run `43022301635`, commit `bcdff727c235161c10967590f45dea8f98b03e2d`. The user's Android screenshot had confirmed the homepage top section visually; this does not prove calculator functional QA.
 - A new Pages workflow was queued after the documentation transfer (run `43180954264`, commit `54cdfec8c1fdff9e848ae7b52b1d9d91df06a148`). Recheck its final status; a docs-only transfer is not proof of a successful new deployment.
 - Keep USAJIO separate from InfoJano. Do not switch hosting or add paid services. Next product task remains structured QA of the six live calculators and navigation/policy pages.
+
+
+---
+
+## 17. Living research and execution log — 21 November 2026
+
+- Established `docs/RESEARCH_AND_QA.md` as the ongoing research, decision, QA and work log. It now records the USA audience/product direction, project rules, competitor research baseline, historical QA findings, PR status, prioritized roadmap, release gates and a repeatable session-log template.
+- New documentation branch: `docs/ongoing-research-work-log`.
+- Documentation PR: https://github.com/barsulkhan/USAJIO/pull/2 (open; not merged at checkpoint). The updated research file was fetched back from the branch and verified.
+- Calculator QA PR #1 remains separate: https://github.com/barsulkhan/USAJIO/pull/1. Latest fetch reports open, not merged, and mergeable. Simulated JavaScript/DOM checks are recorded, but Android Chrome, real-browser accessibility, navigation/policy review and current live deployment verification remain pending.
+- No application code, hosting, domain, paid service or production deployment was changed in this documentation step.
+- Next priority: complete real-browser and Android Chrome QA of the six calculators; then address confirmed defects, recheck PR #1, merge after release gates pass, verify Pages deployment, and record exact results in both project documents.
+- Do not treat either open PR as merged. Do not treat a mergeability flag as proof that testing is complete.
