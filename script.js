@@ -56,6 +56,10 @@
     calculate(values);
   }
   $("year").textContent = new Date().getFullYear();
+  const ciNote = document.querySelector("#compound .disclaimer");
+  if (ciNote) ciNote.textContent = "Assumes a constant annual rate. Monthly contributions are grouped and added at the end of each compounding period. Taxes, fees and inflation are excluded; actual returns vary.";
+  const loanNote = document.querySelector("#loan .disclaimer");
+  if (loanNote) loanNote.textContent = "The monthly payment shown includes any extra amount. The final payment may be smaller. Excludes taxes, fees and variable-rate changes; this is not a lender quote.";
   $("currency").addEventListener("change", () => {
     Object.values(groups).forEach((ids, index) => {
       const keys = ["ci","loan","budget","save","ef","debt"];
