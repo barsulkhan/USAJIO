@@ -277,3 +277,12 @@ This section supersedes earlier checkpoint statements in Sections 7 and 11–14 
 - Hardened validation bounds and loan/debt termination handling to avoid showing partial or misleading payoff estimates.
 - Independent calculation check: for $1,000 principal + $100 monthly contribution, 5% APR, 12 months, estimated ending values are about $2,279.05 monthly, $2,278.71 quarterly, and $2,277.26 annual compounding.
 - Static and independent arithmetic checks are not a substitute for real browser, accessibility and Android Chrome testing. No deployment occurred.
+
+
+## 2026-11-21 — Calculator catalog expansion (PR #9)
+- Added dedicated Mortgage, Auto Loan and Credit Card Payoff calculator pages and homepage cards on branch `feature/us-loan-and-credit-calculators-2026-11-21`.
+- New pages: `mortgage-calculator.html`, `auto-loan-calculator.html`, `credit-card-payoff.html`.
+- Shared `script.js` includes handlers for all three tools. Mortgage separates principal-and-interest from estimated housing total; tax/insurance/HOA are user-entered and exclusions are disclosed.
+- Auto loan supports extra monthly payments and uses fixed-rate amortization; enter financed amount after upfront taxes/fees.
+- Credit card payoff uses monthly APR/12 approximation and flags payments that do not exceed monthly interest; daily interest accrual, fees, new purchases and variable APR are excluded.
+- Homepage now has nine calculator cards. These changes are in a review branch only; no production merge/deployment. Static checks and independent arithmetic only; real browser/Android QA remains pending.
