@@ -29,6 +29,10 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: .
+      # GitHub's artifact metadata can briefly lag behind a successful upload.
+      # Give the Actions artifact API time to register github-pages before deployment.
+      - name: Wait for Pages artifact registration
+        run: sleep 15
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
