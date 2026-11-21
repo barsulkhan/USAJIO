@@ -54,3 +54,14 @@ Educational estimates only; no guaranteed returns or unverified rates. Do not co
   3. Currency selection changes formatting only; it does not convert currencies (already disclosed in the project limitations).
 - PR #3 currently reports open, unmerged, and mergeable. No merge or deployment was performed.
 - Not performed: live browser rendering, JavaScript console inspection in a real browser, Android Chrome touch/keyboard/accessibility checks, and full boundary/negative/large-input test matrix. Do not describe this pass as full QA or production approval.
+
+
+## 2026-11-21 — Follow-up edge-case hardening
+- Updated the shared calculator script on branch `qa/calculator-edge-cases-2026-11-21`.
+- Added a JavaScript-side upper bound of 1e12 for monetary inputs to avoid non-finite intermediate totals from extremely large values.
+- Loan term now validates at least one year (matching the page's HTML minimum) and month count is clamped to at least one, preventing a positive fractional year from rounding to zero months.
+- Debt payoff now handles a zero balance before checking whether the monthly payment is positive, so a paid-off debt reports 0 months and $0 interest even if payment is zero.
+- Debt payoff distinguishes a missing/zero payment from other invalid inputs.
+- Static source checks passed: all six handlers are present; amount caps, loan month floor, zero-balance ordering, and monthly contribution sequence are present.
+- Independent arithmetic regression checks reproduced: $10,000 loan at 7% for 5 years ≈ $198.01/month, $1,880.72 interest, $11,880.72 total, 60 months; $5,000 debt at 12% with $250/month ≈ 23 months and $606.74 interest.
+- Not a full browser test: no real browser console, screen-reader, or Android visual regression was available. The code change remains unmerged and not live.
