@@ -301,3 +301,12 @@ This section supersedes earlier checkpoint statements in Sections 7 and 11–14 
 - Retirement projection includes current savings, monthly contribution, years, assumed return and optional match; uses month-end contribution timing and clearly labels return as an assumption.
 - Student loan planner estimates fixed-payment payoff using monthly APR/12 approximation. It is not a federal student-loan plan estimator and excludes income-driven plans, forgiveness, deferment, fees and variable rates.
 - Homepage and sitemap updated. This is a follow-on branch from PR #9 and remains unmerged/unpublished pending review and dependency checks.
+
+
+## 2026-11-21 — Consolidated quality, trust, SEO and mobile pass
+- Created integration-review branch `quality/trust-seo-mobile-final-pass-2026-11-21` from the eleven-calculator/six-guide expansion branch (PR #10 head). This is a review branch only; it does not change production.
+- Improved About, Contact, Privacy, Terms, Financial Disclaimer and Editorial Policy pages. Privacy wording describes the current static-browser calculation approach, GitHub Pages hosting and the absence of intentionally configured first-party analytics/ads; third-party font requests are acknowledged. No unverified contact email was invented.
+- Added Retirement Planning and Student Loan educational guides and homepage discovery links. The guides distinguish simplified calculator scenarios from actual plan/servicer rules and direct readers to official US resources where relevant.
+- Expanded sitemap for both new guides, added homepage canonical/Open Graph metadata, and added responsive keyboard-focus, touch-target, reduced-motion and guide-reading styles.
+- Integration note: PR #10 does not include the separate premium visual stylesheet work from PR #5 or the competitor research report from PR #4. Do not close or merge stacked PRs blindly; compare and integrate deliberately.
+- QA remains source/static only. No real browser, Android, screen-reader, Lighthouse or live HTTP verification has been performed. No production merge/deployment; explicit user approval is still required.
