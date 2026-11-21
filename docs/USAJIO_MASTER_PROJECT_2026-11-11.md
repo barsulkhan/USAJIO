@@ -286,3 +286,11 @@ This section supersedes earlier checkpoint statements in Sections 7 and 11–14 
 - Auto loan supports extra monthly payments and uses fixed-rate amortization; enter financed amount after upfront taxes/fees.
 - Credit card payoff uses monthly APR/12 approximation and flags payments that do not exceed monthly interest; daily interest accrual, fees, new purchases and variable APR are excluded.
 - Homepage now has nine calculator cards. These changes are in a review branch only; no production merge/deployment. Static checks and independent arithmetic only; real browser/Android QA remains pending.
+
+
+## 2026-11-21 — Editorial content expansion (PR #9)
+- Added six dedicated Money Guide pages: `budgeting-guide.html`, `emergency-fund-guide.html`, `debt-payoff-guide.html`, `credit-score-guide.html`, `mortgage-basics-guide.html`, and `auto-financing-guide.html`.
+- Homepage guide cards now link to all six pages; relevant calculators are cross-linked from the guides.
+- Topics cover practical budgeting, emergency savings, debt repayment methods, US credit score/report basics, mortgage cost components and auto financing comparisons.
+- Sitemap expanded to include all six guides. Pages are general education only and do not offer individualized advice.
+- This work remains in PR #9 review branch. No production merge/deployment; browser/mobile QA and external source review remain pending.
