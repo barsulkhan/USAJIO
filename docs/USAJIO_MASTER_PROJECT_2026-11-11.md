@@ -230,3 +230,80 @@ This section supersedes earlier checkpoint statements in Sections 7 and 11–14 
 - The previously recorded GitHub Pages deployment remains successful: workflow run `43022301635`, commit `bcdff727c235161c10967590f45dea8f98b03e2d`. The user's Android screenshot had confirmed the homepage top section visually; this does not prove calculator functional QA.
 - A new Pages workflow was queued after the documentation transfer (run `43180954264`, commit `54cdfec8c1fdff9e848ae7b52b1d9d91df06a148`). Recheck its final status; a docs-only transfer is not proof of a successful new deployment.
 - Keep USAJIO separate from InfoJano. Do not switch hosting or add paid services. Next product task remains structured QA of the six live calculators and navigation/policy pages.
+
+
+---
+
+## 16. QA development checkpoint — 21 November 2026
+
+### Repository state checked before changes
+- Confirmed the separate public repository `barsulkhan/USAJIO`, default branch `main`, and the `main` branch itself through the connected GitHub integration.
+- Latest commit found on `main` before this QA work: `7fe430aaa0cab5c7b101ff16a1acb3ec4134f87f` (documentation migration verification, 12 November 2026).
+- No open pull requests were found at the start of this session.
+- Read the complete master file, current `index.html`, `script.js`, `styles.css`, and `docs/RESEARCH_AND_QA.md` from `main` before creating a working branch.
+- Working branch created from `main`: `qa/six-calculators-validation`. No changes were made to `main`; no PR has been merged.
+
+### Workflow run verification
+- Rechecked GitHub Actions run `43180954264` (the docs-transfer workflow run previously marked for recheck).
+- Its `deploy` job status is `completed`, conclusion `cancelled`. Steps through artifact upload succeeded, but the Deploy to GitHub Pages step was cancelled.
+- Do not describe this run as a successful deployment. Earlier run `43022301635` remains the separately recorded successful Pages deployment; the Android screenshot only confirmed the homepage view at that earlier time.
+- A fresh live-site fetch was not available in this session. Do not claim the current live site or the new QA branch is deployed.
+
+### Research and competitor review
+- Reviewed current calculator hubs and methodology pages from NerdWallet, Bankrate and Finelta.
+- NerdWallet emphasizes reviewed/updated calculators and clear educational guidance.
+- Bankrate exposes a broad set of borrowing, total-cost and payoff calculators.
+- Finelta documents formulas, assumptions, contribution timing and excluded factors.
+- Useful references:
+  - https://www.nerdwallet.com/banking/calculators
+  - https://www.nerdwallet.com/finance/calculators
+  - https://www.bankrate.com/calculators/
+  - https://finelta.com/methodology
+- USAJIO improvement direction: visible validation, transparent formula/timing assumptions, consistent totals, and clear treatment of impossible repayment inputs. This was a focused competitor review, not a complete market audit.
+
+### Initial code QA findings
+- Numeric helper silently converted negative/blank inputs to zero, concealing invalid entries.
+- Savings Goal could treat a zero-month period as a zero monthly saving amount.
+- Debt Payoff could report an over-100-year outcome for a zero monthly payment at zero interest, and needed explicit handling for zero balance and payments below monthly interest.
+- Loan display did not clearly say that the displayed regular payment included extra payments and the final payment could be smaller.
+- Compound Interest needed to disclose that monthly contributions are grouped and added at the end of each compounding period.
+- Budget zero-income behavior should show the negative remaining balance and an undefined percentage rather than divide by zero.
+
+### Changes made on the QA branch
+- `script.js`: added per-calculator input validation for all six tools; reject blank, non-finite, negative, out-of-range and non-integer period inputs; mark invalid fields with `aria-invalid`; display inline accessible error messages; handle zero debt and zero-balance loan cases; reject debt payments that do not exceed the first month's interest; and clarify compound-contribution and loan-payment assumptions.
+- `styles.css`: added clear error-message and invalid-field styling.
+- Currency selector remains display formatting only; no FX conversion or country-specific financial rules were introduced.
+- No paid services, APIs, subscriptions, hosting changes or domain purchases were made.
+
+### Reproducible checks completed on the branch
+- JavaScript source parse check: passed using the JavaScript runtime parser.
+- Simulated DOM checks against the current calculator script:
+  - Default Compound Interest: future value $17,175.24; contributions $13,000.00; interest $4,175.24.
+  - Default Loan: regular payment $198.01; interest $1,880.72; total repayment $11,880.72.
+  - Default Budget: expenses $2,350.00; remaining $1,150.00; remaining share 32.9%.
+  - Default Savings Goal: $250.00 per month.
+  - Default Emergency Fund: target $10,800.00; gap $9,800.00.
+  - Default Debt Payoff: 23 months; interest $606.74.
+  - Negative budget value, blank compound contribution and zero-month savings period were rejected and marked invalid.
+  - Debt payment below the first month's interest was rejected.
+  - Zero debt returned 0 months and $0 interest.
+  - Zero-rate loan returned $216.67 monthly including the tested extra payment, $0 interest and $10,000 total repayment.
+  - Zero-income budget returned a negative remaining balance and an em dash for percentage.
+  - Savings goal already reached and emergency fund already met both returned a $0 gap/payment.
+  - Zero-rate debt returned 20 months and $0 interest.
+  - Zero-rate compound scenario returned future value equal to total contributions and $0 interest.
+- These are simulated runtime checks, not Android/manual browser QA or live-site testing.
+
+### Remaining QA and release gates
+1. Review the branch diff and complete all six calculators' edge-case tests in a real browser.
+2. Verify accessibility, mobile layout and the actual Android Chrome experience.
+3. Verify all navigation and policy pages; review placeholder contact and policy copy.
+4. Run any available CI/build checks and verify the actual GitHub Pages deployment after PR merge; no merge is authorized yet.
+5. Present the PR for user review. Do not merge without explicit permission.
+6. After user review, continue QA for SEO, accessibility, performance and technical site foundations. Do not claim these are complete.
+
+### Exact current handoff
+- Base branch: `main` at the previously verified checkpoint.
+- Working branch: `qa/six-calculators-validation`.
+- Changed files: `script.js`, `styles.css`, and this master project file.
+- Status: changes committed only to the QA branch; real Android QA and user PR review remain pending; no merge or new deployment has been performed.
