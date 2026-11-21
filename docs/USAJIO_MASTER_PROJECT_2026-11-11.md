@@ -268,3 +268,12 @@ This section supersedes earlier checkpoint statements in Sections 7 and 11–14 
 - PR #3 status checked: open, unmerged, mergeable. No changes merged or deployed.
 - This was code/static and independent arithmetic QA only. No real browser, console, responsive visual, or Android Chrome session was available; full QA is still pending. Keep PR #3 unmerged until fixes and further testing are complete.
 - Detailed results are in `docs/RESEARCH_AND_QA.md`, section “Independent code-level QA pass”.
+
+
+## 21. Formula accuracy and validation follow-up — 21 November 2026
+- Created branch `qa/calculator-accuracy-and-methodology-2026-11-21` from current `main`.
+- Corrected compound-interest timing so monthly contributions are posted at month-end and interest is credited monthly, quarterly or annually according to the selected option.
+- Disclosed the exact contribution/interest timing assumption on the calculator page.
+- Hardened validation bounds and loan/debt termination handling to avoid showing partial or misleading payoff estimates.
+- Independent calculation check: for $1,000 principal + $100 monthly contribution, 5% APR, 12 months, estimated ending values are about $2,282.03 monthly, $2,279.34 quarterly, and $2,250.00 annual compounding.
+- Static and independent arithmetic checks are not a substitute for real browser, accessibility and Android Chrome testing. No deployment occurred.
