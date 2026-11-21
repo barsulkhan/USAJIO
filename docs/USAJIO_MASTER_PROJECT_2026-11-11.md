@@ -243,3 +243,13 @@ This section supersedes earlier checkpoint statements in Sections 7 and 11–14 
 - No application code, hosting, domain, paid service or production deployment was changed in this documentation step.
 - Next priority: complete real-browser and Android Chrome QA of the six calculators; then address confirmed defects, recheck PR #1, merge after release gates pass, verify Pages deployment, and record exact results in both project documents.
 - Do not treat either open PR as merged. Do not treat a mergeability flag as proof that testing is complete.
+
+
+## 18. First QA review — 21 November 2026
+- Re-fetched current `main` before review; no application code was modified in this step.
+- Compared current main with QA branch: PR #1 changes `script.js`; `index.html` is unchanged. The validation changes are not yet on the deployed main branch.
+- Reviewed the six calculator input mappings and the starter policy pages. Contact page still lacks a published contact channel; privacy, terms, disclaimer and editorial pages need final review before launch.
+- Static UX observation: mobile menu markup does not expose an `aria-expanded` state; real keyboard/screen-reader verification is still required before changing it.
+- Live-site fetch was blocked by the web reader environment. This does not establish an outage; live status remains unverified.
+- Android Chrome/manual browser QA has not been performed. A step-by-step Android checklist and caveat about main-vs-PR deployment were appended to `docs/RESEARCH_AND_QA.md`.
+- Next immediate step: user checks the current live baseline on Android Chrome and reports any visible/functionality issue; then branch-specific validation QA is required before PR #1 can be considered release-ready.
