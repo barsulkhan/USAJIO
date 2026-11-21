@@ -91,3 +91,13 @@ Educational estimates only; no guaranteed returns or unverified rates. Do not co
 - Retirement projection uses monthly equivalent rate, current balance compounding and month-end contributions; discloses no inflation, tax, fees, contribution limits, vesting, volatility or withdrawals.
 - Added Student Loan Payoff Calculator using fixed monthly payment and APR/12 approximation; flags payments that do not exceed monthly interest and discloses that federal income-driven repayment, forgiveness and other program rules are not modeled.
 - Added both tools to homepage and sitemap. Static read-back checks follow; browser/mobile QA remains pending.
+
+
+## 2026-11-21 — Consolidated trust, SEO and mobile review branch
+- Added two linked education guides: retirement planning and student-loan repayment. Homepage now surfaces both; sitemap contains their canonical GitHub Pages URLs.
+- Homepage metadata now includes canonical URL and Open Graph fields. Policy pages have been expanded to explain the current implementation and avoid invented contact details or unsupported legal/business claims.
+- Privacy copy notes that calculations run in the browser in the current static implementation, GitHub Pages may process technical request data, no first-party analytics/ads/account feature is intentionally implemented, and third-party web fonts can make external requests.
+- Added keyboard-visible focus treatment, minimum touch target/input sizing, reduced-motion handling and mobile guide typography.
+- Source review confirmed all eleven calculator buttons are wired into both the currency-format refresh and initial calculation loops in the PR #10 branch. Mortgage, auto, card, retirement and student handlers include finite-value guards and payoff termination limits.
+- Important QA gap: browser/Android interaction, actual rendered mobile layout, accessibility/screen-reader, console and live HTTP response tests remain unperformed. Static review cannot certify production readiness.
+- This branch is based on PR #10 and remains a separate review PR. No merge or production deployment.
