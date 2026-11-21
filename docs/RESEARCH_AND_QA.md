@@ -75,3 +75,12 @@ Educational estimates only; no guaranteed returns or unverified rates. Do not co
 - Credit card payoff uses an APR/12 monthly-interest approximation and fixed monthly payment. It flags payments at or below monthly interest and discloses daily accrual, fees, new purchases and variable-rate limitations.
 - Static read-back confirmed the three new pages, calculator button IDs, script and homepage changes exist on the feature branch. Independent sample arithmetic: $280,000 mortgage principal at 6.5% for 30 years gives about $1,769.79 monthly P&I and $357,124.57 total interest; $28,000 auto loan at 6.9% for 60 months gives about $553.11 scheduled monthly payment and $5,186.81 interest; $4,500 card balance at 24.99% APR with $200 monthly payment gives 31 months and about $1,634.71 interest.
 - Static and independent arithmetic checks only; real-browser, Android, accessibility and console checks remain pending. No merge or deployment.
+
+
+## 2026-11-21 — Money guide library expansion
+- Created six standalone, linked educational guides: budgeting, emergency funds, debt payoff, US credit scores/reports, mortgage basics and auto financing.
+- Homepage Money Guides section now links to all six pages; relevant calculator links connect the education pages to tools.
+- US credit-report guide points readers to AnnualCreditReport.com and distinguishes credit scores from reports; it does not promise a specific score or approval result.
+- Mortgage and auto guides emphasize full borrowing cost, loan terms, fees and ownership costs rather than monthly payment alone.
+- Added the six guide URLs to sitemap.xml. Content is general education and requires periodic source/date review as rules and products change.
+- Static read-back of all six pages and homepage links completed. Real browser/mobile QA and external-link validation remain pending; no merge or deployment.
