@@ -294,3 +294,10 @@ This section supersedes earlier checkpoint statements in Sections 7 and 11–14 
 - Topics cover practical budgeting, emergency savings, debt repayment methods, US credit score/report basics, mortgage cost components and auto financing comparisons.
 - Sitemap expanded to include all six guides. Pages are general education only and do not offer individualized advice.
 - This work remains in PR #9 review branch. No production merge/deployment; browser/mobile QA and external source review remain pending.
+
+
+## 2026-11-21 — Retirement and student-loan tools (follow-on PR)
+- Added `retirement-calculator.html` and `student-loan-payoff.html`, bringing the calculator catalog to eleven tools.
+- Retirement projection includes current savings, monthly contribution, years, assumed return and optional match; uses month-end contribution timing and clearly labels return as an assumption.
+- Student loan planner estimates fixed-payment payoff using monthly APR/12 approximation. It is not a federal student-loan plan estimator and excludes income-driven plans, forgiveness, deferment, fees and variable rates.
+- Homepage and sitemap updated. This is a follow-on branch from PR #9 and remains unmerged/unpublished pending review and dependency checks.
