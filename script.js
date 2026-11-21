@@ -18,7 +18,7 @@
   if ($("year")) $("year").textContent = new Date().getFullYear();
   if ($("currency")) $("currency").addEventListener("change", event => {
     currency = event.target.value;
-    ["ci-calc","loan-calc","budget-calc","save-calc","ef-calc","debt-calc","mortgage-calc","auto-calc","card-calc"].forEach(id => { if ($(id)) $(id).click(); });
+    ["ci-calc","loan-calc","budget-calc","save-calc","ef-calc","debt-calc","mortgage-calc","auto-calc","card-calc","retirement-calc","student-calc"].forEach(id => { if ($(id)) $(id).click(); });
   });
 
   bind("ci-calc", () => {
@@ -125,5 +125,28 @@
     put("card-interest",months>=1200?"—":fmt(interest));put("card-total",months>=1200?"—":fmt(total));
   });
 
-  ["ci-calc","loan-calc","budget-calc","save-calc","ef-calc","debt-calc","mortgage-calc","auto-calc","card-calc"].forEach(id=>{if($(id))$(id).click();});
+
+  bind("retirement-calc", () => {
+    const current=read("retirement-current",0,1e12), monthly=read("retirement-monthly",0,1e10), years=read("retirement-years",1,70), annual=read("retirement-return",0,30), match=read("retirement-match",0,100);
+    if([current,monthly,years,annual,match].some(v=>v===null)){invalid(["retirement-balance","retirement-contrib","retirement-total"]);return;}
+    const months=years*12, rate=Math.pow(1+annual/100,1/12)-1, contribution=monthly*(1+match/100);
+    const growth=rate===0?1:(Math.pow(1+rate,months)-1)/rate;
+    const balance=current*Math.pow(1+rate,months)+contribution*growth;
+    const contrib=current+contribution*months;
+    if(!Number.isFinite(balance)||!Number.isFinite(contrib)){invalid(["retirement-balance","retirement-contrib","retirement-total"]);return;}
+    put("retirement-balance",fmt(balance));put("retirement-contrib",fmt(contrib));put("retirement-total",fmt(balance-contrib));
+  });
+  bind("student-calc", () => {
+    const principal=read("student-balance",0,1e12), annual=read("student-rate",0,100), payment=read("student-payment",0,1e12);
+    if([principal,annual,payment].some(v=>v===null)){invalid(["student-months","student-interest","student-total"]);return;}
+    if(principal===0){put("student-months","0");put("student-interest",fmt(0));put("student-total",fmt(0));return;}
+    if(payment<=0){put("student-months","Enter a payment");put("student-interest","—");put("student-total","—");return;}
+    const rate=annual/1200;
+    if(rate>0&&payment<=principal*rate){put("student-months","Payment too low");put("student-interest","—");put("student-total","—");return;}
+    let balance=principal,interest=0,total=0,months=0;
+    while(balance>0.005&&months<1200){const charge=balance*rate,paid=Math.min(balance+charge,payment);interest+=charge;total+=paid;balance=Math.max(0,balance+charge-paid);months++;}
+    put("student-months",months>=1200?"Over 100 years":String(months)+" months");put("student-interest",months>=1200?"—":fmt(interest));put("student-total",months>=1200?"—":fmt(total));
+  });
+
+  ["ci-calc","loan-calc","budget-calc","save-calc","ef-calc","debt-calc","mortgage-calc","auto-calc","card-calc","retirement-calc","student-calc"].forEach(id=>{if($(id))$(id).click();});
 })();
