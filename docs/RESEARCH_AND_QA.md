@@ -111,7 +111,17 @@ Educational estimates only; no guaranteed returns or unverified rates. Do not co
 - Standardized mobile navigation and footer policy links on retirement and student-loan calculator pages.
 - Static checks: 11 calculator pages have unique IDs, expected calculator button IDs, viewport metadata and script references; internal page links inspected in the 11 calculator pages, guides and policy pages had no missing local HTML targets; sitemap contains all 11 calculators and 8 guides plus policy pages.
 - Independent arithmetic spot checks matched the documented outputs for compound growth, personal loan amortization, debt payoff and auto-loan amortization.
-- Not performed: real Chrome/Android browser interaction, screen-reader testing, Lighthouse/Core Web Vitals and visual regression. Do not mark these as passed.
+- Automated Chromium browser QA now passes in GitHub Actions: homepage loads; all 11 calculators execute their default calculation and render results; result regions expose polite live announcements; mobile navigation opens/closes; homepage has no horizontal overflow at 390px; local HTML links resolve. Run: https://github.com/barsulkhan/USAJIO/actions/runs/44935795608
+- Still not performed: physical Android-device testing, screen-reader/manual keyboard audit, Lighthouse/Core Web Vitals and visual regression. Do not mark these as passed.
 - Integration is staged in `quality/integrated-final-qa-2026-11-21`; no merge or live deployment has been performed.
 
 - Integrated the competitor research report from the former research PR into this consolidated branch so the research record and implementation now travel together.
+
+
+## Automated browser QA checkpoint — 2026-11-21
+
+- Added `.github/workflows/browser-qa.yml` and `tests/browser-qa.cjs` on the integration branch. The workflow installs Playwright Chromium and serves the static site locally in CI; it does not deploy the site.
+- Successful run: https://github.com/barsulkhan/USAJIO/actions/runs/44935795608 (PASS).
+- Verified homepage and all eleven calculator pages load; each calculator's default action runs and produces non-placeholder results; result groups use `aria-live="polite"`; mobile menu toggles correctly; 390px homepage has no horizontal overflow; local HTML links resolve; no browser page errors, console errors or HTTP 4xx/5xx responses were observed during the run.
+- This is automated desktop Chromium plus mobile-viewport emulation, not a physical Android device test. Screen-reader/manual keyboard review, Lighthouse/Core Web Vitals and visual regression remain outstanding.
+- No merge or GitHub Pages deployment was performed.
