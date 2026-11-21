@@ -25,3 +25,14 @@ Review calculator clarity and educational structure from NerdWallet, Bankrate, C
 
 ## Trust principles
 Educational estimates only; no guaranteed returns or unverified rates. Do not collect banking credentials, card/account numbers or unnecessary sensitive financial data. Disclose affiliate relationships if introduced.
+
+
+## 2026-11-21 — Calculator Hub / dedicated page implementation
+- Research direction: use a calculator discovery hub plus individual tool pages, reflecting common patterns in finance calculator sites (category-led discovery, focused calculator pages, clear results and assumptions). This is a design-pattern benchmark, not copied source code or wording.
+- Created branch `feature/calculator-hub-separate-pages` from latest `main`.
+- Homepage now links six calculator cards to dedicated pages: `compound-interest.html`, `loan-calculator.html`, `monthly-budget.html`, `savings-goal.html`, `emergency-fund.html`, `debt-payoff.html`.
+- Added `calculator-pages.css`; made `script.js` shared initialization null-safe for single-calculator pages.
+- Each calculator page includes a page-specific title/description, a return-to-all-tools link, its form/results, and related calculator links.
+- No merge or deployment performed. Browser/Android visual and functional QA remains pending; formula QA is not implied by this structural change.
+- Existing PR #1 (calculator input QA) and PR #2 (documentation) were not merged or modified.
+- Next: fetch-back verification, static ID/script review, PR creation, then manual Android checks after approved merge/deployment.
