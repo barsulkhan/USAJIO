@@ -315,3 +315,10 @@ This section supersedes earlier checkpoint statements in Sections 7 and 11–14 
 ## Integrated QA checkpoint — 2026-11-21
 
 Consolidated integration branch: `quality/integrated-final-qa-2026-11-21`. Premium visual CSS, canonical metadata, calculator result live regions, and consistent mobile navigation/footer links have been staged. Static source and arithmetic checks have been performed. Real-browser, Android, assistive-technology and Lighthouse validation remain outstanding. No merge or production deployment has been performed.
+
+
+## 2026-11-21 — Automated browser QA passed
+- Added a Playwright Chromium workflow and browser smoke suite on the integration branch. GitHub Actions run https://github.com/barsulkhan/USAJIO/actions/runs/44935795608 completed successfully.
+- Homepage and all eleven calculators load; all eleven default calculator interactions produce results; polite result announcements, mobile navigation open/close, 390px homepage overflow and local HTML links pass; no browser/console errors or HTTP error responses were observed in the run.
+- This is CI Chromium with a mobile viewport, not a physical Android device. Screen-reader/manual keyboard review, Lighthouse/Core Web Vitals and visual regression remain outstanding.
+- Changes remain on the integration PR; no merge or live deployment has occurred.
