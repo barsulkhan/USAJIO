@@ -268,3 +268,11 @@ This section supersedes earlier checkpoint statements in Sections 7 and 11–14 
 - PR #3 status checked: open, unmerged, mergeable. No changes merged or deployed.
 - This was code/static and independent arithmetic QA only. No real browser, console, responsive visual, or Android Chrome session was available; full QA is still pending. Keep PR #3 unmerged until fixes and further testing are complete.
 - Detailed results are in `docs/RESEARCH_AND_QA.md`, section “Independent code-level QA pass”.
+
+
+## 20. Technical SEO baseline prepared — 21 November 2026
+- Created `seo/technical-baseline-2026-11-21` from `main`.
+- Added canonical URL and Open Graph metadata to the homepage and six calculator pages.
+- Added `sitemap.xml` and `robots.txt`; sitemap currently lists the seven existing public pages only.
+- Opened PR #7. Changes are not live.
+- Follow-up after merge: verify deployed file responses and canonical tags; submit sitemap in Search Console when account access is available; keep sitemap updated as new indexable pages are added.
