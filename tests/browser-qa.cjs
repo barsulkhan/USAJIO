@@ -33,7 +33,7 @@ const server = http.createServer((req,res) => {
 
     const home=await page.goto('http://127.0.0.1:4173/index.html');
     if(!home.ok()) throw new Error('Homepage did not load');
-    const homeCards=await page.locator('a[href$="-calculator.html"], a[href="compound-interest.html"], a[href="loan-calculator.html"], a[href="monthly-budget.html"], a[href="savings-goal.html"], a[href="emergency-fund.html"], a[href="debt-payoff.html"]').count();
+    const homeCards=await page.locator('.tool-card a[href]').count();
     if(homeCards<11) throw new Error('Homepage calculator navigation links missing: '+homeCards);
 
     for(const file of pages){
