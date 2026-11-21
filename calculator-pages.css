@@ -4,3 +4,16 @@
 
 /* Consistent grid behavior for the expanded calculator catalog */
 .tool-grid{align-items:stretch}.methodology .disclaimer{max-width:900px}
+
+
+/* Final responsive and keyboard usability pass */
+:where(a,button,input,select,textarea):focus-visible{outline:3px solid #0c9b83;outline-offset:3px}
+button,.primary-btn,.nav a{min-height:42px}
+.fields input,.fields select{width:100%;min-height:44px}
+.guide-article{max-width:850px;line-height:1.75}
+.guide-article h1{font-size:clamp(30px,4vw,44px)}
+.guide-article h2{font-size:clamp(20px,2.5vw,27px);margin-top:30px}
+.guide-article .guide-lead{font-size:18px;color:var(--muted)}
+.guide-article li{margin:8px 0}
+@media(max-width:700px){.guide-article{padding:42px 20px}.guide-article .guide-lead{font-size:16px}.result-grid strong{font-size:15px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}
