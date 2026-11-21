@@ -111,3 +111,33 @@ For each future session append:
 - Still pending / next action:
 - Master project file update status:
 
+
+
+### 2026-11-21 — First live-code review / QA preparation
+- Re-fetched current `main` before this review. Main remained at the previously recorded content versions for `script.js`, `index.html`, `styles.css`, and the policy pages. No code was changed in this review.
+- Compared `main` and `qa/six-calculators-validation`: the PR #1 branch contains the proposed `script.js` validation changes; `index.html` remains identical to main. This means the proposed validation code is not yet part of the deployed main-branch website.
+- Reviewed the six calculator sections and their input IDs against the validation groups. The six group mappings correspond to the current calculator form IDs.
+- Reviewed the policy pages on main:
+  - `contact.html` explicitly says a public contact email/channel will be added before launch; this is a launch-readiness gap.
+  - `privacy.html` describes local calculator processing and hosting technical logs, but says it must be updated to match final hosting, analytics, advertising and contact arrangements. Do not treat it as final legal advice.
+  - `terms.html`, `disclaimer.html` and `editorial.html` are concise starter copy and require editorial/legal review before public launch.
+- Initial static accessibility/UX observations from source (not browser-tested): mobile menu button has a fixed accessible name but no `aria-expanded` state; mobile menu state is toggled inline and no explicit close-on-navigation behavior is visible in the reviewed markup. Verify with keyboard and screen reader in a real browser before changing.
+- Attempted to fetch the live GitHub Pages URL through the available web reader; the fetch was blocked by the environment. This is not evidence that the site is down. Live availability and current deployed revision remain unverified.
+- No real Android Chrome/browser automation is available in this session. Simulated tests already recorded under PR #1 must not be represented as manual device QA.
+
+### Manual QA protocol to execute on Android Chrome
+1. Open https://barsulkhan.github.io/USAJIO/ in Chrome and reload the page.
+2. Confirm the homepage loads, text is readable, the navigation menu opens, and the page can scroll to all six calculators.
+3. For each calculator, press its Calculate button without changing the default values. Confirm a result appears and no error is shown.
+4. Change one field to blank (clear the value) and calculate. Confirm a clear error appears and the page does not silently show a normal result.
+5. Enter a negative value where the field permits typing, calculate, and confirm it is rejected.
+6. Test zero/boundary cases: zero balance for loan/debt, zero income for budget, already-funded savings/emergency goal, and zero interest for loan/debt/compound interest.
+7. Rotate or resize if possible; confirm inputs, buttons and results fit the screen and can be tapped without horizontal scrolling.
+8. Report any incorrect number, error message, layout issue or inaccessible control. Do not submit bank, card, account or other sensitive information.
+- Note: the current live site may still serve `main`, not PR #1. Until PR #1 is merged and deployment is verified, the live calculator UI may not include the new validation behavior. This first visit checks the current live baseline; branch-specific validation needs a preview or post-merge deployment.
+
+### First review outcome
+- Confirmed by source inspection: main still contains the original script with silent numeric fallback; PR #1 contains the candidate validation replacement.
+- Confirmed by source inspection: contact and policy copy are not launch-final.
+- Not confirmed: real mobile behavior, actual calculation output in a browser, accessibility behavior, and current live deployment.
+- Next: obtain Android observations, run branch-specific real-browser QA if a preview can be safely produced, then fix verified defects and decide PR #1 merge readiness.
