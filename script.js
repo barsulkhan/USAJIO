@@ -1,9 +1,74 @@
-(()=>{const $=id=>document.getElementById(id);const n=id=>Math.max(0,Number($(id)?.value)||0);let currency=$("currency")?.value||"USD";const fmt=v=>new Intl.NumberFormat("en-US",{style:"currency",currency,maximumFractionDigits:2}).format(Number.isFinite(v)?v:0);const put=(id,v)=>{if($(id))$(id).textContent=v};if($("year"))$("year").textContent=new Date().getFullYear();const bind=(id,fn)=>{if($(id))$(id).addEventListener("click",fn)};if($("currency"))$("currency").addEventListener("change",e=>{currency=e.target.value;document.querySelectorAll(".primary-btn").forEach(b=>b.click())});
-bind("ci-calc",()=>{const p=n("ci-principal"),m=n("ci-monthly"),r=n("ci-rate")/100,y=n("ci-years"),f=Number($("ci-frequency")?.value||12),total=y*f;let balance=p;for(let i=0;i<total;i++){balance*=1+r/f;balance+=m*12/f}const paid=p+m*12*y;put("ci-result",fmt(balance));put("ci-paid",fmt(paid));put("ci-interest",fmt(balance-paid))});
-bind("loan-calc",()=>{const p=n("loan-amount"),r=n("loan-rate")/1200,months=n("loan-years")*12,extra=n("loan-extra");if(!months)return;const base=r?p*r/(1-Math.pow(1+r,-months)):p/months;let bal=p,interest=0,total=0,count=0;while(bal>0.005&&count<1200){const fee=bal*r;interest+=fee;const pay=Math.min(bal+fee,base+extra);bal=Math.max(0,bal+fee-pay);total+=pay;count++}put("loan-monthly",fmt(base+extra));put("loan-interest",fmt(interest));put("loan-total",fmt(total))});
-bind("budget-calc",()=>{const income=n("budget-income"),expense=["budget-housing","budget-food","budget-transport","budget-bills","budget-other"].reduce((s,id)=>s+n(id),0),left=income-expense;put("budget-expenses",fmt(expense));put("budget-remaining",fmt(left));put("budget-share",income?((left/income)*100).toFixed(1)+"%":"—")});
-bind("save-calc",()=>{const gap=Math.max(0,n("save-target")-n("save-current")),months=n("save-months");put("save-monthly",fmt(months?gap/months:0))});
-bind("ef-calc",()=>{const goal=n("ef-cost")*n("ef-months");put("ef-goal",fmt(goal));put("ef-gap",fmt(Math.max(0,goal-n("ef-current"))))});
-bind("debt-calc",()=>{let bal=n("debt-balance"),rate=n("debt-rate")/1200,pay=n("debt-payment"),interest=0,months=0;if(rate&&pay<=bal*rate){put("debt-months","Payment too low");put("debt-interest","—");return}while(bal>.005&&months<1200){const i=bal*rate;interest+=i;bal=Math.max(0,bal+i-pay);months++}put("debt-months",months>=1200?"Over 100 years":String(months));put("debt-interest",fmt(interest))});
-["ci-calc","loan-calc","budget-calc","save-calc","ef-calc","debt-calc"].forEach(id=>{if($(id))$(id).click()});
+(()=> {
+  const $ = id => document.getElementById(id);
+  const put = (id, value) => { if ($(id)) $(id).textContent = value; };
+  let currency = $("currency")?.value || "USD";
+  const fmt = value => new Intl.NumberFormat("en-US", {style:"currency", currency, maximumFractionDigits:2}).format(value);
+  const read = (id, min=0, max=Number.MAX_SAFE_INTEGER) => {
+    const el = $(id);
+    if (!el) return null;
+    const value = el.value.trim() === "" ? NaN : Number(el.value);
+    const ok = Number.isFinite(value) && value >= min && value <= max;
+    el.setAttribute("aria-invalid", String(!ok));
+    return ok ? value : null;
+  };
+  const bind = (id, fn) => { if ($(id)) $(id).addEventListener("click", fn); };
+  if ($("year")) $("year").textContent = new Date().getFullYear();
+  if ($("currency")) $("currency").addEventListener("change", event => {
+    currency = event.target.value;
+    ["ci-calc","loan-calc","budget-calc","save-calc","ef-calc","debt-calc"].forEach(id => { if ($(id)) $(id).click(); });
+  });
+
+  bind("ci-calc", () => {
+    const p=read("ci-principal"), m=read("ci-monthly"), r=read("ci-rate",0,100), y=read("ci-years",1,80), f=Number($("ci-frequency")?.value);
+    if ([p,m,r,y].some(v=>v===null)) { ["ci-result","ci-paid","ci-interest"].forEach(id=>put(id,"Check inputs")); return; }
+    const monthlyRate = Math.pow(1+r/100/f, f/12)-1;
+    let balance=p;
+    for(let month=0;month<y*12;month++){ balance*=1+monthlyRate; balance+=m; }
+    const paid=p+m*12*y;
+    put("ci-result",fmt(balance)); put("ci-paid",fmt(paid)); put("ci-interest",fmt(balance-paid));
+  });
+
+  bind("loan-calc", () => {
+    const p=read("loan-amount",0), annual=read("loan-rate",0,100), years=read("loan-years",0.01,50), extra=read("loan-extra",0);
+    if([p,annual,years,extra].some(v=>v===null)||p<=0){["loan-monthly","loan-interest","loan-total"].forEach(id=>put(id,"Check inputs"));return;}
+    const rate=annual/1200, months=Math.round(years*12);
+    const base=rate ? p*rate/(1-Math.pow(1+rate,-months)) : p/months;
+    let balance=p, interest=0, total=0, count=0;
+    while(balance>0.005 && count<600){const charge=balance*rate;interest+=charge;const payment=Math.min(balance+charge,base+extra);balance=Math.max(0,balance+charge-payment);total+=payment;count++;}
+    put("loan-monthly",fmt(base+extra));put("loan-interest",fmt(interest));put("loan-total",fmt(total));
+  });
+
+  bind("budget-calc", () => {
+    const income=read("budget-income");
+    const ids=["budget-housing","budget-food","budget-transport","budget-bills","budget-other"];
+    const expenses=ids.map(id=>read(id));
+    if(income===null||expenses.some(v=>v===null)){["budget-expenses","budget-remaining","budget-share"].forEach(id=>put(id,"Check inputs"));return;}
+    const total=expenses.reduce((a,b)=>a+b,0), remaining=income-total;
+    put("budget-expenses",fmt(total));put("budget-remaining",fmt(remaining));put("budget-share",income?((remaining/income)*100).toFixed(1)+"%":"—");
+  });
+
+  bind("save-calc", () => {
+    const target=read("save-target"), current=read("save-current"), months=read("save-months",1,1200);
+    if([target,current,months].some(v=>v===null)){put("save-monthly","Check inputs");return;}
+    put("save-monthly",fmt(Math.max(0,target-current)/months));
+  });
+
+  bind("ef-calc", () => {
+    const cost=read("ef-cost"), months=read("ef-months",1,24), current=read("ef-current");
+    if([cost,months,current].some(v=>v===null)){put("ef-goal","Check inputs");put("ef-gap","Check inputs");return;}
+    const goal=cost*months;put("ef-goal",fmt(goal));put("ef-gap",fmt(Math.max(0,goal-current)));
+  });
+
+  bind("debt-calc", () => {
+    let balance=read("debt-balance"), annual=read("debt-rate",0,100), payment=read("debt-payment",0);
+    if([balance,annual,payment].some(v=>v===null)||payment<=0){put("debt-months","Check inputs");put("debt-interest","—");return;}
+    if(balance===0){put("debt-months","0");put("debt-interest",fmt(0));return;}
+    const rate=annual/1200;
+    if(rate>0 && payment<=balance*rate){put("debt-months","Payment too low");put("debt-interest","—");return;}
+    let interest=0, months=0;
+    while(balance>0.005 && months<1200){const charge=balance*rate;interest+=charge;balance=Math.max(0,balance+charge-payment);months++;}
+    put("debt-months",months>=1200?"Over 100 years":String(months));put("debt-interest",fmt(interest));
+  });
+
+  ["ci-calc","loan-calc","budget-calc","save-calc","ef-calc","debt-calc"].forEach(id=>{if($(id))$(id).click();});
 })();
