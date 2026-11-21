@@ -268,3 +268,13 @@ This section supersedes earlier checkpoint statements in Sections 7 and 11–14 
 - PR #3 status checked: open, unmerged, mergeable. No changes merged or deployed.
 - This was code/static and independent arithmetic QA only. No real browser, console, responsive visual, or Android Chrome session was available; full QA is still pending. Keep PR #3 unmerged until fixes and further testing are complete.
 - Detailed results are in `docs/RESEARCH_AND_QA.md`, section “Independent code-level QA pass”.
+
+
+## 19. Calculator edge-case hardening — 21 November 2026
+- Created branch `qa/calculator-edge-cases-2026-11-21` from `main`; updated `script.js` only.
+- Monetary input validation now caps values at 1e12 to reduce overflow risk.
+- Loan term validation now matches the UI minimum of one year, with a defensive minimum of one repayment month.
+- Debt payoff reports a zero-balance debt as 0 months / zero interest before requiring a positive payment; a non-positive payment on a positive balance receives a specific prompt.
+- Static source assertions passed for the above changes and for the presence of all six calculator handlers.
+- Independent arithmetic checks reproduced baseline loan and debt payoff outputs (loan $10,000 at 7% over 5 years: $198.01 regular monthly payment, $1,880.72 interest, $11,880.72 total, 60 months; debt $5,000 at 12% with $250 monthly payment: 23 months, $606.74 interest).
+- This is a targeted code/static check, not complete browser QA. No merge/deployment occurred; real-browser console, responsive and accessibility checks remain pending.
