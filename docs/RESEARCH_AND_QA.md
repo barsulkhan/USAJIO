@@ -57,9 +57,9 @@ Educational estimates only; no guaranteed returns or unverified rates. Do not co
 
 
 ## 2026-11-21 — Formula and input-validation follow-up
-- Corrected compound-interest contribution timing: monthly deposits are added at month-end; interest is credited only at the selected monthly, quarterly, or annual compounding interval. The prior implementation used an equivalent monthly yield for all contribution deposits, which did not model actual quarterly/annual crediting.
+- Corrected and documented compound-interest convention: monthly deposits are added at month-end, and the selected nominal compounding frequency is converted into an equivalent monthly rate. This keeps monthly contributions consistent across monthly, quarterly and annual selections.
 - Updated the calculator's on-page assumption text to disclose month-end deposits and selected interest-credit frequency.
 - Loan calculator now caps monetary inputs, enforces the one-year UI minimum, protects against zero-month rounding, and reports invalid non-amortizing simulation rather than presenting a partial total.
 - Budget, savings, emergency-fund and debt inputs now share finite numeric bounds. Debt payoff handles zero balance, zero payment, insufficient payment and 100-year simulation limits distinctly.
-- Independent arithmetic check for a $1,000 starting balance, $100 month-end contribution, 5% annual rate over one year: monthly compounding ≈ $2,282.03; quarterly ≈ $2,279.34; annual ≈ $2,250.00. These differ because interest is credited at the selected intervals.
+- Independent arithmetic check for a $1,000 starting balance, $100 month-end contribution, 5% nominal annual rate over one year: monthly ≈ $2,279.05; quarterly ≈ $2,278.71; annual ≈ $2,277.26 using equivalent monthly rates.
 - Static source checks and independent formula calculations only; no real-browser/Android testing has been performed. Changes remain in PR review and are not live.
