@@ -1,0 +1,27 @@
+name: USAJIO browser QA
+
+on:
+  push:
+    branches:
+      - quality/integrated-final-qa-2026-11-21
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Run static and browser tests
+        run: node tests/browser-qa.cjs

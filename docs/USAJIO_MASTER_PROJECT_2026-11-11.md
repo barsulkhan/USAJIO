@@ -268,3 +268,57 @@ This section supersedes earlier checkpoint statements in Sections 7 and 11–14 
 - PR #3 status checked: open, unmerged, mergeable. No changes merged or deployed.
 - This was code/static and independent arithmetic QA only. No real browser, console, responsive visual, or Android Chrome session was available; full QA is still pending. Keep PR #3 unmerged until fixes and further testing are complete.
 - Detailed results are in `docs/RESEARCH_AND_QA.md`, section “Independent code-level QA pass”.
+
+
+## 21. Formula accuracy and validation follow-up — 21 November 2026
+- Created branch `qa/calculator-accuracy-and-methodology-2026-11-21` from current `main`.
+- Documented compound-interest timing so monthly contributions are posted at month-end and the selected nominal compounding frequency is converted to an equivalent monthly rate.
+- Disclosed the exact contribution/interest timing assumption on the calculator page.
+- Hardened validation bounds and loan/debt termination handling to avoid showing partial or misleading payoff estimates.
+- Independent calculation check: for $1,000 principal + $100 monthly contribution, 5% APR, 12 months, estimated ending values are about $2,279.05 monthly, $2,278.71 quarterly, and $2,277.26 annual compounding.
+- Static and independent arithmetic checks are not a substitute for real browser, accessibility and Android Chrome testing. No deployment occurred.
+
+
+## 2026-11-21 — Calculator catalog expansion (PR #9)
+- Added dedicated Mortgage, Auto Loan and Credit Card Payoff calculator pages and homepage cards on branch `feature/us-loan-and-credit-calculators-2026-11-21`.
+- New pages: `mortgage-calculator.html`, `auto-loan-calculator.html`, `credit-card-payoff.html`.
+- Shared `script.js` includes handlers for all three tools. Mortgage separates principal-and-interest from estimated housing total; tax/insurance/HOA are user-entered and exclusions are disclosed.
+- Auto loan supports extra monthly payments and uses fixed-rate amortization; enter financed amount after upfront taxes/fees.
+- Credit card payoff uses monthly APR/12 approximation and flags payments that do not exceed monthly interest; daily interest accrual, fees, new purchases and variable APR are excluded.
+- Homepage now has nine calculator cards. These changes are in a review branch only; no production merge/deployment. Static checks and independent arithmetic only; real browser/Android QA remains pending.
+
+
+## 2026-11-21 — Editorial content expansion (PR #9)
+- Added six dedicated Money Guide pages: `budgeting-guide.html`, `emergency-fund-guide.html`, `debt-payoff-guide.html`, `credit-score-guide.html`, `mortgage-basics-guide.html`, and `auto-financing-guide.html`.
+- Homepage guide cards now link to all six pages; relevant calculators are cross-linked from the guides.
+- Topics cover practical budgeting, emergency savings, debt repayment methods, US credit score/report basics, mortgage cost components and auto financing comparisons.
+- Sitemap expanded to include all six guides. Pages are general education only and do not offer individualized advice.
+- This work remains in PR #9 review branch. No production merge/deployment; browser/mobile QA and external source review remain pending.
+
+
+## 2026-11-21 — Retirement and student-loan tools (follow-on PR)
+- Added `retirement-calculator.html` and `student-loan-payoff.html`, bringing the calculator catalog to eleven tools.
+- Retirement projection includes current savings, monthly contribution, years, assumed return and optional match; uses month-end contribution timing and clearly labels return as an assumption.
+- Student loan planner estimates fixed-payment payoff using monthly APR/12 approximation. It is not a federal student-loan plan estimator and excludes income-driven plans, forgiveness, deferment, fees and variable rates.
+- Homepage and sitemap updated. This is a follow-on branch from PR #9 and remains unmerged/unpublished pending review and dependency checks.
+
+
+## 2026-11-21 — Consolidated quality, trust, SEO and mobile pass
+- Created integration-review branch `quality/trust-seo-mobile-final-pass-2026-11-21` from the eleven-calculator/six-guide expansion branch (PR #10 head). This is a review branch only; it does not change production.
+- Improved About, Contact, Privacy, Terms, Financial Disclaimer and Editorial Policy pages. Privacy wording describes the current static-browser calculation approach, GitHub Pages hosting and the absence of intentionally configured first-party analytics/ads; third-party font requests are acknowledged. No unverified contact email was invented.
+- Added Retirement Planning and Student Loan educational guides and homepage discovery links. The guides distinguish simplified calculator scenarios from actual plan/servicer rules and direct readers to official US resources where relevant.
+- Expanded sitemap for both new guides, added homepage canonical/Open Graph metadata, and added responsive keyboard-focus, touch-target, reduced-motion and guide-reading styles.
+- Integration note: PR #10 does not include the separate premium visual stylesheet work from PR #5 or the competitor research report from PR #4. Do not close or merge stacked PRs blindly; compare and integrate deliberately.
+- QA remains source/static only. No real browser, Android, screen-reader, Lighthouse or live HTTP verification has been performed. No production merge/deployment; explicit user approval is still required.
+
+
+## Integrated QA checkpoint — 2026-11-21
+
+Consolidated integration branch: `quality/integrated-final-qa-2026-11-21`. Premium visual CSS, canonical metadata, calculator result live regions, and consistent mobile navigation/footer links have been staged. Static source and arithmetic checks have been performed. Real-browser, Android, assistive-technology and Lighthouse validation remain outstanding. No merge or production deployment has been performed.
+
+
+## 2026-11-21 — Automated browser QA passed
+- Added a Playwright Chromium workflow and browser smoke suite on the integration branch. GitHub Actions run https://github.com/barsulkhan/USAJIO/actions/runs/44935795608 completed successfully.
+- Homepage and all eleven calculators load; all eleven default calculator interactions produce results; polite result announcements, mobile navigation open/close, 390px homepage overflow and local HTML links pass; no browser/console errors or HTTP error responses were observed in the run.
+- This is CI Chromium with a mobile viewport, not a physical Android device. Screen-reader/manual keyboard review, Lighthouse/Core Web Vitals and visual regression remain outstanding.
+- Changes remain on the integration PR; no merge or live deployment has occurred.
