@@ -268,3 +268,34 @@ This section supersedes earlier checkpoint statements in Sections 7 and 11–14 
 - PR #3 status checked: open, unmerged, mergeable. No changes merged or deployed.
 - This was code/static and independent arithmetic QA only. No real browser, console, responsive visual, or Android Chrome session was available; full QA is still pending. Keep PR #3 unmerged until fixes and further testing are complete.
 - Detailed results are in `docs/RESEARCH_AND_QA.md`, section “Independent code-level QA pass”.
+
+
+## 18. Competitor research and premium redesign work — 21 November 2026
+
+### Current product / deployment checkpoint
+- User confirmed on Android that all six homepage calculator cards open their own standalone pages. This verifies navigation from the user's test, not the correctness of all calculations or every responsive state.
+- Live website remains https://barsulkhan.github.io/USAJIO/ ; repository remains https://github.com/barsulkhan/USAJIO ; hosting is GitHub Pages.
+- Treat the live build as published, but do not claim complete functional QA, accessibility QA, SEO indexation, or performance testing.
+
+### Research completed
+- Public competitor review performed for NerdWallet (calculator hub, banking calculators, methodology and 2025 Form 10-K), Bankrate (calculator and personal-finance calculator hubs), and Calculator.net.
+- Google Search Central helpful-content, Search Essentials, SEO Starter Guide and JavaScript SEO guidance reviewed, along with Core Web Vitals documentation.
+- Full comparison, keyword-intent map, design recommendations, implementation priorities, sources and research limitations are recorded in `docs/COMPETITOR_RESEARCH_AND_PREMIUM_PLAN_2026-11-21.md`.
+- Research conclusion: USAJIO should differentiate with clear task-based discovery, transparent formulas and assumptions, reliable calculation outputs, mobile-first polish and useful original guides—not competitor imitation.
+- Target keyword clusters are mapped for the six current tools and likely future mortgage, auto, credit-card, retirement and net-worth tools. Exact US volume/difficulty/rank exports were not available in this pass: connected Ahrefs returned an insufficient-plan response and connected OpenSEO had insufficient organization credits. No unverified volume or ranking claims were made.
+- Public sources do not reveal competitors' internal CMS, private design system or full operating workflow; report distinguishes observable public practices from inference.
+
+### Working branch and documentation
+- Created branch: `research/premium-competitor-redesign-2026-11-21` from `main`.
+- Added `docs/COMPETITOR_RESEARCH_AND_PREMIUM_PLAN_2026-11-21.md`.
+- Updated `docs/RESEARCH_AND_QA.md` with the research checkpoint and current QA limitations.
+- These documentation commits are on the research branch only; no production code or live site was changed in this research task.
+- Next step: open a documentation/research PR, then implement P0 calculator correctness and trust improvements on a dedicated branch; follow with P1 premium UI, P2 technical SEO/content, and only then P3 additional tools.
+- No paid services, paid hosting, domain, subscriptions or API purchases approved. Keep USAJIO separate from InfoJano.
+
+### Required next actions
+1. Confirm the documentation PR contents and status.
+2. Complete reproducible tests for all six calculator formulas and invalid/boundary cases; resolve formula and output-label defects.
+3. Upgrade consistent visual system and individual calculator result experiences after the correctness baseline is established.
+4. Add technical SEO only with correct canonical/site URL decisions and verify sitemap/robots/page metadata.
+5. Do not merge/deploy production changes without explicit user permission.
