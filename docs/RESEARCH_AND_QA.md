@@ -125,3 +125,15 @@ Educational estimates only; no guaranteed returns or unverified rates. Do not co
 - Verified homepage and all eleven calculator pages load; each calculator's default action runs and produces non-placeholder results; result groups use `aria-live="polite"`; mobile menu toggles correctly; 390px homepage has no horizontal overflow; local HTML links resolve; no browser page errors, console errors or HTTP 4xx/5xx responses were observed during the run.
 - This is automated desktop Chromium plus mobile-viewport emulation, not a physical Android device test. Screen-reader/manual keyboard review, Lighthouse/Core Web Vitals and visual regression remain outstanding.
 - No merge or GitHub Pages deployment was performed.
+
+
+## Deployment incident — 2026-11-22
+
+- **Repository/main:** verified `main` at `ebe4a214ed948b5cdd36e16ef8d9c7f00d18fb76`; PR #13 homepage commit `e0673687ad2c3b48f8b0b921ff1fbbacd20319d9` is an ancestor.
+- **PR #14:** merged; added a 15-second wait between Pages artifact upload and deployment to allow GitHub Actions artifact metadata to become visible.
+- **Root cause evidence:** failed run `44936850607` uploaded/finalized artifact `github-pages` successfully, then `deploy-pages@v4` immediately received `Found 0 artifact(s)` and failed with `No artifacts named "github-pages" were found`.
+- **Fix verification:** run `44937240457` succeeded. Checkout — Pass; Configure Pages — Pass; Upload site artifact — Pass; artifact-registration wait — Pass; Deploy to GitHub Pages — Pass. Logs show `Found 1 artifact(s)`, `Created deployment for ebe4a214ed948b5cdd36e16ef8d9c7f00d18fb76`, `Reported success!`, and environment URL `https://barsulkhan.github.io/USAJIO/`.
+- **Permissions observed in runner:** `contents: read`, `pages: write`, `id-token: write`; Pages deployment completed with these permissions. Node.js 20 deprecation warning was non-fatal.
+- **Free-service compliance:** GitHub Pages only; no paid hosting/domain/API/subscription added.
+- **Live browser/HTTP check:** **Not Tested** in this execution because outbound DNS/network access was unavailable. Deployment success is confirmed by GitHub Actions; visual rendering on the current release is not newly browser-verified.
+- **Pending:** live browser check; current 11-calculator QA; internal links/navigation/guides; SEO/sitemap/robots; keyboard/screen reader/physical Android/visual regression/Lighthouse.
