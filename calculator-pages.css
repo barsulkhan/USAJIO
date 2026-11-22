@@ -17,3 +17,9 @@ button,.primary-btn,.nav a{min-height:42px}
 .guide-article li{margin:8px 0}
 @media(max-width:700px){.guide-article{padding:42px 20px}.guide-article .guide-lead{font-size:16px}.result-grid strong{font-size:15px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}
+
+
+/* WCAG AA contrast: keep calculator-page accents readable on white surfaces. */
+:root{--teal:#08745f}
+.nav-cta,.hero-cta,.primary-btn{background-color:#08745f!important}
+.back-tools,.related-tools a,.tool-card a{color:#08745f!important}

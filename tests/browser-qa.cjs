@@ -25,6 +25,7 @@ const server = http.createServer((req,res) => {
   await new Promise(resolve=>server.listen(4173,'127.0.0.1',resolve));
   const browser = await chromium.launch({headless:true});
   const errors=[];
+  const accessibilityFindings=[];
   try {
     const page = await browser.newPage({viewport:{width:1365,height:900}});
     page.on('pageerror',e=>errors.push('pageerror: '+e.message));
@@ -32,6 +33,16 @@ const server = http.createServer((req,res) => {
     page.on('response',r=>{if(r.status()>=400) errors.push('HTTP '+r.status()+' '+r.url());});
 
     const home=await page.goto('http://127.0.0.1:4173/index.html');
+    const axe = require('axe-core');
+    const auditA11y=async(label)=>{
+      // Each page navigation replaces the document, so inject axe for every page.
+      await page.addScriptTag({content:axe.source});
+      const result=await page.evaluate(async()=>await window.axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21a','wcag21aa']}}));
+      for(const v of result.violations){
+        accessibilityFindings.push({page:label,id:v.id,impact:v.impact,description:v.help,nodes:v.nodes.map(n=>({target:n.target,html:n.html,summary:n.failureSummary}))});
+      }
+    };
+    await auditA11y('index.html');
     if(!home.ok()) throw new Error('Homepage did not load');
     const homeCards=await page.locator('.tool-card a[href]').count();
     if(homeCards<11) throw new Error('Homepage calculator navigation links missing: '+homeCards);
@@ -40,6 +51,7 @@ const server = http.createServer((req,res) => {
       const response=await page.goto('http://127.0.0.1:4173/'+file);
       if(!response || !response.ok()) throw new Error(file+' failed to load');
       await page.waitForLoadState('networkidle');
+      await auditA11y(file);
       const title=await page.title();
       if(!title.includes('USAJIO')) throw new Error(file+' missing branded title');
       const calc=page.locator('button[id$="-calc"]');
@@ -79,7 +91,10 @@ const server = http.createServer((req,res) => {
     }
     if(missing.length) throw new Error('Broken local links: '+missing.join(', '));
     if(errors.length) throw new Error('Browser errors: '+errors.join(' | '));
-    console.log('PASS: homepage, 11 calculator default interactions, live result announcements, mobile menu, 390px overflow and local HTML links.');
+    console.log('ACCESSIBILITY AUDIT: '+JSON.stringify(accessibilityFindings,null,2));
+    const blocking=accessibilityFindings.filter(x=>x.impact==='critical'||x.impact==='serious');
+    if(blocking.length) throw new Error('Accessibility violations (serious/critical): '+JSON.stringify(blocking));
+    console.log('PASS: homepage, 11 calculator default interactions, live result announcements, mobile menu, 390px overflow, local HTML links and axe WCAG 2.1 A/AA audit.');
   } finally {
     await browser.close();
     await new Promise(resolve=>server.close(resolve));
