@@ -139,6 +139,10 @@ const server = http.createServer((req,res) => {
     if(await page.locator('.site-header').evaluate(el=>getComputedStyle(el).display)!=='none') throw new Error('Print stylesheet should hide site navigation');
     if(await page.locator('#loan-print-heading').evaluate(el=>getComputedStyle(el).display)==='none') throw new Error('Print stylesheet should show report assumptions');
     await page.emulateMedia({media:'screen'});
+    await page.locator('#loan-extra').fill('25');
+    if(!(await page.locator('#loan-download-csv').isDisabled())||!(await page.locator('#loan-print-report').isDisabled())) throw new Error('Editing loan assumptions must invalidate stale report actions');
+    await set({'loan-amount':10000,'loan-rate':7,'loan-years':5,'loan-extra':0});
+    await page.locator('#loan-calc').click();
 
     const finalBalance=await scheduleRows.last().locator('td').nth(5).innerText();
     near(Number(finalBalance.replace(/[^0-9.-]/g,'')),0,'Loan schedule final balance');
