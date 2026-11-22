@@ -416,3 +416,12 @@ Consolidated integration branch: `quality/integrated-final-qa-2026-11-21`. Premi
 ### Still requires a human device
 - Open the deployed site on a physical Android device and visually confirm the hero, CTA and navigation. CI tests a 390px Chromium viewport but cannot certify the user's actual handset/browser rendering or touch experience.
 - Keyboard/screen-reader audit, visual regression and Lighthouse/Core Web Vitals have not yet been run.
+
+
+## 2026-11-22 — Net worth calculator service
+- Added a new standalone net worth calculator on branch `feature/net-worth-calculator` for the planned net-worth tool in the competitor research roadmap.
+- The tool totals cash/bank accounts, non-retirement investments, retirement accounts, home value and vehicles/other assets; subtracts mortgage, auto, student, credit-card and other debt balances.
+- Added the homepage card, canonical page metadata, sitemap URL, README catalog entry, browser QA coverage and Lighthouse mobile/desktop URLs.
+- Privacy scope: values are calculated in-page only and are not transmitted or saved by this static tool. Currency selection is formatting-only, not FX conversion.
+- Static read-back confirms 12 calculator cards and 13 Lighthouse URLs including homepage. PR-triggered browser/axe and Lighthouse results remain pending; physical-device QA remains separate.
+- Work is isolated in PR review; no merge or production deployment is included.
