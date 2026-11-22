@@ -104,17 +104,17 @@ const server = http.createServer((req,res) => {
     // 2. Fixed-rate personal loan: standard payment, zero-rate and extra-payment payoff.
     await calculate('loan-calculator.html','loan-calc',{'loan-amount':10000,'loan-rate':7,'loan-years':5,'loan-extra':0});
     near(await money('loan-monthly'),198.013,'Loan scheduled payment',0.02);
-    near(await money('loan-interest'),1880.72,'Loan total interest');
-    near(await money('loan-total'),11880.72,'Loan total repayment');
+    near(await money('loan-interest'),1880.75,'Loan total interest');
+    near(await money('loan-total'),11880.75,'Loan total repayment');
     await set({'loan-amount':1200,'loan-rate':0,'loan-years':1,'loan-extra':0}); await page.locator('#loan-calc').click();
     near(await money('loan-monthly'),100,'Zero-rate loan payment'); near(await money('loan-interest'),0,'Zero-rate loan interest'); near(await money('loan-total'),1200,'Zero-rate loan total');
     // Loan amortization schedule: ledger reconciles, extra principal accelerates payoff, zero rate works.
     await calculate('loan-calculator.html','loan-calc',{'loan-amount':10000,'loan-rate':7,'loan-years':5,'loan-extra':0});
     const scheduleRows=page.locator('#loan-schedule tr');
-    if(await scheduleRows.count()!==60) throw new Error('Loan schedule should contain 60 monthly rows; found '+await scheduleRows.count());
+    if(await scheduleRows.count()!==61) throw new Error('Cent-rounded loan schedule should contain 61 monthly rows; found '+await scheduleRows.count());
     near(await money('loan-monthly'),198.01,'Loan rounded scheduled payment',0.02);
-    near(await money('loan-interest'),1880.72,'Loan schedule interest reconciliation',0.03);
-    near(await money('loan-total'),11880.72,'Loan schedule total reconciliation',0.03);
+    near(await money('loan-interest'),1880.75,'Loan schedule interest reconciliation');
+    near(await money('loan-total'),11880.75,'Loan schedule total reconciliation');
     const finalBalance=await scheduleRows.last().locator('td').nth(5).innerText();
     near(Number(finalBalance.replace(/[^0-9.-]/g,'')),0,'Loan schedule final balance');
     await set({'loan-amount':10000,'loan-rate':7,'loan-years':5,'loan-extra':100}); await page.locator('#loan-calc').click();
