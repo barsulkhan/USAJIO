@@ -1,0 +1,64 @@
+{
+  "ci": {
+    "collect": {
+      "staticDistDir": ".",
+      "url": [
+        "http://localhost:4173/",
+        "http://localhost:4173/compound-interest.html",
+        "http://localhost:4173/loan-calculator.html",
+        "http://localhost:4173/monthly-budget.html",
+        "http://localhost:4173/savings-goal.html",
+        "http://localhost:4173/emergency-fund.html",
+        "http://localhost:4173/debt-payoff.html",
+        "http://localhost:4173/mortgage-calculator.html",
+        "http://localhost:4173/auto-loan-calculator.html",
+        "http://localhost:4173/credit-card-payoff.html",
+        "http://localhost:4173/retirement-calculator.html",
+        "http://localhost:4173/student-loan-payoff.html"
+      ],
+      "numberOfRuns": 1,
+      "settings": {
+        "preset": "desktop",
+        "chromeFlags": "--no-sandbox --headless"
+      }
+    },
+    "assert": {
+      "assertions": {
+        "categories:performance": [
+          "warn",
+          {
+            "minScore": 0.7
+          }
+        ],
+        "categories:accessibility": [
+          "warn",
+          {
+            "minScore": 0.9
+          }
+        ],
+        "categories:best-practices": [
+          "warn",
+          {
+            "minScore": 0.9
+          }
+        ],
+        "categories:seo": [
+          "warn",
+          {
+            "minScore": 0.9
+          }
+        ],
+        "resource-summary:total-byte-weight": [
+          "warn",
+          {
+            "maxNumericValue": 1500000
+          }
+        ]
+      }
+    },
+    "upload": {
+      "target": "filesystem",
+      "outputDir": ".lighthouseci"
+    }
+  }
+}
