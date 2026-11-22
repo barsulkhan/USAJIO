@@ -4,7 +4,7 @@ A mobile-first global personal finance calculator and education website prototyp
 
 ## Included
 - Responsive homepage and clean light design
-- Compound interest, loan payment, monthly budget, savings goal, emergency fund and debt payoff calculators
+- Twelve calculators: compound interest, loan payment, monthly budget, savings goal, emergency fund, debt payoff, mortgage, auto loan, credit-card payoff, retirement, student-loan payoff and net worth
 - Currency display selector (USD, EUR, GBP, CAD, AUD, INR)
 - About, Contact, Privacy, Terms, Financial Disclaimer and Editorial Policy pages
 - SVG brand logo and favicon
