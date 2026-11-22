@@ -171,6 +171,9 @@ const server = http.createServer((req,res) => {
     await page.locator('#budget-target-savings').fill('20');
     await page.locator('#budget-calc').click();
     if(!/add up to 100%/.test(await textOf('budget-allocation-status'))) throw new Error('Invalid target percentages should be rejected');
+    await page.locator('#budget-target-needs').fill('50');
+    await page.locator('#budget-target-wants').fill('30');
+    await page.locator('#budget-target-savings').fill('20');
 
     // Zero income must not cause division by zero or NaN.
     await set({'budget-income':0,'budget-housing':0,'budget-food':0,'budget-transport':0,'budget-bills':0,'budget-other':0,'budget-savings-debt':0});
