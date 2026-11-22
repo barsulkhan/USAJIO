@@ -80,11 +80,6 @@
     const groups=["needs","wants","savings"];
     const expenses=ids.map(id=>read(id,0,1e12));
     const savingsDebt=read("budget-savings-debt",0,1e12);
-    if(income===null||expenses.some(v=>v===null)||savingsDebt===null){invalid(["budget-expenses","budget-remaining","budget-share"]);return;}
-    const total=expenses.reduce((a,b)=>a+b,0), remaining=income-total-savingsDebt;
-    put("budget-expenses",fmt(total)); put("budget-remaining",fmt(remaining));
-    put("budget-share",income?((remaining/income)*100).toFixed(1)+"%":"—");
-
     const clearAllocation=()=>{
       ["needs","wants","savings"].forEach(group=>{
         put("budget-actual-"+group,"—");
@@ -93,6 +88,15 @@
         put("budget-variance-"+group,"—");
       });
     };
+    if(income===null||expenses.some(v=>v===null)||savingsDebt===null){
+      invalid(["budget-expenses","budget-remaining","budget-share"]);
+      clearAllocation();
+      put("budget-allocation-status","Check income, expense and savings/debt inputs.");
+      return;
+    }
+    const total=expenses.reduce((a,b)=>a+b,0), remaining=income-total-savingsDebt;
+    put("budget-expenses",fmt(total)); put("budget-remaining",fmt(remaining));
+    put("budget-share",income?((remaining/income)*100).toFixed(1)+"%":"—");
     const targetIds=["budget-target-needs","budget-target-wants","budget-target-savings"];
     const targets=targetIds.map(id=>read(id,0,100));
     if(targets.some(v=>v===null)){
