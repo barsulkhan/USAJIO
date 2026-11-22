@@ -102,12 +102,12 @@
       put("compare-count-"+key,r.count+" payments");
       put("compare-extra-"+key,fmt(r.extraTotal));
     });
-    const deltaMoney=(value)=>value===0?"No difference":(value>0?"+":"−")+fmt(Math.abs(value));
+    const deltaMoney=(value)=>{const amount=Math.round((value+Number.EPSILON)*100)/100;return amount===0?"No difference":(amount>0?"+":"−")+fmt(Math.abs(amount));};
     ["b","c"].forEach((key,index)=>{
       const r=results[index+1], baseline=results[0];
-      put("compare-delta-monthly-"+key,deltaMoney(cents(r.monthlyPayment-baseline.monthlyPayment)));
-      put("compare-delta-interest-"+key,deltaMoney(cents(r.interestTotal-baseline.interestTotal)));
-      put("compare-delta-total-"+key,deltaMoney(cents(r.paidTotal-baseline.paidTotal)));
+      put("compare-delta-monthly-"+key,deltaMoney(r.monthlyPayment-baseline.monthlyPayment));
+      put("compare-delta-interest-"+key,deltaMoney(r.interestTotal-baseline.interestTotal));
+      put("compare-delta-total-"+key,deltaMoney(r.paidTotal-baseline.paidTotal));
       const countDiff=r.count-baseline.count;
       put("compare-delta-count-"+key,countDiff===0?"No difference":(countDiff>0?"+":"−")+Math.abs(countDiff)+" payments");
     });
