@@ -310,8 +310,9 @@ const server = http.createServer((req,res) => {
     await set({'debt-balance':0,'debt-rate':12,'debt-payment':0}); await page.locator('#debt-calc').click(); if(await textOf('debt-months')!=='0') throw new Error('Zero debt balance must return zero months');
     await set({'debt-balance':5000,'debt-rate':12,'debt-payment':50}); await page.locator('#debt-calc').click(); if(await textOf('debt-months')!=='Payment too low') throw new Error('Debt payment below interest must be rejected');
 
-    // Optional multi-debt comparison: same total monthly budget, distinct snowball/avalanche ordering.
+    // Optional multi-debt comparison: expand its disclosure before interacting with the fields.
     await calculate('debt-payoff.html','debt-calc',{'debt-balance':5000,'debt-rate':12,'debt-payment':250});
+    await page.locator('#multi-debt-details > summary').click();
     await set({'multi-debt-name-1':'Small low-rate','multi-debt-balance-1':1200,'multi-debt-rate-1':8,'multi-debt-min-1':40,
       'multi-debt-name-2':'Large high-rate','multi-debt-balance-2':5000,'multi-debt-rate-2':24,'multi-debt-min-2':150,
       'multi-debt-extra':50});
