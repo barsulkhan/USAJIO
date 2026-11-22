@@ -699,3 +699,81 @@ USAJIO এখান থেকে চালিয়ে যাও। আগে `d
 - Updated `docs/INDEXING_QUEUE.md`: all ten URLs now have status **SUBMITTED — awaiting Google**.
 - No URL is marked indexed/complete yet. Wait for Google processing and user confirmation of indexing results.
 - Keep Batch 02 queued until the user reports outcomes for Batch 01.
+
+
+---
+
+## 2026-11-22 — Master Roadmap & Task Schedule (active execution plan)
+
+### Operating rule
+This is the single ordered backlog for USAJIO. Work in sequence unless a critical defect interrupts it. Every feature follows **Research → Competitor Analysis → Improvement Plan → Development → Testing → Review/merge → Deployment verification**. Use a separate branch and PR for each meaningful task. Do not merge until required checks pass. Update this section after each completed milestone with evidence, commit/PR links, and any blockers. No paid domain, hosting, APIs, subscriptions, purchases, or monetization without explicit permission. USAJIO only; never modify InfoJano.
+
+### Milestone 0 — Finish current maintenance release
+- [x] PR #48 — fix homepage calculator-card HTML nesting and add a browser-QA assertion that the calculator grid contains 12 direct card children.
+- [x] Browser QA passed for PR #48 head `b2bad12aa0aa17dd8efd10e18a8c6f332ef589cb` (workflow run #45029206148).
+- [x] Mobile and desktop Lighthouse/performance checks passed for the same PR head (workflow run #45029206105).
+- [x] PR #48 squash-merged; merge commit `d61f0498a1fbc965ec5278a1185fb92458ecf85f`.
+- [ ] Verify GitHub Pages deployment for merge commit; deployment workflow run #45030278000 was queued at checkpoint time. Do not call this release deployed until success is confirmed.
+
+### Milestone 1 — Loan Amortization Schedule (first new feature; highest priority)
+**Goal:** Make the loan calculator's repayment schedule clear, useful and exportable, without duplicating or breaking the existing EMI calculation.
+1. Research: inspect current USAJIO loan calculator implementation and formulas; identify supported loan types/inputs and current schedule behavior.
+2. Competitor analysis: review reputable loan/mortgage calculators and compare schedule columns, extra-payment handling, frequency, rounding, accessibility and export behavior. Use findings to create an original, simpler UX.
+3. Improvement plan: define exact inputs, assumptions, schedule columns (payment number/date if supported, payment, principal, interest, remaining balance), summary totals, extra-payment behavior, rounding policy, validation and responsive behavior.
+4. Development: implement monthly principal/interest/balance schedule for supported loan inputs; make clear that it is an estimate and state assumptions. Add export only after the schedule itself is correct and usable.
+5. Testing: known-answer amortization cases, zero interest, fractional cents/rounding, early payoff, extra payments, invalid/zero/negative inputs, large values, total principal/interest reconciliation, keyboard/screen-reader labels, mobile layout and browser regression.
+6. Release: separate PR; require browser QA and relevant Lighthouse checks; merge only when green; verify deployment workflow on the resulting main SHA.
+**Acceptance:** scheduled principal sums reconcile to the amount financed within documented rounding tolerance; final balance reaches zero (or a documented residual due only to rounding); interest totals match the payment schedule; extra payments shorten payoff without increasing total interest; no regression to existing loan calculator.
+
+### Milestone 2 — Advanced Budget Planner
+- Review the existing Monthly Budget Planner before designing additions; retain simple entry flow.
+- Add optional 50/30/20 guidance and actual-vs-target breakdown only if research demonstrates user value.
+- Define take-home income basis, category mapping, treatment of savings/debt payments, and clear warning that 50/30/20 is an optional guideline, not a universal rule.
+- Test totals, surplus/deficit, empty categories, irregular income, negative/invalid entries, rounding, mobile usability and privacy (browser-local processing).
+- Acceptance: totals reconcile exactly to entered income/expenses and the optional framework never silently changes user-entered categories.
+
+### Milestone 3 — Compare Scenarios
+- Allow side-by-side comparison of loan rate, term and payment assumptions (initial scope limited to supported loan calculations).
+- Show assumptions and comparable outputs consistently; avoid implying lender offers or guaranteed savings.
+- Test identical scenarios, lower/higher rates, shorter/longer terms, extra payments, invalid inputs and rounding.
+- Acceptance: each scenario independently matches the underlying calculator; comparison does not mix currencies or assumptions.
+
+### Milestone 4 — Inflation-adjusted Retirement Projection
+- Research official, reputable educational sources and explain inflation, nominal vs real returns, contribution timing and uncertainty.
+- Show assumptions transparently; avoid presenting a deterministic projection as a promise or individualized investment recommendation.
+- Include conservative/base/optimistic scenarios only where methodology is defensible and clearly explained.
+- Test inflation zero/boundaries, contribution timing, long horizons, negative real returns, large values and rounding.
+- Acceptance: nominal and inflation-adjusted values are mathematically consistent and every assumption is visible.
+
+### Milestone 5 — Downloadable Reports (PDF/CSV)
+- Implement after the underlying calculators/schedules are stable.
+- Decide per tool whether CSV, print-friendly output or PDF materially helps; do not add export controls that do not work.
+- Keep generation client-side where practical; never transmit private financial inputs to a server.
+- Test file contents, units/currency labels, totals, escaping, long schedules, empty data, filename safety and mobile download behavior.
+- Acceptance: exported values match on-screen values and include calculation assumptions/disclaimers.
+
+### Ongoing core-quality backlog (interleave after each feature milestone)
+- [ ] Audit the 12 calculators and 9 finance guides for content clarity, formula/assumption disclosure, source quality, update dates and internal linking; fix only evidence-backed issues.
+- [ ] Review About/publisher transparency and Contact page; do not invent credentials, postal address, phone number or support email. Use only an owner-approved public contact channel.
+- [ ] Re-run full-site browser QA after material code changes: all calculator formulas/edge cases, Net Worth browser-local privacy, responsive widths, keyboard operation, labels, navigation, policy links, HTML metadata, sitemap/robots and internal links.
+- [ ] Physical Android visual/touch review and actual TalkBack testing remain **NOT TESTED** until completed on a real device by the user; automated browser and axe results are not substitutes.
+- [ ] Keep accessibility/performance regression checks in CI and record exact run IDs/results. Lighthouse lab scores are not field Core Web Vitals.
+
+### Explicitly paused / not part of the active execution queue
+- Google Search Console, sitemap/indexing submissions and related troubleshooting: paused by the user. Do not resume unless explicitly requested.
+- AdSense, ads.txt, CMP, ad scripts and monetization: paused pending the user's explicit direction and custom-domain decision. Do not resume or purchase a domain/service.
+- Any InfoJano work: out of scope.
+
+### Execution sequence and status ledger
+| Order | Work item | Status at 2026-11-22 |
+|---|---|---|
+| 0 | Homepage card nesting fix (PR #48) | Merged; deployment verification pending |
+| 1 | Loan Amortization Schedule | Next active task |
+| 2 | Advanced Budget Planner | Planned |
+| 3 | Compare Scenarios | Planned |
+| 4 | Inflation-adjusted Retirement Projection | Planned |
+| 5 | Downloadable Reports (PDF/CSV) | Planned |
+| Ongoing | Core-quality backlog and real-device manual QA | Partly pending; see checklist above |
+
+### Current resume point
+First verify deployment run #45030278000 for merge commit `d61f0498a1fbc965ec5278a1185fb92458ecf85f`. Then begin Milestone 1 research by inspecting the current loan calculator source and reviewing reputable competitor schedule patterns. Do not jump directly into coding before recording the research and improvement plan.
