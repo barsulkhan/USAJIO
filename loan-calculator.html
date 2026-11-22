@@ -15,12 +15,12 @@
 <fieldset class="scenario-card"><legend>Scenario B</legend><div class="fields">
 <label>Annual interest rate (%)<input id="compare-rate-b" type="number" min="0" max="100" step=".1" value="6.5"></label>
 <label>Term (years)<input id="compare-years-b" type="number" min="1" max="50" value="5"></label>
-<label>Extra monthly payment<input id="compare-extra-b" type="number" min="0" value="0"></label>
+<label>Extra monthly payment<input id="compare-extra-input-b" type="number" min="0" value="0"></label>
 </div></fieldset>
 <fieldset class="scenario-card"><legend>Scenario C</legend><div class="fields">
 <label>Annual interest rate (%)<input id="compare-rate-c" type="number" min="0" max="100" step=".1" value="7"></label>
 <label>Term (years)<input id="compare-years-c" type="number" min="1" max="50" value="4"></label>
-<label>Extra monthly payment<input id="compare-extra-c" type="number" min="0" value="0"></label>
+<label>Extra monthly payment<input id="compare-extra-input-c" type="number" min="0" value="0"></label>
 </div></fieldset>
 </div>
 <button class="primary-btn" id="compare-calc">Compare scenarios</button>
@@ -34,7 +34,7 @@
 <tr><th scope="row">Total interest</th><td id="compare-interest-a">—</td><td id="compare-interest-b">—</td><td id="compare-interest-c">—</td></tr>
 <tr><th scope="row">Total repayment</th><td id="compare-total-a">—</td><td id="compare-total-b">—</td><td id="compare-total-c">—</td></tr>
 <tr><th scope="row">Payments to payoff</th><td id="compare-count-a">—</td><td id="compare-count-b">—</td><td id="compare-count-c">—</td></tr>
-<tr><th scope="row">Extra principal paid</th><td id="compare-extra-a">—</td><td id="compare-extra-b">—</td><td id="compare-extra-c">—</td></tr>
+<tr><th scope="row">Extra principal paid</th><td id="compare-extra-paid-a">—</td><td id="compare-extra-input-b">—</td><td id="compare-extra-input-c">—</td></tr>
 </tbody></table></div>
 <div class="schedule-table-wrap" role="region" aria-label="Scenario differences compared with scenario A" tabindex="0">
 <table class="schedule-table compare-table"><caption>Difference compared with Scenario A</caption><thead><tr><th scope="col">Measure</th><th scope="col">Scenario B vs A</th><th scope="col">Scenario C vs A</th></tr></thead><tbody>
