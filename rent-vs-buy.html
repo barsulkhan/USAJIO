@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Compare estimated renting and homeownership costs over your planned stay, including mortgage, maintenance, fees and sale equity.">
+<link rel="canonical" href="https://barsulkhan.github.io/USAJIO/rent-vs-buy.html">
+<title>Rent vs. Buy Calculator | USAJIO</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="calculator-pages.css"><link rel="stylesheet" href="premium.css">
+</head>
+<body>
+<header class="site-header"><a class="brand" href="index.html"><img class="brand-logo" src="assets/logo.svg" alt="USAJIO Personal Finance"></a><button class="menu-toggle" aria-label="Open menu" aria-expanded="false" onclick="const n=document.querySelector('.nav');n.classList.toggle('open');this.setAttribute('aria-expanded',n.classList.contains('open'))">☰</button><nav class="nav"><a href="index.html#calculators">All calculators</a><a href="index.html#guides">Money Guides</a><a href="index.html#about">About</a><a class="nav-cta" href="index.html#calculators">Explore tools</a></nav></header>
+<main>
+<section class="page-intro"><p class="eyebrow">HOUSING DECISION PLANNER</p><h1>Rent vs. Buy Calculator</h1><p>Compare the estimated cost of renting with the net cost of buying over the time you plan to stay.</p><a class="back-tools" href="index.html#calculators">← View all calculators</a></section>
+<section class="calculator-page">
+<div class="calc-copy"><h2>Compare the full housing picture</h2><p>A mortgage payment is only one part of owning a home. Include taxes, insurance, maintenance and sale costs to make the comparison more complete.</p><p class="disclaimer">This is an educational scenario model, not a personal financial recommendation.</p></div>
+<div class="calculator">
+<h2>Core assumptions</h2>
+<div class="fields">
+<label>Monthly rent<input id="rvb-rent" type="number" min="0" max="10000000" step=".01" value="2200" inputmode="decimal"></label>
+<label>Home purchase price<input id="rvb-price" type="number" min="1" max="1000000000" step=".01" value="350000" inputmode="decimal"></label>
+<label>Down payment (%)<input id="rvb-down" type="number" min="0" max="100" step=".1" value="10" inputmode="decimal"></label>
+<label>Mortgage APR (%)<input id="rvb-apr" type="number" min="0" max="30" step=".01" value="6.5" inputmode="decimal"></label>
+<label>Mortgage term (years)<input id="rvb-term" type="number" min="1" max="40" step="1" value="30" inputmode="numeric"></label>
+<label>Planned stay (years)<input id="rvb-stay" type="number" min="1" max="40" step="1" value="7" inputmode="numeric"></label>
+<label>Currency<select id="rvb-currency"><option value="USD">USD ($)</option><option value="EUR">EUR (€)</option><option value="GBP">GBP (£)</option><option value="CAD">CAD ($)</option><option value="AUD">AUD ($)</option><option value="INR">INR (₹)</option></select></label>
+</div>
+<details class="advanced-options" id="rvb-advanced"><summary>Adjust taxes, fees and growth assumptions</summary>
+<div class="fields">
+<label>Purchase closing costs (%)<input id="rvb-closing" type="number" min="0" max="20" step=".1" value="3" inputmode="decimal"></label>
+<label>Home selling costs (%)<input id="rvb-selling" type="number" min="0" max="20" step=".1" value="6" inputmode="decimal"></label>
+<label>Property tax (% / year)<input id="rvb-tax" type="number" min="0" max="10" step=".01" value="1.1" inputmode="decimal"></label>
+<label>Home insurance ($ / year)<input id="rvb-insurance" type="number" min="0" max="1000000" step=".01" value="1800" inputmode="decimal"></label>
+<label>Maintenance (% home value / year)<input id="rvb-maint" type="number" min="0" max="10" step=".1" value="1" inputmode="decimal"></label>
+<label>HOA ($ / month)<input id="rvb-hoa" type="number" min="0" max="100000" step=".01" value="0" inputmode="decimal"></label>
+<label>PMI estimate (% loan / year)<input id="rvb-pmi" type="number" min="0" max="10" step=".01" value="0.5" inputmode="decimal"></label>
+<label>Rent increase (% / year)<input id="rvb-rent-growth" type="number" min="-20" max="30" step=".1" value="3" inputmode="decimal"></label>
+<label>Home appreciation (% / year)<input id="rvb-appreciation" type="number" min="-20" max="30" step=".1" value="3" inputmode="decimal"></label>
+<label>Renter insurance ($ / month)<input id="rvb-rent-insurance" type="number" min="0" max="10000" step=".01" value="20" inputmode="decimal"></label>
+</div></details>
+<button class="primary-btn" id="rvb-calc">Compare rent and buy</button>
+<p id="rvb-status" role="status" aria-live="polite"></p>
+<div id="rvb-results" hidden>
+<div class="result-grid" id="rvb-summary" role="status" aria-live="polite" aria-atomic="true">
+<div><small>Renting total cost</small><strong id="rvb-rent-total">—</strong></div>
+<div><small>Buying net cost</small><strong id="rvb-buy-total">—</strong></div>
+<div><small>Estimated net sale proceeds</small><strong id="rvb-proceeds">—</strong></div>
+<div><small>Cost difference</small><strong id="rvb-difference">—</strong></div>
+</div>
+<p id="rvb-verdict" class="result-note"></p>
+<p id="rvb-breakeven" class="result-note"></p>
+<h3>Year-by-year comparison</h3>
+<div class="schedule-table-wrap" role="region" aria-label="Scrollable annual rent versus buy comparison" tabindex="0"><table class="schedule-table"><thead><tr><th scope="col">Year</th><th scope="col">Renting cost</th><th scope="col">Buying net cost</th><th scope="col">Home value</th><th scope="col">Loan balance</th></tr></thead><tbody id="rvb-schedule"></tbody></table></div>
+</div>
+<p class="disclaimer">Model assumptions: fixed-rate mortgage with monthly amortization; rent rises annually; home value compounds monthly; annual property tax, insurance, maintenance and PMI are approximated monthly. Buyer net cost includes down payment, purchase closing costs, mortgage payments, owner costs and selling costs, less estimated sale proceeds after paying the remaining loan. Renter cost includes rent and renter insurance. A refundable security deposit is excluded.</p>
+</div></section>
+<section class="methodology"><h2>What this comparison does not include</h2><p>Taxes or tax deductions, capital-gains tax, inflation-adjusted dollars, investment returns on a renter’s down payment or monthly savings, utilities, moving costs, lender fees, rate changes, local transfer taxes or repair costs above the maintenance allowance. PMI is only an editable estimate and is not automatically removed. Actual costs and loan terms vary by location and lender.</p><p>Small changes in assumptions can change the result. Review your local costs and loan documents before making a housing decision.</p></section>
+<section class="related-tools"><h2>Explore other tools</h2><a href="mortgage-calculator.html">Mortgage Calculator</a><a href="monthly-budget.html">Monthly Budget Planner</a><a href="index.html#calculators">All calculators</a></section>
+</main>
+<footer class="site-footer"><p>© <span id="year"></span> USAJIO. Educational tools for clearer money decisions.</p><a href="disclaimer.html">Financial disclaimer</a><a href="privacy.html">Privacy</a></footer>
+<script src="rent-vs-buy.js"></script>
+</body></html>
