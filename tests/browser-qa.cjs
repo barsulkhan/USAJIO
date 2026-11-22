@@ -325,7 +325,7 @@ const server = http.createServer((req,res) => {
     await page.locator('#multi-debt-extra').fill('75');
     if(!(await page.locator('#multi-debt-results').isHidden())) throw new Error('Editing multi-debt inputs must invalidate old results');
     await page.locator('#multi-debt-calc').click();
-    await page.locator('#multi-debt-min-2').fill('100');
+    await page.locator('#multi-debt-min-2').fill('50');
     await page.locator('#multi-debt-calc').click();
     if(!(await textOf('multi-debt-status')).includes('minimum payment must be greater')) throw new Error('Minimum payment below first-month interest must be rejected');
 
