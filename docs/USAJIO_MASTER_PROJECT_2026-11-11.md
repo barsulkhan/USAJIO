@@ -322,3 +322,83 @@ Consolidated integration branch: `quality/integrated-final-qa-2026-11-21`. Premi
 - Homepage and all eleven calculators load; all eleven default calculator interactions produce results; polite result announcements, mobile navigation open/close, 390px homepage overflow and local HTML links pass; no browser/console errors or HTTP error responses were observed in the run.
 - This is CI Chromium with a mobile viewport, not a physical Android device. Screen-reader/manual keyboard review, Lighthouse/Core Web Vitals and visual regression remain outstanding.
 - Changes remain on the integration PR; no merge or live deployment has occurred.
+
+
+## 14. Deployment incident resolution and homepage release verification — 2026-11-22
+
+### Repository state verified
+- Repository: `barsulkhan/USAJIO` (public); default branch: `main`; repository is not archived.
+- PR #13 remains the homepage design change, merged as `e0673687ad2c3b48f8b0b921ff1fbbacd20319d9`.
+- PR #14 (`Fix Pages deployment artifact metadata timing`) was already merged into `main` as `ebe4a214ed948b5cdd36e16ef8d9c7f00d18fb76`.
+- Current `main` head at verification: `ebe4a214ed948b5cdd36e16ef8d9c7f00d18fb76`.
+- No changes were made to InfoJano.
+
+### Deployment failure root cause
+- Failed run #44936850607 checked out PR #13 commit `e0673687ad2c3b48f8b0b921ff1fbbacd20319d9`.
+- Checkout, Configure Pages, and Upload site artifact all succeeded.
+- `upload-pages-artifact@v3` finalized artifact `github-pages` (ID `14719629520`) successfully.
+- Immediately afterward, `deploy-pages@v4` queried the Actions artifact API and received `Found 0 artifact(s)` / `No artifacts named "github-pages" were found`. This was an artifact metadata visibility/race condition, not a missing upload, Pages configuration failure, or missing workflow permission.
+- The Node.js 20 deprecation warning was non-fatal and unrelated to the deployment failure.
+
+### Fix already merged and verified
+- PR #14 added a 15-second wait after `actions/upload-pages-artifact@v3` and before `actions/deploy-pages@v4` in `.github/workflows/deploy-pages.yml`.
+- Workflow permissions remain least-privilege for this deployment: `contents: read`, `pages: write`, `id-token: write`.
+- Successful run: https://github.com/barsulkhan/USAJIO/actions/runs/44937240457 (run #8; commit `ebe4a214ed948b5cdd36e16ef8d9c7f00d18fb76`).
+- Successful job steps: Checkout — Pass; Configure Pages — Pass; Upload site artifact — Pass; Wait for Pages artifact registration — Pass; Deploy to GitHub Pages — Pass.
+- Success log confirms artifact metadata lookup returned `Found 1 artifact(s)`, Pages deployment was created for commit `ebe4a214ed948b5cdd36e16ef8d9c7f00d18fb76`, deployment status `Reported success!`, and environment URL `https://barsulkhan.github.io/USAJIO/`.
+- GitHub Pages remains the free hosting platform. No paid service, domain, API, subscription, or hosting migration was introduced.
+
+### Homepage/live verification status
+- `index.html` in `main` is the homepage source included in the successful deployment artifact; it contains the PR #13 homepage implementation.
+- GitHub Actions confirms the Pages deployment succeeded and publishes the environment URL above.
+- Direct external HTTP/browser fetch of the live URL could not be completed from this execution environment because outbound DNS/network access was unavailable. Therefore direct visual rendering/HTTP response of the current deployment is **Not Tested here**; do not represent it as browser-verified. User-side Android visual confirmation from the earlier release is separate historical evidence, not a new test of this build.
+
+### Current next actions
+1. Verify the live homepage via a browser-capable check when available, then record HTTP status and confirm the new hero content.
+2. Re-run the current 11-calculator browser QA against the deployed build; do not reuse older test outcomes as current pass evidence.
+3. Check internal links, navigation, guides, SEO metadata, sitemap and robots.
+4. Continue pending keyboard accessibility, screen reader, physical Android, visual regression, and Lighthouse/Core Web Vitals checks; mark each Pass/Fail/Not Tested honestly.
+
+
+## 15. Today's execution plan and static QA — 2026-11-22
+
+### Work sequence for today
+1. Reconfirm `main`, deployment status, open PRs, and release source — **Pass**.
+2. Verify live homepage HTTP/rendering — **Not Tested**: this environment cannot resolve `barsulkhan.github.io` (DNS/network restriction). User confirmation is required only for the visible live page on their own device.
+3. Inspect all 11 calculator source pages and their JavaScript wiring — **Pass for static structure**; runtime/browser interactions remain **Not Tested**.
+4. Audit SEO basics, sitemap and robots directives — **Pass for static source checks**; search-engine crawl/index status remains **Not Tested**.
+5. Check internal navigation and guide-page links — **In progress**; automated runtime link crawl is not available in this execution environment.
+6. Record remaining manual-only checks and prioritize next work.
+
+### Static source QA performed against `main` at `ebe4a214ed948b5cdd36e16ef8d9c7f00d18fb76`
+- All 11 calculator HTML pages fetched from current `main`: **Pass**.
+- Each of the 11 calculator pages has one branded `<title>`, a meta description, exactly one `<h1>`, and exactly one matching calculator action ID — **Pass**.
+- Each calculator page contains a result region with `aria-live="polite"` — **Pass**.
+- JavaScript contains matching click handlers for all 11 calculator action IDs — **Pass** by source inspection.
+- Independent arithmetic spot checks using the same documented formulas: $10,000 at 7% for 60 months = $198.01/month; $28,000 at 6.9% for 60 months = $553.11/month; $5,000 at 12% with $250/month = 23 months; $1,000 initial + $100 at month-end for 12 months at 5% monthly compounding = $2,279.05 — **Pass (formula calculation only; not browser execution of current code)**.
+- Sitemap contains 26 absolute URLs under the GitHub Pages project path — **Pass (syntax/count)**; existence and live response of every URL still require a browser/HTTP crawl.
+- `robots.txt` allows crawling and references the correct sitemap URL — **Pass (static source)**.
+- Homepage source has a branded title and description and includes the new hero copy, green trust badge, both CTAs, and the three trust statements — **Pass (source inspection)**.
+- Live HTTP status, visual rendering, browser console/network errors, real mobile overflow, and interactive calculator behavior — **Not Tested** because outbound DNS/network is unavailable and no browser runner is exposed in this execution.
+
+### PR overlap / branch hygiene
+- PR #15 is documentation-only and remains open; no main-branch merge/deployment was performed.
+- PR #11 remains open but is based on the older `4f55fb9...` base and its branch diverges from current `main` (`57` commits ahead, `3` behind); its changed-file set substantially overlaps files already delivered through merged PRs #12–#14. Do not merge it as-is. Review/close as obsolete only after a patch-level comparison.
+- PRs #10, #9, #8 and #7 are also open historical branches with overlapping site files; do not merge without checking exact current diff and unique value. PR #12 is merged; PR #13 and #14 are merged.
+
+### Checks that require user/device or unavailable browser access
+- User: open `https://barsulkhan.github.io/USAJIO/` on the device/browser they normally use and confirm whether the new hero design is visible. This cannot be confirmed by GitHub Actions alone.
+- User/device: physical Android touch/layout check; this cannot be emulated as a real device here.
+- Not tested: keyboard-only and screen-reader audit, visual regression, Lighthouse/Core Web Vitals.
+
+
+### Additional static content/navigation checks — 2026-11-22
+- All 8 Money Guide pages inspected: each has a page-specific title, meta description, canonical URL and exactly one H1 — **Pass**.
+- About, Contact, Privacy, Terms, Disclaimer and Editorial pages inspected: each has a title, meta description, canonical URL and exactly one H1 — **Pass**.
+- Static local HTML-link audit across all 26 HTML pages in the repository tree: **Pass**; no missing relative `.html` targets were found.
+- Sitemap URL count (26) matches the current HTML page count (26) — **Pass (count only)**. Sitemap URLs are project-relative GitHub Pages absolute URLs; live URL reachability remains **Not Tested**.
+- No source code or calculator logic was modified during this QA pass.
+
+### CI automation follow-up
+- PR #16 opened: https://github.com/barsulkhan/USAJIO/pull/16. It adds a `pull_request` trigger for the existing Playwright browser QA workflow when site HTML/CSS/JS, assets, tests or the workflow itself change. This is a CI-only change; it does not modify the website or deployment workflow.
+- GitHub will not execute the newly added PR trigger for PR #16 itself because the workflow definition is not yet present on the base branch. After approval/merge, future site PRs will run the browser QA automatically.

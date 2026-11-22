@@ -125,3 +125,36 @@ Educational estimates only; no guaranteed returns or unverified rates. Do not co
 - Verified homepage and all eleven calculator pages load; each calculator's default action runs and produces non-placeholder results; result groups use `aria-live="polite"`; mobile menu toggles correctly; 390px homepage has no horizontal overflow; local HTML links resolve; no browser page errors, console errors or HTTP 4xx/5xx responses were observed during the run.
 - This is automated desktop Chromium plus mobile-viewport emulation, not a physical Android device test. Screen-reader/manual keyboard review, Lighthouse/Core Web Vitals and visual regression remain outstanding.
 - No merge or GitHub Pages deployment was performed.
+
+
+## Deployment incident — 2026-11-22
+
+- **Repository/main:** verified `main` at `ebe4a214ed948b5cdd36e16ef8d9c7f00d18fb76`; PR #13 homepage commit `e0673687ad2c3b48f8b0b921ff1fbbacd20319d9` is an ancestor.
+- **PR #14:** merged; added a 15-second wait between Pages artifact upload and deployment to allow GitHub Actions artifact metadata to become visible.
+- **Root cause evidence:** failed run `44936850607` uploaded/finalized artifact `github-pages` successfully, then `deploy-pages@v4` immediately received `Found 0 artifact(s)` and failed with `No artifacts named "github-pages" were found`.
+- **Fix verification:** run `44937240457` succeeded. Checkout — Pass; Configure Pages — Pass; Upload site artifact — Pass; artifact-registration wait — Pass; Deploy to GitHub Pages — Pass. Logs show `Found 1 artifact(s)`, `Created deployment for ebe4a214ed948b5cdd36e16ef8d9c7f00d18fb76`, `Reported success!`, and environment URL `https://barsulkhan.github.io/USAJIO/`.
+- **Permissions observed in runner:** `contents: read`, `pages: write`, `id-token: write`; Pages deployment completed with these permissions. Node.js 20 deprecation warning was non-fatal.
+- **Free-service compliance:** GitHub Pages only; no paid hosting/domain/API/subscription added.
+- **Live browser/HTTP check:** **Not Tested** in this execution because outbound DNS/network access was unavailable. Deployment success is confirmed by GitHub Actions; visual rendering on the current release is not newly browser-verified.
+- **Pending:** live browser check; current 11-calculator QA; internal links/navigation/guides; SEO/sitemap/robots; keyboard/screen reader/physical Android/visual regression/Lighthouse.
+
+
+## Today's execution — 2026-11-22
+
+- `main` verified at `ebe4a214ed948b5cdd36e16ef8d9c7f00d18fb76`; Pages run `44937240457` — **Pass**.
+- Static inspection of all 11 calculator pages: branded title, meta description, exactly one H1 and matching calculator button ID — **Pass**.
+- All 11 calculator pages include `aria-live="polite"` result announcements — **Pass**.
+- `script.js` contains handlers for all 11 calculator action IDs — **Pass** by source inspection only.
+- Independent formula arithmetic checks: personal loan $198.01/month; auto loan $553.11/month; $5,000 debt at 12% with $250 monthly payment = 23 months; compound balance = $2,279.05 — **Pass (independent formula calculation; not browser execution)**.
+- Sitemap has 26 GitHub Pages URLs — **Pass (static syntax/count)**. `robots.txt` allows crawling and points to the sitemap — **Pass (static source)**.
+- Homepage source includes the redesigned hero copy, trust badge, two CTAs and trust statements — **Pass (source inspection)**.
+- Live HTTP/browser check — **Not Tested**: outbound DNS resolution for `barsulkhan.github.io` fails in this environment.
+- Runtime browser tests, internal-link crawl, mobile rendering, keyboard/screen-reader, physical Android, visual regression and Lighthouse — **Not Tested** in this execution.
+- Open PR hygiene: #15 docs-only and open; PR #11 has a stale/diverged branch (57 ahead, 3 behind current main) with broad overlap; PRs #10/#9/#8/#7 also overlap historical site files. Do not merge stale branches without patch-level comparison.
+
+### Additional source QA — 2026-11-22
+- All 8 guide pages and 6 informational/policy pages: unique page title present, meta description present, canonical URL present, exactly one H1 — **Pass**.
+- Local relative `.html` link audit across all 26 repository HTML pages — **Pass**, no missing local targets.
+- Sitemap lists 26 URLs, matching 26 HTML files — **Pass (static count)**; live reachability remains **Not Tested**.
+
+- PR #16 opened to add pull-request-triggered Playwright QA for future site changes. **Not yet active** until merged; the current environment has no GitHub Actions workflow-dispatch action, and outbound DNS prevents a live-site browser run.
