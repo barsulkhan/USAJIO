@@ -209,13 +209,13 @@ const server = http.createServer((req,res) => {
     await privacyPage.locator('#networth-calc').click();
     const privateResult=await privacyPage.locator('#net-result').innerText();
     if(!privateResult || privateResult==='—') throw new Error('Net Worth privacy test did not calculate the supplied local values');
-    const storage=await privacyPage.evaluate(()=>({
+    const storage=await privacyPage.evaluate(async()=>({
       local:localStorage.length,
       session:sessionStorage.length,
       calls:window.__privacyCalls,
-      databases:typeof indexedDB.databases==='function'?indexedDB.databases().then(items=>items.length):Promise.resolve(0)
+      databases:typeof indexedDB.databases==='function'?(await indexedDB.databases()).length:0
     }));
-    const databaseCount=await storage.databases;
+    const databaseCount=storage.databases;
     if(storage.local!==0||storage.session!==0||databaseCount!==0) throw new Error('Net Worth values may be persisted: '+JSON.stringify({local:storage.local,session:storage.session,databases:databaseCount}));
     if(storage.calls.fetch||storage.calls.xhr||storage.calls.beacon) throw new Error('Net Worth triggered an application data-transfer API: '+JSON.stringify(storage.calls));
     await privacyPage.reload();
