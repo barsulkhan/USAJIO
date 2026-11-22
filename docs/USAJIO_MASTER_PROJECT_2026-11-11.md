@@ -934,3 +934,14 @@ First verify deployment run #45030278000 for merge commit `d61f0498a1fbc965ec527
 - Remaining Milestone 5 exports are not implemented yet: Compare Scenarios CSV/print report; Advanced Budget Planner CSV/print report; Retirement Projection CSV/print report. Implement separately only after reviewing the structured calculation results and extending tests.
 - Next active task: research and implement Compare Scenarios export (three scenarios, shared principal/currency, assumptions and deltas vs Scenario A), then Browser QA, mobile/desktop Lighthouse, merge only after checks pass, and verify Pages deployment.
 - Search Console/indexing and AdSense/monetization remain paused. Physical Android/TalkBack testing remains NOT TESTED. No paid domain/service/subscription. Work only in `barsulkhan/USAJIO`; do not touch InfoJano.
+
+---
+
+## 2026-11-22 — Compare Scenarios export merged; mandatory competitive research charter
+
+- Compare Scenarios CSV and browser-native Print / Save as PDF: PR #65 merged as `c54fa30e9514782c56c7ffd9bad427a6dec633c4`.
+- Browser QA run #45052440913 passed after correcting a test assertion for the CSV delta-header row.
+- Lighthouse mobile and desktop run #45052440807 passed.
+- GitHub Pages deployment for this merge commit is not yet verified in this entry; verify before claiming the change is live.
+- Mandatory product standard: [USAJIO Competitive Research & Product Quality Charter](USAJIO_COMPETITIVE_RESEARCH_AND_QUALITY_CHARTER.md). Every future task must research relevant competitors before implementation, document user journey and gap analysis, and target parity or evidence-backed improvement while keeping the experience simple, premium, accessible and privacy-conscious.
+- USAJIO only; InfoJano untouched. Search Console/indexing and AdSense paused; no paid services. Physical Android/TalkBack testing remains NOT TESTED until performed on a real device.
