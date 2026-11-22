@@ -658,3 +658,19 @@ Follow the established process for every new feature: **Research → Competitor 
 USAJIO এখান থেকে চালিয়ে যাও। আগে `docs/USAJIO_MASTER_PROJECT_2026-11-11.md` সম্পূর্ণ পড়বে। PR #35–#38 merged; all nine finance guides now have official sources, review dates and social metadata; browser QA #45023893130 and Lighthouse #45023893131 passed. Android visual/touch and TalkBack physical testing are still NOT TESTED; use `docs/ANDROID_TALKBACK_MANUAL_QA.md`. Search Console is NOT VERIFIED because the connected OpenSEO workspace exposes only InfoJano; do not touch InfoJano. Follow `docs/SEARCH_CONSOLE_SETUP.md`; wait for the user's exact Google verification file/meta tag before adding it in a separate USAJIO PR. First verify deployment run #45024192053 for main commit `5c352bcd4412d0a2e9f77a7777edef5db1994b49`. Use separate branches and PRs; merge only after relevant tests pass. বাংলায় কথা বলবে, কোনো paid service/domain কিনবে না, এবং বাস্তব Android/TalkBack বা Search Console পরীক্ষা না করে pass/indexed বলবে না.
 
 - Final deployment verification: run #45024192053 completed with **success** for main commit `5c352bcd4412d0a2e9f77a7777edef5db1994b49`; all deploy steps completed, including GitHub Pages deployment.
+
+
+---
+
+## 2026-11-22 project checkpoint — AdSense pre-domain preparation
+
+- Scope remains USAJIO only. InfoJano is explicitly out of scope.
+- Owner supplied AdSense Publisher ID: `pub-2956763554929412`. Do not store Customer ID, payment information, identity documents, passwords or one-time codes in the repository.
+- Owner's explicit workflow: do not add USAJIO to AdSense or attempt site verification until a custom domain has been purchased and connected. No domain or paid service is to be purchased without explicit permission.
+- `privacy.html` contains conditional third-party advertising disclosures; it must be made specific to the actual live ad/consent configuration before ads are enabled.
+- `editorial.html` expanded with source hierarchy, jurisdiction scope, calculator methodology/testing, corrections, review-date and advertising-independence standards.
+- `docs/ADSENSE_READINESS.md` records pre-domain work, deferred domain-dependent steps and the supplied Publisher ID.
+- `docs/ADSENSE_INTEGRATION_BLUEPRINT.md` records safe future placements and domain connection/integration sequence.
+- No AdSense script, ad unit, ads.txt, CMP or advertising request is active. Do not add these before custom domain connection and the relevant owner/account decisions.
+- Remaining pre-domain priorities: full content-quality audit across 12 calculators and 9 guides; improve About/publisher transparency without inventing credentials; obtain owner-approved public contact channel; resolve Search Console sitemap fetch/read error; rerun full-site QA.
+- Domain-after-purchase sequence: connect custom domain to USAJIO GitHub Pages, update canonicals/sitemap/robots, add site in AdSense, install exact account code, publish exact root ads.txt line, configure consent, request Google review, and only after Ready enable carefully placed ads.
