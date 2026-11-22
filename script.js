@@ -85,15 +85,25 @@
     put("budget-expenses",fmt(total)); put("budget-remaining",fmt(remaining));
     put("budget-share",income?((remaining/income)*100).toFixed(1)+"%":"—");
 
+    const clearAllocation=()=>{
+      ["needs","wants","savings"].forEach(group=>{
+        put("budget-actual-"+group,"—");
+        put("budget-target-"+group+"-amount","—");
+        put("budget-share-"+group,"—");
+        put("budget-variance-"+group,"—");
+      });
+    };
     const targetIds=["budget-target-needs","budget-target-wants","budget-target-savings"];
     const targets=targetIds.map(id=>read(id,0,100));
     if(targets.some(v=>v===null)){
+      clearAllocation();
       put("budget-allocation-status","Check the three target percentages. Each must be between 0 and 100.");
       return;
     }
     const targetTotal=targets.reduce((a,b)=>a+b,0);
     if(Math.abs(targetTotal-100)>0.01){
       targetIds.forEach(id=>$(id)?.setAttribute("aria-invalid","true"));
+      clearAllocation();
       put("budget-allocation-status","Your target percentages must add up to 100%.");
       return;
     }
@@ -101,13 +111,8 @@
     const unassigned=ids.map((id,index)=>({id,amount:expenses[index],group:$(groupIds[index])?.value||""}))
       .filter(item=>item.amount>0&&!groups.includes(item.group));
     if(unassigned.length){
+      clearAllocation();
       put("budget-allocation-status","Choose a group for: "+unassigned.map(item=>item.id.replace("budget-","").replaceAll("-"," ")).join(", ")+". The basic budget total above is still available.");
-      ["needs","wants","savings"].forEach(group=>{
-        ["actual","target","share","variance"].forEach(kind=>{
-          const suffix=kind==="target"?"amount":kind;
-          put("budget-"+(kind==="actual"?"actual-":kind==="target"?"target-":kind==="share"?"share-":"variance-")+group,"—");
-        });
-      });
       return;
     }
     const allocation={needs:0,wants:0,savings:savingsDebt};
