@@ -173,3 +173,9 @@ Google guidance: create helpful people-first content, use descriptive titles and
 - Competitor internal CMS, design system, editorial workflow and exact operating processes cannot be inferred from public pages. Public filings disclose business model components, not their entire website production workflow.
 - Exact US keyword volumes, keyword difficulty and full competitor ranking exports were not available from the connected SEO subscriptions in this session. The keyword map is an intent-based starting hypothesis, not quantitative keyword validation.
 - No competitor is declared “number one” across all personal-finance calculators; ranking varies by tool, query, country and date.
+
+---
+
+## 2026-11-22 — Mandatory competitive research and quality charter
+
+All future USAJIO work must follow [USAJIO Competitive Research & Product Quality Charter](USAJIO_COMPETITIVE_RESEARCH_AND_QUALITY_CHARTER.md). It is a mandatory pre-implementation gate: research relevant competitors and official pages, document observed workflows and gaps, choose a measurable improvement, then implement and test. Do not copy competitor code, wording or identity; do not claim superiority without evidence. Update the task research note and master roadmap with actual test and deployment evidence.
