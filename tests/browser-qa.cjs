@@ -57,8 +57,8 @@ const server = http.createServer((req,res) => {
       const title=await page.title();
       if(!title.includes('USAJIO')) throw new Error(file+' missing branded title');
       const calc=page.locator('button[id$="-calc"]');
-      if(await calc.count()!==1) throw new Error(file+' should have exactly one calculator action');
-      await calc.click();
+      if(await calc.count()<1) throw new Error(file+' missing a calculator action');
+      await calc.first().click();
       const results=page.locator('.result-grid');
       if(await results.count()!==1) throw new Error(file+' missing result region');
       const text=(await results.innerText()).trim();
@@ -127,6 +127,55 @@ const server = http.createServer((req,res) => {
     if(await page.locator('#loan-schedule tr').count()!==1) throw new Error('Oversized extra payment should clear loan in one capped payment');
     near(Number((await page.locator('#loan-schedule tr').last().locator('td').nth(5).innerText()).replace(/[^0-9.-]/g,'')),0,'Capped final loan balance');
     await page.locator('#loan-amount').fill('0'); await page.locator('#loan-calc').click(); await expectInvalid('loan-monthly','Zero principal loan');
+
+    // 2b. Compare three loan scenarios using the same principal and shared amortization engine.
+    await calculate('loan-calculator.html','loan-calc',{'loan-amount':10000,'loan-rate':7,'loan-years':5,'loan-extra':0});
+    await page.locator('#scenario-comparison > summary').click();
+    await page.locator('#compare-calc').click();
+    near(await money('compare-scheduled-a'),198.02,'Scenario A scheduled payment');
+    near(await money('compare-interest-a'),1880.67,'Scenario A interest');
+    near(await money('compare-total-a'),11880.67,'Scenario A total repayment');
+    near(await money('compare-scheduled-b'),195.67,'Scenario B scheduled payment');
+    near(await money('compare-interest-b'),1739.63,'Scenario B interest');
+    near(await money('compare-total-b'),11739.63,'Scenario B total repayment');
+    await page.locator('#compare-extra-c').fill('100');
+    await page.locator('#compare-calc').click();
+    near(await money('compare-monthly-c'),339.47,'Scenario C monthly outflow');
+    near(await money('compare-interest-c'),1004.51,'Scenario C interest with extra payment');
+    near(await money('compare-total-c'),11004.51,'Scenario C total repayment');
+    if(await textOf('compare-count-c')!=='33 payments') throw new Error('Scenario C payoff count mismatch');
+    near(await money('compare-extra-c'),3200,'Scenario C extra principal');
+    if(await textOf('compare-lowest-monthly')!=='Scenario B') throw new Error('Lowest monthly outflow scenario mismatch');
+    if(await textOf('compare-lowest-interest')!=='Scenario C') throw new Error('Lowest total interest scenario mismatch');
+    if(!/^−/.test(await textOf('compare-delta-interest-b'))) throw new Error('Scenario B interest delta should be negative');
+    if(await textOf('compare-delta-count-b')!=='No difference') throw new Error('Scenario B payment-count delta mismatch');
+
+    // Zero-rate scenario and identical-scenario reconciliation.
+    await page.locator('#compare-rate-b').fill('0');
+    await page.locator('#compare-years-b').fill('5');
+    await page.locator('#compare-extra-c').fill('0');
+    await page.locator('#compare-rate-c').fill('7');
+    await page.locator('#compare-years-c').fill('5');
+    await page.locator('#loan-rate').fill('7');
+    await page.locator('#loan-years').fill('5');
+    await page.locator('#compare-calc').click();
+    near(await money('compare-interest-b'),0,'Scenario B zero-rate interest');
+    near(await money('compare-total-b'),10000,'Scenario B zero-rate total');
+    await page.locator('#compare-rate-b').fill('7');
+    await page.locator('#compare-extra-b').fill('0');
+    await page.locator('#compare-calc').click();
+    if(await textOf('compare-delta-interest-b')!=='No difference') throw new Error('Identical scenarios should have no interest difference');
+    await page.locator('#compare-rate-b').fill('-1');
+    await page.locator('#compare-calc').click();
+    if(!/Check the shared loan amount/.test(await textOf('compare-status'))) throw new Error('Invalid scenario input should be rejected');
+
+    // Expanded comparison table must stay inside a 320px mobile viewport.
+    await page.setViewportSize({width:320,height:800});
+    await page.goto('http://127.0.0.1:4173/loan-calculator.html');
+    await page.locator('#scenario-comparison > summary').click();
+    const scenarioWidth=await page.evaluate(()=>document.documentElement.scrollWidth);
+    if(scenarioWidth>320) throw new Error('Expanded scenario comparison overflows 320px viewport: '+scenarioWidth);
+    await page.setViewportSize({width:1365,height:900});
 
     // 3. Monthly budget: preserve the basic totals and verify advanced target allocation.
     await calculate('monthly-budget.html','budget-calc',{'budget-income':3500,'budget-housing':900,'budget-food':500,'budget-transport':300,'budget-bills':250,'budget-other':400,'budget-savings-debt':200});
