@@ -174,3 +174,12 @@ Educational estimates only; no guaranteed returns or unverified rates. Do not co
 - Inputs are processed in the browser only; the page does not submit or persist entered figures. Currency selection changes formatting only and is not foreign-exchange conversion.
 - Added homepage discovery, sitemap entry, README catalog update, Playwright browser-QA coverage, and mobile/desktop Lighthouse collection URLs.
 - Validation scope: static source wiring and config inspection completed. The new page's real browser interaction, accessibility audit and Lighthouse collection are pending the PR-triggered GitHub Actions run. No production deployment is included.
+
+
+## 2026-11-22 — Cash-flow guide research and content plan
+- Primary-source review: CFPB's "Assess your spending" recommends recording current spending, comparing categories with take-home pay, and accounting for irregular costs; CFPB's "Your Money, Your Goals" toolkit describes weekly cash-flow tracking with beginning balance, income, expenses and a carried-forward ending balance; consumer.gov provides a basic income-and-bills budgeting sequence.
+- Competitor benchmark: NerdWallet's budgeting guides explain take-home pay, expense tracking, flexible methods such as 50/30/20 and recurring review. USAJIO's new guide adds a distinct practical angle: paycheck-frequency conversions, actual payday/bill-date calendars, annual-cost set-asides and a worked monthly example. It does not copy competitor wording or imply that a fixed percentage suits every household.
+- Added `cash-flow-budget-guide.html` with original explanations, a worked example, limitations, internal tool links, review date and official source links.
+- Added the guide to the homepage guide grid, Monthly Budget Planner cross-link, sitemap and README catalog.
+- SEO source review: all 27 existing HTML pages have a unique page title, meta description, canonical link and exactly one H1. Sitemap contains 27 unique URLs on the correct GitHub Pages base path; `robots.txt` allows crawling and references that sitemap. Search Console indexing and live search visibility are not verified.
+- Google Search Central guidance used: prioritize people-first, original, helpful content; use descriptive titles/headings and crawlable links; avoid thin or mass-produced pages. See https://developers.google.com/search/docs/fundamentals/creating-helpful-content and https://developers.google.com/search/docs/essentials.

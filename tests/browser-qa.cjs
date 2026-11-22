@@ -299,21 +299,29 @@ const server = http.createServer((req,res) => {
     if(!robots.includes('https://barsulkhan.github.io/USAJIO/sitemap.xml')) throw new Error('robots.txt does not advertise the canonical sitemap');
     if(sitemapFiles.size!==allHtmlFiles.length) throw new Error('Sitemap/page count mismatch: '+sitemapFiles.size+' sitemap entries vs '+allHtmlFiles.length+' HTML pages');
     const pageIssues=[];
+    const pageTitles=[];
     for(const file of allHtmlFiles){
       const response=await page.goto('http://127.0.0.1:4173/'+file);
       if(!response||response.status()>=400) pageIssues.push(file+' returned '+(response?response.status():'no response'));
       const meta=await page.evaluate(()=>({
         title:document.title.trim(),
+        description:document.querySelector('meta[name="description"]')?.content?.trim()||'',
+        canonical:document.querySelector('link[rel="canonical"]')?.href||'',
         h1:document.querySelectorAll('h1').length,
         lang:document.documentElement.lang,
         links:[...document.querySelectorAll('a[href]')].map(a=>a.getAttribute('href'))
       }));
       if(!meta.title) pageIssues.push(file+' has no document title');
+      pageTitles.push(meta.title);
+      if(!meta.description) pageIssues.push(file+' has no meta description');
+      const expectedCanonical='https://barsulkhan.github.io/USAJIO/'+(file==='index.html'?'':file);
+      if(meta.canonical!==expectedCanonical) pageIssues.push(file+' has incorrect canonical URL: '+meta.canonical);
       if(meta.h1<1) pageIssues.push(file+' has no H1 heading');
       if(meta.lang!=='en') pageIssues.push(file+' has missing or unexpected html lang');
       if(!sitemapFiles.has(file)) pageIssues.push(file+' is missing from sitemap.xml');
       const source=fs.readFileSync(path.join(root,file),'utf8');
-      if(/TODO|FIXME|lorem ipsum|example\\.com|\\[your (email|name|url)\\]/i.test(source)) pageIssues.push(file+' contains placeholder text');
+      const lowerSource=source.toLowerCase();
+      if(['lorem ipsum','example.com','[your email]','[your name]','[your url]'].some(token=>lowerSource.includes(token))||/TODO|FIXME/i.test(source)) pageIssues.push(file+' contains placeholder text');
       if(['privacy.html','terms.html','disclaimer.html'].includes(file)&&!source.includes('Last reviewed:')) pageIssues.push(file+' has no policy review date');
       for(const href of meta.links){
         if(!href||/^(mailto:|tel:|javascript:|data:)/i.test(href)) continue;
@@ -330,14 +338,16 @@ const server = http.createServer((req,res) => {
         }
       }
     }
-    if(pageIssues.length) throw new Error('Site navigation/policy audit failed: '+pageIssues.join(' | '));
+    if(new Set(pageTitles).size!==pageTitles.length) pageIssues.push('HTML page titles are not unique');
+    if(pageIssues.length) throw new Error('Site navigation/policy/SEO audit failed: '+pageIssues.join(' | '));
     const homepageSource=fs.readFileSync(path.join(root,'index.html'),'utf8');
     for(const href of ['about.html','contact.html','privacy.html','terms.html','disclaimer.html','editorial.html']){
       if(!homepageSource.includes('href="'+href+'"')) throw new Error('Homepage footer is missing '+href);
     }
     if(!homepageSource.includes('12 useful calculators')) throw new Error('Homepage calculator count is not 12');
     if(!homepageSource.includes('id="resources"')) throw new Error('Resources navigation target is missing');
-    console.log('PASS: '+allHtmlFiles.length+' HTML pages served; titles, H1, language, sitemap/robots, footer policy links and all local paths/fragments verified.');
+    if(!homepageSource.includes('cash-flow-budget-guide.html')) throw new Error('Homepage is missing the cash-flow guide link');
+    console.log('PASS: '+allHtmlFiles.length+' HTML pages served; unique titles, descriptions, canonicals, H1, language, sitemap/robots, footer policy links and all local paths/fragments verified.');
 
     // Verify every local HTML link resolves against the repository files.
     const htmlFiles=fs.readdirSync(root).filter(x=>x.endsWith('.html'));
