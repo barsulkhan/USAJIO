@@ -8,7 +8,7 @@ const pages = [
   'compound-interest.html','loan-calculator.html','monthly-budget.html',
   'savings-goal.html','emergency-fund.html','debt-payoff.html',
   'mortgage-calculator.html','auto-loan-calculator.html','credit-card-payoff.html',
-  'retirement-calculator.html','student-loan-payoff.html','net-worth-calculator.html'
+  'retirement-calculator.html','student-loan-payoff.html','net-worth-calculator.html','credit-card-minimum-payment.html'
 ];
 const mime = {'.html':'text/html; charset=utf-8','.css':'text/css','.js':'text/javascript','.svg':'image/svg+xml','.xml':'application/xml','.txt':'text/plain'};
 const server = http.createServer((req,res) => {
@@ -47,7 +47,7 @@ const server = http.createServer((req,res) => {
     const homeCards=await page.locator('.tool-card a[href]').count();
     if(homeCards<12) throw new Error('Homepage calculator navigation links missing: '+homeCards);
     const directHomeCards=await page.locator('#calculators .tool-grid > .tool-card').count();
-    if(directHomeCards!==12) throw new Error('Homepage must show 12 separate calculator cards; found '+directHomeCards);
+    if(directHomeCards!==13) throw new Error('Homepage must show 13 separate calculator cards; found '+directHomeCards);
 
     for(const file of pages){
       const response=await page.goto('http://127.0.0.1:4173/'+file);
@@ -67,7 +67,22 @@ const server = http.createServer((req,res) => {
     }
 
 
-    // Reproducible financial-math and input-boundary matrix for all 12 tools.
+    // Credit-card minimum-payment planner: zero APR and non-amortizing rule.
+    await page.goto('http://127.0.0.1:4173/credit-card-minimum-payment.html');
+    await page.locator('#ccmp-balance').fill('1200');
+    await page.locator('#ccmp-apr').fill('0');
+    await page.locator('#ccmp-percent').fill('10');
+    await page.locator('#ccmp-floor').fill('25');
+    await page.locator('#ccmp-calc').click();
+    if((await page.locator('#ccmp-interest').innerText()).replace(/[^0-9.-]/g,'')!=='0') throw new Error('Zero-APR minimum-payment interest should be zero');
+    if(await page.locator('#ccmp-schedule tbody tr').count()!==12) throw new Error('Minimum-payment planner should show the first 12 schedule rows');
+    await page.locator('#ccmp-apr').fill('24');
+    await page.locator('#ccmp-percent').fill('1');
+    await page.locator('#ccmp-floor').fill('0');
+    await page.locator('#ccmp-calc').click();
+    if(!(await page.locator('#ccmp-status').innerText()).includes('does not reduce the balance')) throw new Error('Non-amortizing minimum-payment rule must be flagged');
+
+    // Reproducible financial-math and input-boundary matrix for all 13 tools.
     const money = async id => {
       const raw=(await page.locator('#'+id).innerText()).replace(/[^0-9.-]/g,'');
       const value=Number(raw);
@@ -616,7 +631,7 @@ const server = http.createServer((req,res) => {
     console.log('ACCESSIBILITY AUDIT: '+JSON.stringify(accessibilityFindings,null,2));
     const blocking=accessibilityFindings.filter(x=>x.impact==='critical'||x.impact==='serious');
     if(blocking.length) throw new Error('Accessibility violations (serious/critical): '+JSON.stringify(blocking));
-    console.log('PASS: homepage, 12 calculator default interactions, live result announcements, mobile menu, 390px overflow, local HTML links and axe WCAG 2.1 A/AA audit.');
+    console.log('PASS: homepage, 13 calculator default interactions, live result announcements, mobile menu, 390px overflow, local HTML links and axe WCAG 2.1 A/AA audit.');
   } finally {
     await browser.close();
     await new Promise(resolve=>server.close(resolve));
