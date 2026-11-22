@@ -75,8 +75,8 @@ const server = http.createServer((req,res) => {
     await page.locator('#ccmp-floor').fill('25');
     await page.locator('#ccmp-calc').click();
     if(Number((await page.locator('#ccmp-interest').innerText()).replace(/[^0-9.-]/g,''))!==0) throw new Error('Zero-APR minimum-payment interest should be zero');
-    const ccmpScheduleRows=await page.locator('#ccmp-schedule tr').count();
-    if(ccmpScheduleRows<1||ccmpScheduleRows>12) throw new Error('Minimum-payment planner should show up to 12 monthly schedule rows; found '+ccmpScheduleRows);
+    const minimumScheduleRows=await page.locator('#ccmp-schedule tr').count();
+    if(minimumScheduleRows<1||minimumScheduleRows>12) throw new Error('Minimum-payment planner should show up to 12 monthly schedule rows; found '+minimumScheduleRows);
     await page.locator('#ccmp-apr').fill('24');
     await page.locator('#ccmp-percent').fill('1');
     await page.locator('#ccmp-floor').fill('0');
@@ -126,8 +126,8 @@ const server = http.createServer((req,res) => {
     near(await money('loan-monthly'),100,'Zero-rate loan payment'); near(await money('loan-interest'),0,'Zero-rate loan interest'); near(await money('loan-total'),1200,'Zero-rate loan total');
     // Loan amortization schedule: ledger reconciles, extra principal accelerates payoff, zero rate works.
     await calculate('loan-calculator.html','loan-calc',{'loan-amount':10000,'loan-rate':7,'loan-years':5,'loan-extra':0});
-    const ccmpScheduleRows=page.locator('#loan-schedule tr');
-    if(await ccmpScheduleRows.count()!==60) throw new Error('Rounded scheduled payment should clear the loan in 60 months; found '+await ccmpScheduleRows.count());
+    const scheduleRows=page.locator('#loan-schedule tr');
+    if(await scheduleRows.count()!==60) throw new Error('Rounded scheduled payment should clear the loan in 60 months; found '+await ccmpScheduleRows.count());
     near(await money('loan-monthly'),198.02,'Loan rounded scheduled payment',0.001);
     near(await money('loan-interest'),1880.67,'Loan schedule interest reconciliation');
     near(await money('loan-total'),11880.67,'Loan schedule total reconciliation');
@@ -160,7 +160,7 @@ const server = http.createServer((req,res) => {
     await set({'loan-amount':10000,'loan-rate':7,'loan-years':5,'loan-extra':0});
     await page.locator('#loan-calc').click();
 
-    const finalBalance=await ccmpScheduleRows.last().locator('td').nth(5).innerText();
+    const finalBalance=await scheduleRows.last().locator('td').nth(5).innerText();
     near(Number(finalBalance.replace(/[^0-9.-]/g,'')),0,'Loan schedule final balance');
     await set({'loan-amount':10000,'loan-rate':7,'loan-years':5,'loan-extra':100}); await page.locator('#loan-calc').click();
     if(await page.locator('#loan-schedule tr').count()>=60) throw new Error('Extra payment should shorten loan payoff');
