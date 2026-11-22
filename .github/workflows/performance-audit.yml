@@ -33,11 +33,43 @@ jobs:
         run: npm install --no-save @lhci/cli http-server
       - name: Run Lighthouse on homepage and all calculators
         run: npx lhci autorun --config=lighthouserc.${{ matrix.profile }}.json
+      - name: Print Lighthouse score and Core Web Vitals summary
+        if: always()
+        run: |
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const dir = '.lighthouseci';
+          const reports = fs.existsSync(dir)
+            ? fs.readdirSync(dir).filter(name => name.endsWith('.json')).map(name => {
+                try { return JSON.parse(fs.readFileSync(path.join(dir, name), 'utf8')); } catch { return null; }
+              }).filter(report => report && report.categories && report.audits)
+            : [];
+          if (!reports.length) {
+            console.error('No Lighthouse result JSON files were generated.');
+            process.exit(1);
+          }
+          const score = (report, key) => Math.round((report.categories[key]?.score ?? 0) * 100);
+          const metric = (report, key) => report.audits[key]?.numericValue;
+          for (const report of reports) {
+            console.log([
+              report.requestedUrl,
+              'Performance=' + score(report, 'performance'),
+              'Accessibility=' + score(report, 'accessibility'),
+              'BestPractices=' + score(report, 'best-practices'),
+              'SEO=' + score(report, 'seo'),
+              'LCP_ms=' + (metric(report, 'largest-contentful-paint') ?? 'n/a'),
+              'CLS=' + (metric(report, 'cumulative-layout-shift') ?? 'n/a'),
+              'TBT_ms=' + (metric(report, 'total-blocking-time') ?? 'n/a')
+            ].join(' | '));
+          }
+          NODE
       - name: Upload Lighthouse reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: lighthouse-${{ matrix.profile }}
           path: .lighthouseci/
-          if-no-files-found: ignore
+          if-no-files-found: error
+          include-hidden-files: true
           retention-days: 14
