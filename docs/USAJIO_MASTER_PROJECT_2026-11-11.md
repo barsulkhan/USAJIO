@@ -908,3 +908,29 @@ First verify deployment run #45030278000 for merge commit `d61f0498a1fbc965ec527
 - Keep report generation local, use RFC 4180 quoting, test spreadsheet formula-injection safeguards, include assumptions/units/currency/disclaimers, and never upload financial inputs.
 - Do not add paid PDF services or libraries. Native browser print is not an automatic PDF download; label it accurately.
 - Search Console/indexing and AdSense remain paused. Physical Android/TalkBack tests remain NOT TESTED until performed on a real device. USAJIO only; no InfoJano changes or paid services.
+
+---
+
+## 2026-11-22 — Downloadable Reports first slice (PR #63) completed, tested and deployed
+
+### Release and implementation
+- PR #63, `feat: add loan amortization CSV and print reports`, was squash-merged to `main`.
+- PR: https://github.com/barsulkhan/USAJIO/pull/63
+- Feature branch: `feature/downloadable-reports-loan-csv-2026-11-22`
+- Merge commit: `8c7bb010a925a7d47ae0ec322cc4ebbfec9ca270`
+- Files changed: `loan-calculator.html`, `script.js`, `calculator-pages.css`, `tests/browser-qa.cjs`, `docs/DOWNLOADABLE_REPORTS_RESEARCH.md`.
+- Loan Amortization report actions now provide a client-side CSV download and native browser Print / Save as PDF. CSV is built from validated cent-rounded calculation results, includes report assumptions/disclaimer and every schedule row, uses UTF-8 BOM, RFC-4180-style quoted fields and CRLF records, and uses a fixed safe filename. No financial inputs are uploaded or placed in filenames.
+- Print stylesheet removes navigation, calculator controls and action buttons while retaining report title, assumptions, summary, disclaimer and the full schedule. Editing inputs invalidates prior report actions until recalculation.
+
+### Verified checks and user-supplied manual evidence
+- Browser QA workflow run #45050335877: passed on PR head `e777fa7073403f2da8bb6559b8ae30a945446613`. Automated checks covered CSV filename/BOM/metadata/CRLF/row count and full schedule, final zero balance, static formula-safe labels, native print invocation, print CSS and stale-report invalidation; broader calculator, responsive, keyboard and axe WCAG 2.1 A/AA checks also passed.
+- Lighthouse run #45050335847: Mobile and Desktop jobs both completed successfully.
+- User manually generated and uploaded the CSV; the conversation review recorded valid UTF-8 BOM, metadata, CRLF records, complete 60-payment schedule and final zero balance. The user's separate PDF upload was inspected: 3 pages, payments 1–60 continuous across pages, all 8 schedule columns visible, and final payment 60 capped at $1.30 with ending balance $0.00 and cumulative interest $18.71 for that PDF's $100 principal / 7% / 5-year example. This is user-device print-to-PDF evidence, not a claim of physical Android/TalkBack accessibility testing.
+- PR #63 was squash-merged. GitHub Pages deployment run #45050740122 for merge commit `8c7bb010a925a7d47ae0ec322cc4ebbfec9ca270` completed with conclusion `success`; the user's Actions screenshot also showed the green Success status and the live Pages URL.
+- Node.js 20 deprecation appeared as a non-blocking workflow warning; deployment succeeded. Consider a separate maintenance update to the Pages workflow when the action/runtime compatibility is reviewed.
+
+### Milestone 5 scope and next steps
+- Loan Amortization CSV + print/PDF workflow: complete, merged, Browser QA passed, Mobile/Desktop Lighthouse passed, user-generated CSV/PDF reviewed, GitHub Pages deployment verified.
+- Remaining Milestone 5 exports are not implemented yet: Compare Scenarios CSV/print report; Advanced Budget Planner CSV/print report; Retirement Projection CSV/print report. Implement separately only after reviewing the structured calculation results and extending tests.
+- Next active task: research and implement Compare Scenarios export (three scenarios, shared principal/currency, assumptions and deltas vs Scenario A), then Browser QA, mobile/desktop Lighthouse, merge only after checks pass, and verify Pages deployment.
+- Search Console/indexing and AdSense/monetization remain paused. Physical Android/TalkBack testing remains NOT TESTED. No paid domain/service/subscription. Work only in `barsulkhan/USAJIO`; do not touch InfoJano.
