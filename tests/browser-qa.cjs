@@ -286,6 +286,10 @@ const server = http.createServer((req,res) => {
 
     // Crawl every public HTML page and verify all local links, fragments and sitemap entries.
     const allHtmlFiles=fs.readdirSync(root).filter(name=>name.endsWith('.html')).sort();
+    // Google Search Console ownership files are verification endpoints, not indexable site pages.
+    const sitemapEligibleHtmlFiles=allHtmlFiles.filter(name=>!/^google[0-9a-f]+\.html$/i.test(name));
+    const googleVerificationFile='google4a4795e5c7c03eae.html';
+    if(fs.readFileSync(path.join(root,googleVerificationFile),'utf8').trim()!=='google-site-verification: google4a4795e5c7c03eae.html') throw new Error('Google Search Console verification file content does not match the supplied token.');
     const siteOrigin='https://barsulkhan.github.io';
     const basePath='/USAJIO/';
     const sitemapSource=fs.readFileSync(path.join(root,'sitemap.xml'),'utf8');
@@ -297,10 +301,10 @@ const server = http.createServer((req,res) => {
     }));
     const robots=fs.readFileSync(path.join(root,'robots.txt'),'utf8');
     if(!robots.includes('https://barsulkhan.github.io/USAJIO/sitemap.xml')) throw new Error('robots.txt does not advertise the canonical sitemap');
-    if(sitemapFiles.size!==allHtmlFiles.length) throw new Error('Sitemap/page count mismatch: '+sitemapFiles.size+' sitemap entries vs '+allHtmlFiles.length+' HTML pages');
+    if(sitemapFiles.size!==sitemapEligibleHtmlFiles.length) throw new Error('Sitemap/page count mismatch: '+sitemapFiles.size+' sitemap entries vs '+sitemapEligibleHtmlFiles.length+' indexable HTML pages');
     const pageIssues=[];
     const pageTitles=[];
-    for(const file of allHtmlFiles){
+    for(const file of sitemapEligibleHtmlFiles){
       const response=await page.goto('http://127.0.0.1:4173/'+file);
       if(!response||response.status()>=400) pageIssues.push(file+' returned '+(response?response.status():'no response'));
       const meta=await page.evaluate(()=>({
@@ -357,7 +361,7 @@ const server = http.createServer((req,res) => {
     if(!homepageSource.includes('12 useful calculators')) throw new Error('Homepage calculator count is not 12');
     if(!homepageSource.includes('id="resources"')) throw new Error('Resources navigation target is missing');
     if(!homepageSource.includes('cash-flow-budget-guide.html')) throw new Error('Homepage is missing the cash-flow guide link');
-    console.log('PASS: '+allHtmlFiles.length+' HTML pages served; unique titles, descriptions, canonicals, H1, language, sitemap/robots, footer policy links and all local paths/fragments verified.');
+    console.log('PASS: '+sitemapEligibleHtmlFiles.length+' indexable HTML pages and Google verification endpoint served; unique titles, descriptions, canonicals, H1, language, sitemap/robots, footer policy links and all local paths/fragments verified.');
 
     // Verify every local HTML link resolves against the repository files.
     const htmlFiles=fs.readdirSync(root).filter(x=>x.endsWith('.html'));
