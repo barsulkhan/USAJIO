@@ -130,7 +130,7 @@
     const current=read("retirement-current",0,1e12), monthly=read("retirement-monthly",0,1e10), years=read("retirement-years",1,70), annual=read("retirement-return",0,30), match=read("retirement-match",0,100);
     if([current,monthly,years,annual,match].some(v=>v===null)){invalid(["retirement-balance","retirement-contrib","retirement-total"]);return;}
     const months=years*12, rate=Math.pow(1+annual/100,1/12)-1, contribution=monthly*(1+match/100);
-    const growth=rate===0?1:(Math.pow(1+rate,months)-1)/rate;
+    const growth=rate===0?months:(Math.pow(1+rate,months)-1)/rate;
     const balance=current*Math.pow(1+rate,months)+contribution*growth;
     const contrib=current+contribution*months;
     if(!Number.isFinite(balance)||!Number.isFinite(contrib)){invalid(["retirement-balance","retirement-contrib","retirement-total"]);return;}
