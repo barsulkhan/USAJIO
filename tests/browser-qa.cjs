@@ -311,12 +311,12 @@ const server = http.createServer((req,res) => {
     await set({'retirement-current':0,'retirement-monthly':100,'retirement-years':10,'retirement-return':0,'retirement-match':0,'retirement-low-return':0,'retirement-high-return':0});
     await page.locator('#retirement-calc').click();
     near(await money('retirement-base-nominal'),12000,'Zero-return scenario nominal balance');
-    near(await money('retirement-base-real'),12000,'Zero-return scenario today's-dollar balance');
+    near(await money('retirement-base-real'),12000,'Zero-return scenario real value');
 
     // Negative real return: positive nominal growth can still lose purchasing power.
     await set({'retirement-current':10000,'retirement-monthly':200,'retirement-years':20,'retirement-return':4,'retirement-match':50,'retirement-low-return':3,'retirement-high-return':6,'retirement-inflation':5});
     await page.locator('#retirement-calc').click();
-    if((await money('retirement-base-real'))>=(await money('retirement-base-nominal'))) throw new Error('Higher inflation should reduce today's-dollar value below nominal value');
+    if((await money('retirement-base-real'))>=(await money('retirement-base-nominal'))) throw new Error('Higher inflation should reduce the real value below nominal value');
     if(!/5.0% annual inflation/.test(await textOf('retirement-scenario-status'))) throw new Error('Retirement inflation assumption not disclosed');
 
     // Scenario ordering must be conservative <= base <= optimistic.
