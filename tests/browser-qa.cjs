@@ -67,6 +67,21 @@ const server = http.createServer((req,res) => {
     }
 
 
+    // Credit-card minimum-payment planner: zero APR and non-amortizing rule.
+    await page.goto('http://127.0.0.1:4173/credit-card-minimum-payment.html');
+    await page.locator('#ccmp-balance').fill('1200');
+    await page.locator('#ccmp-apr').fill('0');
+    await page.locator('#ccmp-percent').fill('10');
+    await page.locator('#ccmp-floor').fill('25');
+    await page.locator('#ccmp-calc').click();
+    if((await page.locator('#ccmp-interest').innerText()).replace(/[^0-9.-]/g,'')!=='0') throw new Error('Zero-APR minimum-payment interest should be zero');
+    if(await page.locator('#ccmp-schedule tbody tr').count()!==12) throw new Error('Minimum-payment planner should show the first 12 schedule rows');
+    await page.locator('#ccmp-apr').fill('24');
+    await page.locator('#ccmp-percent').fill('1');
+    await page.locator('#ccmp-floor').fill('0');
+    await page.locator('#ccmp-calc').click();
+    if(!(await page.locator('#ccmp-status').innerText()).includes('does not reduce the balance')) throw new Error('Non-amortizing minimum-payment rule must be flagged');
+
     // Reproducible financial-math and input-boundary matrix for all 12 tools.
     const money = async id => {
       const raw=(await page.locator('#'+id).innerText()).replace(/[^0-9.-]/g,'');
