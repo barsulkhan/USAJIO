@@ -307,6 +307,12 @@ const server = http.createServer((req,res) => {
     await page.locator('#retirement-calc').click();
     near(await money('retirement-base-real'),await money('retirement-base-nominal'),'Zero-inflation retirement value');
 
+    // Zero nominal return and zero inflation preserve contributions exactly.
+    await set({'retirement-current':0,'retirement-monthly':100,'retirement-years':10,'retirement-return':0,'retirement-match':0,'retirement-low-return':0,'retirement-high-return':0});
+    await page.locator('#retirement-calc').click();
+    near(await money('retirement-base-nominal'),12000,'Zero-return scenario nominal balance');
+    near(await money('retirement-base-real'),12000,'Zero-return scenario today's-dollar balance');
+
     // Negative real return: positive nominal growth can still lose purchasing power.
     await set({'retirement-return':4,'retirement-low-return':3,'retirement-high-return':6,'retirement-inflation':5});
     await page.locator('#retirement-calc').click();
