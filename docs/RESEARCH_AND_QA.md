@@ -156,3 +156,5 @@ Educational estimates only; no guaranteed returns or unverified rates. Do not co
 - All 8 guide pages and 6 informational/policy pages: unique page title present, meta description present, canonical URL present, exactly one H1 — **Pass**.
 - Local relative `.html` link audit across all 26 repository HTML pages — **Pass**, no missing local targets.
 - Sitemap lists 26 URLs, matching 26 HTML files — **Pass (static count)**; live reachability remains **Not Tested**.
+
+- PR #16 opened to add pull-request-triggered Playwright QA for future site changes. **Not yet active** until merged; the current environment has no GitHub Actions workflow-dispatch action, and outbound DNS prevents a live-site browser run.
