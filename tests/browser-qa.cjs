@@ -8,7 +8,7 @@ const pages = [
   'compound-interest.html','loan-calculator.html','monthly-budget.html',
   'savings-goal.html','emergency-fund.html','debt-payoff.html',
   'mortgage-calculator.html','auto-loan-calculator.html','credit-card-payoff.html',
-  'retirement-calculator.html','student-loan-payoff.html','net-worth-calculator.html','credit-card-minimum-payment.html'
+  'retirement-calculator.html','student-loan-payoff.html','net-worth-calculator.html','credit-card-minimum-payment.html','rent-vs-buy.html'
 ];
 const mime = {'.html':'text/html; charset=utf-8','.css':'text/css','.js':'text/javascript','.svg':'image/svg+xml','.xml':'application/xml','.txt':'text/plain'};
 const server = http.createServer((req,res) => {
@@ -47,7 +47,7 @@ const server = http.createServer((req,res) => {
     const homeCards=await page.locator('.tool-card a[href]').count();
     if(homeCards<12) throw new Error('Homepage calculator navigation links missing: '+homeCards);
     const directHomeCards=await page.locator('#calculators .tool-grid > .tool-card').count();
-    if(directHomeCards!==13) throw new Error('Homepage must show 13 separate calculator cards; found '+directHomeCards);
+    if(directHomeCards!==14) throw new Error('Homepage must show 14 separate calculator cards; found '+directHomeCards);
 
     for(const file of pages){
       const response=await page.goto('http://127.0.0.1:4173/'+file);
@@ -66,6 +66,17 @@ const server = http.createServer((req,res) => {
       if(await results.getAttribute('aria-live')!=='polite') throw new Error(file+' result region is not announced politely');
     }
 
+
+    // Rent-vs-buy: default comparison, zero-rate mortgage and invalid stay length.
+    await page.goto('http://127.0.0.1:4173/rent-vs-buy.html');
+    await page.locator('#rvb-calc').click();
+    if(await page.locator('#rvb-schedule tr').count()<1) throw new Error('Rent-vs-buy annual schedule should render');
+    await page.locator('#rvb-apr').fill('0');
+    await page.locator('#rvb-calc').click();
+    if(await page.locator('#rvb-results').isHidden()) throw new Error('Zero-rate mortgage comparison should produce results');
+    await page.locator('#rvb-stay').fill('0');
+    await page.locator('#rvb-calc').click();
+    if(!(await page.locator('#rvb-status').innerText()).includes('Check the inputs')) throw new Error('Invalid zero-year stay should be rejected');
 
     // Credit-card minimum-payment planner: zero APR and non-amortizing rule.
     await page.goto('http://127.0.0.1:4173/credit-card-minimum-payment.html');
@@ -632,7 +643,7 @@ const server = http.createServer((req,res) => {
     console.log('ACCESSIBILITY AUDIT: '+JSON.stringify(accessibilityFindings,null,2));
     const blocking=accessibilityFindings.filter(x=>x.impact==='critical'||x.impact==='serious');
     if(blocking.length) throw new Error('Accessibility violations (serious/critical): '+JSON.stringify(blocking));
-    console.log('PASS: homepage, 13 calculator default interactions, live result announcements, mobile menu, 390px overflow, local HTML links and axe WCAG 2.1 A/AA audit.');
+    console.log('PASS: homepage, 14 calculator default interactions, live result announcements, mobile menu, 390px overflow, local HTML links and axe WCAG 2.1 A/AA audit.');
   } finally {
     await browser.close();
     await new Promise(resolve=>server.close(resolve));
