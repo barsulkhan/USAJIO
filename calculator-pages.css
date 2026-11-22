@@ -93,3 +93,30 @@ button,.primary-btn,.nav a{min-height:42px}
 .retirement-scenario-table{min-width:650px}
 .retirement-scenario-table td,.retirement-scenario-table th{white-space:nowrap}
 @media(max-width:420px){.retirement-scenarios{padding:12px}.retirement-scenario-inputs{grid-template-columns:1fr}}
+
+
+/* Loan report export and print layout. */
+.report-actions{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 18px}
+.report-actions button{min-height:44px}
+.report-actions button:disabled{opacity:.55;cursor:not-allowed}
+.report-print-heading{display:none}
+@media print{
+  @page{size:landscape;margin:12mm}
+  body{background:#fff!important;color:#111!important;font-size:9pt}
+  .site-header,.page-intro,.calc-copy,.calculator>.fields,.calculator>#loan-calc,
+  .report-actions,.scenario-comparison,.methodology,.related-tools,footer{display:none!important}
+  main,.calculator-page,.calculator{display:block!important;width:100%!important;max-width:none!important;margin:0!important;padding:0!important;border:0!important;box-shadow:none!important}
+  .report-print-heading{display:block!important;margin:0 0 12px;break-inside:avoid}
+  .report-print-heading h1{font-size:18pt;margin:0 0 8px}
+  .report-print-heading p{font-size:8pt;line-height:1.4;margin:5px 0}
+  .calculator>.result-grid{margin:8px 0 12px;break-inside:avoid}
+  .calculator>.disclaimer{font-size:8pt}
+  .amortization{margin:0;padding:0;border:0}
+  .amortization h2{font-size:13pt}
+  .amortization>.disclaimer,.schedule-summary{font-size:8pt}
+  .schedule-table-wrap{max-width:none!important;overflow:visible!important;border:0!important}
+  .schedule-table{width:100%!important;min-width:0!important;font-size:7pt!important;table-layout:auto}
+  .schedule-table th,.schedule-table td{padding:4px 5px!important;white-space:nowrap}
+  .schedule-table thead{display:table-header-group}
+  .schedule-table tr{break-inside:avoid}
+}
