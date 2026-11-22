@@ -41,7 +41,8 @@ Sources:
 ## 4. Improvement plan and proposed first-release scope
 
 ### Product definition
-- Build a separate Compare Scenarios page for fixed-rate loan what-if analysis, not a marketplace or lender ranking tool.
+- Add an optional, collapsed Compare Scenarios section to the existing Loan Payment Calculator page for fixed-rate what-if analysis; keep the basic calculator flow unchanged and do not add a separate calculator card in the first release.
+- This is a scenario-analysis tool, not a marketplace or lender-ranking tool.
 - Compare up to three scenarios against one shared loan principal and currency.
 - Each scenario has its own annual interest rate, term in years and extra monthly principal amount.
 - Provide a clear default baseline and two editable scenarios. Users can leave a scenario disabled/blank if they only want a two-way comparison.
@@ -91,7 +92,7 @@ Sources:
 
 ## 6. Implementation sequence
 1. Review the current loan engine and decide whether to extract a shared pure amortization helper without changing its existing outputs.
-2. Create compare-scenarios.html with shared principal and up to three parallel scenario cards.
+2. Add the expandable comparison section to loan-calculator.html with one shared principal and up to three parallel scenario cards.
 3. Render side-by-side results and deltas using the shared cent-rounded ledger.
 4. Add responsive comparison table and mobile summary, labels, keyboard and live result announcements.
 5. Extend Browser QA for calculation parity, edge cases, three-scenario reconciliation, privacy and 320px layout.
