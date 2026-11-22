@@ -115,6 +115,31 @@ const server = http.createServer((req,res) => {
     near(await money('loan-monthly'),198.02,'Loan rounded scheduled payment',0.001);
     near(await money('loan-interest'),1880.67,'Loan schedule interest reconciliation');
     near(await money('loan-total'),11880.67,'Loan schedule total reconciliation');
+
+    // Downloaded CSV must include assumptions, every cent-rounded schedule row and a safe static schema.
+    const csvDownloadPromise=page.waitForEvent('download');
+    await page.locator('#loan-download-csv').click();
+    const csvDownload=await csvDownloadPromise;
+    if(csvDownload.suggestedFilename()!=='usajio-loan-amortization.csv') throw new Error('Unexpected loan CSV filename');
+    const csvPath=await csvDownload.path();
+    const csv=fs.readFileSync(csvPath,'utf8');
+    if(csv.charCodeAt(0)!==0xFEFF) throw new Error('Loan CSV must include UTF-8 BOM');
+    if(!csv.includes('"Currency","USD"')||!csv.includes('"Annual interest rate (%)","7.00"')||!csv.includes('"Total interest","1880.67"')) throw new Error('Loan CSV is missing currency, assumptions or reconciled totals');
+    const csvLines=csv.replace(/^\\uFEFF/,'').split('\\r\\n');
+    if(csvLines.length!==77) throw new Error('Loan CSV should contain metadata, header and all 60 schedule rows; found '+csvLines.length);
+    if(!csvLines[15].includes('"Payment","Starting balance","Scheduled payment"')) throw new Error('Loan CSV schedule header is incorrect');
+    if(!csvLines[76].includes('"60"')||!csvLines[76].endsWith('"0.00","1880.67"')) throw new Error('Loan CSV final capped payment row is missing or incorrect');
+    if(csvLines.some(line=>/^\\s*["']?[=+@]/.test(line))) throw new Error('Loan CSV contains a formula-like row prefix');
+
+    // Print action calls native browser print; print CSS keeps the report and hides site controls.
+    await page.evaluate(()=>{window.__printCalled=false;window.print=()=>{window.__printCalled=true;};});
+    await page.locator('#loan-print-report').click();
+    if(!(await page.evaluate(()=>window.__printCalled))) throw new Error('Print / Save as PDF action did not invoke native print');
+    await page.emulateMedia({media:'print'});
+    if(await page.locator('.site-header').evaluate(el=>getComputedStyle(el).display)!=='none') throw new Error('Print stylesheet should hide site navigation');
+    if(await page.locator('#loan-print-heading').evaluate(el=>getComputedStyle(el).display)==='none') throw new Error('Print stylesheet should show report assumptions');
+    await page.emulateMedia({media:'screen'});
+
     const finalBalance=await scheduleRows.last().locator('td').nth(5).innerText();
     near(Number(finalBalance.replace(/[^0-9.-]/g,'')),0,'Loan schedule final balance');
     await set({'loan-amount':10000,'loan-rate':7,'loan-years':5,'loan-extra':100}); await page.locator('#loan-calc').click();
