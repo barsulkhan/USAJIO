@@ -3,6 +3,16 @@
 <h2 id="amortization-title">Monthly amortization schedule</h2>
 <p class="disclaimer">Each row estimates how a payment is split between interest and principal. Extra monthly payments are applied to principal. Amounts are rounded to cents each month; your lender may calculate interest differently.</p>
 <div class="schedule-summary" aria-live="polite" aria-atomic="true"><span id="loan-payment-count">—</span><span id="loan-extra-total">—</span></div>
+<div class="report-actions" aria-label="Loan report actions">
+<button type="button" class="primary-btn" id="loan-download-csv" disabled>Download CSV</button>
+<button type="button" class="primary-btn" id="loan-print-report" disabled>Print / Save as PDF</button>
+</div>
+<div class="report-print-heading" id="loan-print-heading">
+<h1>USAJIO — Loan Amortization Report</h1>
+<p>Currency: <strong id="loan-print-currency">USD</strong> · Principal: <strong id="loan-print-principal">—</strong> · Annual rate: <strong id="loan-print-rate">—</strong> · Term: <strong id="loan-print-term">—</strong> · Extra monthly principal: <strong id="loan-print-extra">—</strong></p>
+<p>Scheduled monthly payment: <strong id="loan-print-payment">—</strong> · Total interest: <strong id="loan-print-interest">—</strong> · Total repayment: <strong id="loan-print-total">—</strong> · Payments: <strong id="loan-print-count">—</strong></p>
+<p class="disclaimer">Illustrative fixed-rate estimate using cent-rounded monthly interest. Fees, taxes, insurance and lender-specific rules are excluded. Educational information only; not a lender quote or personalized financial advice.</p>
+</div>
 <div class="schedule-table-wrap" role="region" aria-label="Monthly loan amortization schedule" tabindex="0">
 <table class="schedule-table">
 <thead><tr><th scope="col">Payment</th><th scope="col">Starting balance</th><th scope="col">Scheduled payment</th><th scope="col">Extra payment</th><th scope="col">Interest</th><th scope="col">Principal</th><th scope="col">Ending balance</th><th scope="col">Cumulative interest</th></tr></thead>

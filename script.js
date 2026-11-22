@@ -66,11 +66,67 @@
     return {basePayment:cents(basePayment),extraPayment,monthlyPayment:cents(basePayment+extraPayment),interestTotal,paidTotal,extraTotal,count,finalBalance:balance,rows};
   };
 
+  let latestLoanReport = null;
+  const loanReportControls = ["loan-amount","loan-rate","loan-years","loan-extra","currency"];
+  const setLoanReportActions = enabled => {
+    ["loan-download-csv","loan-print-report"].forEach(id => { if ($(id)) $(id).disabled = !enabled; });
+  };
+  const loanCsvCell = value => '"' + String(value).replace(/"/g,'""') + '"';
+  const loanCsvNumber = value => Number(value).toFixed(2);
+  const downloadLoanCsv = report => {
+    const rows = [
+      ["Report","USAJIO Loan Amortization Schedule"],
+      ["Currency",report.currency],
+      ["Principal",loanCsvNumber(report.principal)],
+      ["Annual interest rate (%)",loanCsvNumber(report.annual)],
+      ["Term (years)",loanCsvNumber(report.years)],
+      ["Extra monthly principal",loanCsvNumber(report.extra)],
+      ["Scheduled monthly payment",loanCsvNumber(report.result.basePayment)],
+      ["Monthly outflow incl. extra",loanCsvNumber(report.result.monthlyPayment)],
+      ["Total interest",loanCsvNumber(report.result.interestTotal)],
+      ["Total repayment",loanCsvNumber(report.result.paidTotal)],
+      ["Number of payments",String(report.result.count)],
+      ["Final balance",loanCsvNumber(report.result.finalBalance)],
+      ["Assumptions","Fixed rate; monthly payments; cent-rounded monthly interest; extra payments reduce principal."],
+      ["Exclusions","Taxes, fees, insurance, lender-specific interest methods and prepayment penalties are excluded."],
+      [],
+      ["Payment","Starting balance","Scheduled payment","Extra principal","Interest","Principal paid","Ending balance","Cumulative interest"],
+      ...report.result.rows.map(row => [row.count,row.opening,row.scheduled,row.extra,row.interest,row.principal,row.ending,row.cumulative].map((value,index)=>index===0?String(value):loanCsvNumber(value)))
+    ];
+    const csv="\uFEFF"+rows.map(row=>row.map(loanCsvCell).join(",")).join("\r\n");
+    const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+    const url=URL.createObjectURL(blob);
+    const link=document.createElement("a");
+    link.href=url;link.download="usajio-loan-amortization.csv";
+    document.body.appendChild(link);link.click();link.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  };
+  loanReportControls.forEach(id => {
+    const element=$(id);
+    if(element) element.addEventListener("input",()=>{latestLoanReport=null;setLoanReportActions(false);});
+  });
+  bind("loan-download-csv",()=>{if(latestLoanReport) downloadLoanCsv(latestLoanReport);});
+  bind("loan-print-report",()=>{if(latestLoanReport) window.print();});
+
   bind("loan-calc", () => {
     const p=read("loan-amount",0,1e12), annual=read("loan-rate",0,100), years=read("loan-years",1,50), extra=read("loan-extra",0,1e12);
-    if([p,annual,years,extra].some(v=>v===null)||p<=0){invalid(["loan-monthly","loan-interest","loan-total"]);put("loan-schedule","");return;}
+    if([p,annual,years,extra].some(v=>v===null)||p<=0){latestLoanReport=null;setLoanReportActions(false);invalid(["loan-monthly","loan-interest","loan-total"]);put("loan-schedule","");return;}
     const result=calculateLoanSchedule(p,annual,years,extra);
-    if(!result){invalid(["loan-monthly","loan-interest","loan-total"]);put("loan-schedule","");return;}
+    if(!result){latestLoanReport=null;setLoanReportActions(false);invalid(["loan-monthly","loan-interest","loan-total"]);put("loan-schedule","");return;}
+    latestLoanReport={principal:p,annual,years,extra,currency:$("currency")?.value||"USD",result};
+    setLoanReportActions(true);
+    const printValues={
+      "loan-print-currency":latestLoanReport.currency,
+      "loan-print-principal":fmt(p),
+      "loan-print-rate":annual.toFixed(2)+"%",
+      "loan-print-term":years+" years",
+      "loan-print-extra":fmt(extra),
+      "loan-print-payment":fmt(result.basePayment),
+      "loan-print-interest":fmt(result.interestTotal),
+      "loan-print-total":fmt(result.paidTotal),
+      "loan-print-count":String(result.count)
+    };
+    Object.entries(printValues).forEach(([id,value])=>{if($(id)) $(id).textContent=value;});
     put("loan-monthly",fmt(result.monthlyPayment));
     put("loan-interest",fmt(result.interestTotal));
     put("loan-total",fmt(result.paidTotal));
