@@ -314,19 +314,19 @@ const server = http.createServer((req,res) => {
     near(await money('retirement-base-real'),12000,'Zero-return scenario today's-dollar balance');
 
     // Negative real return: positive nominal growth can still lose purchasing power.
-    await set({'retirement-return':4,'retirement-low-return':3,'retirement-high-return':6,'retirement-inflation':5});
+    await set({'retirement-current':10000,'retirement-monthly':200,'retirement-years':20,'retirement-return':4,'retirement-match':50,'retirement-low-return':3,'retirement-high-return':6,'retirement-inflation':5});
     await page.locator('#retirement-calc').click();
     if((await money('retirement-base-real'))>=(await money('retirement-base-nominal'))) throw new Error('Higher inflation should reduce today's-dollar value below nominal value');
     if(!/5.0% annual inflation/.test(await textOf('retirement-scenario-status'))) throw new Error('Retirement inflation assumption not disclosed');
 
     // Scenario ordering must be conservative <= base <= optimistic.
-    await set({'retirement-return':6,'retirement-low-return':8,'retirement-high-return':4});
+    await set({'retirement-current':10000,'retirement-monthly':200,'retirement-years':20,'retirement-return':6,'retirement-match':50,'retirement-low-return':8,'retirement-high-return':4});
     await page.locator('#retirement-calc').click();
     if(!/Conservative return/.test(await textOf('retirement-scenario-status'))) throw new Error('Invalid retirement scenario order should be rejected');
     near(await money('retirement-balance'),168102.9445,'Base retirement result remains available after scenario-order error');
 
     // Invalid inflation must be rejected without breaking the base projection.
-    await set({'retirement-return':6,'retirement-low-return':4,'retirement-high-return':8,'retirement-inflation':-1});
+    await set({'retirement-current':10000,'retirement-monthly':200,'retirement-years':20,'retirement-return':6,'retirement-match':50,'retirement-low-return':4,'retirement-high-return':8,'retirement-inflation':-1});
     await page.locator('#retirement-calc').click();
     if(!/Check inflation/.test(await textOf('retirement-scenario-status'))) throw new Error('Invalid inflation should be rejected');
 
