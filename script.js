@@ -44,7 +44,7 @@
     const base=rate ? p*rate/(1-Math.pow(1+rate,-months)) : p/months;
     if(!Number.isFinite(base)||base<=0){invalid(["loan-monthly","loan-interest","loan-total"]);return;}
     const cents=value=>Math.round((value+Number.EPSILON)*100)/100;
-    const basePayment=cents(base), extraPayment=cents(extra);
+    const basePayment=Math.ceil((base-1e-10)*100)/100, extraPayment=cents(extra);
     let balance=cents(p), interestTotal=0, paidTotal=0, extraTotal=0, count=0;
     const rows=[];
     while(balance>0 && count<600){
