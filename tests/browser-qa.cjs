@@ -39,7 +39,7 @@ const server = http.createServer((req,res) => {
       await page.addScriptTag({content:axe.source});
       const result=await page.evaluate(async()=>await window.axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21a','wcag21aa']}}));
       for(const v of result.violations){
-        accessibilityFindings.push({page:label,id:v.id,impact:v.impact,description:v.help,nodes:v.nodes.length});
+        accessibilityFindings.push({page:label,id:v.id,impact:v.impact,description:v.help,nodes:v.nodes.map(n=>({target:n.target,html:n.html,summary:n.failureSummary}))});
       }
     };
     await auditA11y('index.html');
