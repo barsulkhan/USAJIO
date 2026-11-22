@@ -63,3 +63,6 @@ footer{background:#fbfcfd}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
 }
+
+/* Ensure the compact mobile navigation control meets the 44px touch target. */
+@media(max-width:620px){.menu-toggle{min-width:44px;min-height:44px;}}
