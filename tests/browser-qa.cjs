@@ -185,7 +185,7 @@ const server = http.createServer((req,res) => {
     const compareCsv=fs.readFileSync(await compareDownload.path(),'utf8');if(compareCsv.charCodeAt(0)!==0xFEFF) throw new Error('Comparison CSV must include UTF-8 BOM');
     if(!compareCsv.includes('"Shared principal","10000.00"')||!compareCsv.includes('"Scenario A"')||!compareCsv.includes('"Scenario B"')||!compareCsv.includes('"Scenario C"')||!compareCsv.includes('"Total interest"')||!compareCsv.includes('"1880.67"')) throw new Error('Comparison CSV missing scenario metadata or results');
     const compareLines=compareCsv.slice(1).split(String.fromCharCode(13,10));if(compareLines.length!==16) throw new Error('Comparison CSV row count mismatch: '+compareLines.length);
-    if(!compareLines[6].includes('"Scenario","Annual interest rate (%)"')||!compareLines[10].includes('"Difference vs Scenario A"')) throw new Error('Comparison CSV headers missing');
+    if(!compareLines[6].includes('"Scenario","Annual interest rate (%)"')||!compareLines[11].includes('"Difference vs Scenario A"')) throw new Error('Comparison CSV headers missing');
     await page.evaluate(()=>{window.__comparePrintCalled=false;window.print=()=>{window.__comparePrintCalled=true;};});await page.locator('#compare-print-report').click();
     if(!(await page.evaluate(()=>window.__comparePrintCalled))) throw new Error('Comparison print did not invoke native print');
     if(!(await page.locator('body').evaluate(el=>el.classList.contains('compare-print')))) throw new Error('Comparison print mode not applied');
