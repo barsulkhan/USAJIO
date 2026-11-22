@@ -24,11 +24,13 @@ function calc(){
  let balance=loan,home=price,rent=v["rvb-rent"],buyer=down+price*v["rvb-closing"]/100,renter=0,breakeven=null,finalProceeds=0;
  const rows=[];
  for(let m=1;m<=stay;m++){
-  const interest=balance*mr,principal=Math.min(balance,Math.max(0,payment-interest));
+  const interest=balance*mr,actualPayment=Math.min(payment,balance+interest);
+  const principal=Math.min(balance,Math.max(0,actualPayment-interest));
   balance=round(Math.max(0,balance-principal));
   home*=Math.pow(1+v["rvb-appreciation"]/100,1/12);
   if((m-1)%12===0&&m>1)rent*=1+v["rvb-rent-growth"]/100;
-  const ownerMonthly=payment+home*(v["rvb-tax"]/1200)+v["rvb-insurance"]/12+home*(v["rvb-maint"]/1200)+v["rvb-hoa"]+loan*(v["rvb-pmi"]/1200);
+  const pmiMonthly=balance>0?loan*(v["rvb-pmi"]/1200):0;
+  const ownerMonthly=actualPayment+home*(v["rvb-tax"]/1200)+v["rvb-insurance"]/12+home*(v["rvb-maint"]/1200)+v["rvb-hoa"]+pmiMonthly;
   buyer+=ownerMonthly;
   renter+=rent+v["rvb-rent-insurance"];
   if(m%12===0||m===stay){
