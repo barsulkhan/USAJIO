@@ -18,7 +18,6 @@
       ],
       "numberOfRuns": 1,
       "settings": {
-        "preset": "mobile",
         "chromeFlags": "--no-sandbox --headless"
       }
     },
