@@ -402,3 +402,17 @@ Consolidated integration branch: `quality/integrated-final-qa-2026-11-21`. Premi
 ### CI automation follow-up
 - PR #16 opened: https://github.com/barsulkhan/USAJIO/pull/16. It adds a `pull_request` trigger for the existing Playwright browser QA workflow when site HTML/CSS/JS, assets, tests or the workflow itself change. This is a CI-only change; it does not modify the website or deployment workflow.
 - GitHub will not execute the newly added PR trigger for PR #16 itself because the workflow definition is not yet present on the base branch. After approval/merge, future site PRs will run the browser QA automatically.
+
+
+## 19. Browser QA automation and approved deployment — 22 November 2026
+- User approved merging the documentation and CI follow-ups. PR #15 merged as `8c75c8b8bd8f64fd57b82ef81096be479e54762f` (docs only).
+- The original CI PR #16 was found one commit behind after PR #15 changed `main`; it was closed unmerged and recreated on the current base as PR #17.
+- PR #17 merged as `53cc87accf1e7c2eea44e4e6e38b1a26768b4367`. It adds automatic Playwright QA on pull requests targeting `main` when site HTML/CSS/JS, assets, tests or the workflow change. The workflow also retains its quality-branch push and manual dispatch triggers.
+- Browser QA run #44984822409 completed **successfully** on the PR merge preview. The Playwright log reports: `PASS: homepage, 11 calculator default interactions, live result announcements, mobile menu, 390px overflow and local HTML links.` This is real headless Chromium browser execution, not source-only inspection or physical Android testing.
+- GitHub Pages deployment run #44984834009 completed **successfully** for `main` commit `53cc87accf1e7c2eea44e4e6e38b1a26768b4367`. The log found one `github-pages` artifact, created the deployment for that exact commit, and reported success. Environment URL: https://barsulkhan.github.io/USAJIO/.
+- Historical PRs #4–#11 were closed unmerged after checking their age, overlap and representative current files. Do not restore/merge these historical branches directly; any genuinely unique work should be cherry-picked or rebuilt against current `main` after a fresh review.
+- Current `main` head at this checkpoint: `53cc87accf1e7c2eea44e4e6e38b1a26768b4367`.
+
+### Still requires a human device
+- Open the deployed site on a physical Android device and visually confirm the hero, CTA and navigation. CI tests a 390px Chromium viewport but cannot certify the user's actual handset/browser rendering or touch experience.
+- Keyboard/screen-reader audit, visual regression and Lighthouse/Core Web Vitals have not yet been run.
