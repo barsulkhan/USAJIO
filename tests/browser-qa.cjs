@@ -146,7 +146,7 @@ const server = http.createServer((req,res) => {
     near(await money('budget-actual-savings'),200,'Budget savings/debt actual');
     near(await money('budget-target-savings-amount'),700,'Budget savings/debt target');
     if(await textOf('budget-share-needs')!=='55.7%') throw new Error('Budget needs actual share mismatch');
-    if(!/^\\+/.test(await textOf('budget-variance-needs'))) throw new Error('Budget needs variance should be positive/above target');
+    if(!(await textOf('budget-variance-needs')).startsWith('+')) throw new Error('Budget needs variance should be positive/above target');
     if(!/below target/.test(await textOf('budget-allocation-status'))) throw new Error('Budget allocation completion message missing');
 
     // Unassigned non-zero categories must not silently enter an allocation bucket.
