@@ -2,7 +2,7 @@
 
 **Project:** USAJIO  
 **Research date:** 2026-11-22  
-**Status:** Research and scope definition; implementation not yet started.
+**Status:** Research complete; optional comparison section is implemented in PR #57 and validation is in progress.
 
 ## 1. Existing USAJIO baseline
 - Current source page: loan-calculator.html.
@@ -103,3 +103,9 @@ Sources:
 - Competitor analysis uses public feature descriptions, not hands-on testing or independent verification of competitor calculations.
 - CFPB Loan Estimate guidance primarily addresses mortgage offers. USAJIO's first release is a general fixed-rate loan scenario model and must not imply that it replaces official disclosures.
 - The calculator is educational and should not choose a loan for the user.
+## 8. Implementation note — 2026-11-22
+- The comparison is implemented as a collapsed optional section on the existing Loan Payment Calculator page, preserving the basic single-loan flow and avoiding a new calculator card or sitemap change.
+- Scenario A reuses the existing loan amount, rate, term, extra-payment fields and shared calculation engine. Scenarios B and C share the same principal and currency but have independent rate, term and extra monthly principal inputs.
+- The shared cent-rounded amortization helper powers both the existing loan calculator and the comparison outputs, preserving the baseline schedule behavior.
+- The result view shows scheduled payment, monthly outflow including extra principal, total interest, total repayment, payoff count and extra principal, plus deltas versus Scenario A. Lowest monthly outflow and lowest total interest are separate observations.
+- The expanded comparison table is horizontally scrollable within its own region on small screens. Automated Browser QA and mobile/desktop Lighthouse checks are pending; do not merge until they pass.
