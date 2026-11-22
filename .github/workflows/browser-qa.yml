@@ -1,6 +1,16 @@
 name: USAJIO browser QA
 
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**/*.html'
+      - '**/*.css'
+      - '**/*.js'
+      - 'assets/**'
+      - 'tests/**'
+      - '.github/workflows/browser-qa.yml'
   push:
     branches:
       - quality/integrated-final-qa-2026-11-21
