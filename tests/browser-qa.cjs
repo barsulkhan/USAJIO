@@ -292,6 +292,51 @@ const server = http.createServer((req,res) => {
     near(await money('retirement-balance'),12000,'Retirement zero-return balance'); near(await money('retirement-contrib'),12000,'Retirement contributions'); near(await money('retirement-total'),0,'Retirement zero-return growth');
     await set({'retirement-current':10000,'retirement-monthly':200,'retirement-years':20,'retirement-return':5,'retirement-match':50}); await page.locator('#retirement-calc').click();
     near(await money('retirement-balance'),148274.3226,'Retirement positive-return balance');
+    await page.locator('#retirement-scenarios > summary').click();
+    await page.locator('#retirement-calc').click();
+    near(await money('retirement-low-nominal'),131063.7502,'Retirement conservative nominal balance');
+    near(await money('retirement-low-real'),72566.8207,'Retirement conservative today-dollar balance');
+    near(await money('retirement-base-nominal'),148274.3226,'Retirement base nominal balance');
+    near(await money('retirement-base-real'),82095.8974,'Retirement base today-dollar balance');
+    near(await money('retirement-high-nominal'),217309.2922,'Retirement optimistic nominal balance');
+    near(await money('retirement-high-real'),120318.8863,'Retirement optimistic today-dollar balance');
+    near(await money('retirement-base-contrib'),82000,'Retirement scenario contributions');
+
+    // Zero inflation: today's dollars must equal nominal future dollars.
+    await page.locator('#retirement-inflation').fill('0');
+    await page.locator('#retirement-calc').click();
+    near(await money('retirement-base-real'),await money('retirement-base-nominal'),'Zero-inflation retirement value');
+
+    // Zero nominal return and zero inflation preserve contributions exactly.
+    await set({'retirement-current':0,'retirement-monthly':100,'retirement-years':10,'retirement-return':0,'retirement-match':0,'retirement-low-return':0,'retirement-high-return':0});
+    await page.locator('#retirement-calc').click();
+    near(await money('retirement-base-nominal'),12000,'Zero-return scenario nominal balance');
+    near(await money('retirement-base-real'),12000,'Zero-return scenario real value');
+
+    // Negative real return: positive nominal growth can still lose purchasing power.
+    await set({'retirement-current':10000,'retirement-monthly':200,'retirement-years':20,'retirement-return':4,'retirement-match':50,'retirement-low-return':3,'retirement-high-return':6,'retirement-inflation':5});
+    await page.locator('#retirement-calc').click();
+    if((await money('retirement-base-real'))>=(await money('retirement-base-nominal'))) throw new Error('Higher inflation should reduce the real value below nominal value');
+    if(!/5.0% annual inflation/.test(await textOf('retirement-scenario-status'))) throw new Error('Retirement inflation assumption not disclosed');
+
+    // Scenario ordering must be conservative <= base <= optimistic.
+    await set({'retirement-current':10000,'retirement-monthly':200,'retirement-years':20,'retirement-return':6,'retirement-match':50,'retirement-low-return':8,'retirement-high-return':4});
+    await page.locator('#retirement-calc').click();
+    if(!/Conservative return/.test(await textOf('retirement-scenario-status'))) throw new Error('Invalid retirement scenario order should be rejected');
+    near(await money('retirement-balance'),168102.9445,'Base retirement result remains available after scenario-order error');
+
+    // Invalid inflation must be rejected without breaking the base projection.
+    await set({'retirement-current':10000,'retirement-monthly':200,'retirement-years':20,'retirement-return':6,'retirement-match':50,'retirement-low-return':4,'retirement-high-return':8,'retirement-inflation':-1});
+    await page.locator('#retirement-calc').click();
+    if(!/Check inflation/.test(await textOf('retirement-scenario-status'))) throw new Error('Invalid inflation should be rejected');
+
+    // Expanded scenario table must remain within a 320px mobile viewport.
+    await page.setViewportSize({width:320,height:800});
+    await page.goto('http://127.0.0.1:4173/retirement-calculator.html');
+    await page.locator('#retirement-scenarios > summary').click();
+    const retirementWidth=await page.evaluate(()=>document.documentElement.scrollWidth);
+    if(retirementWidth>320) throw new Error('Expanded retirement scenarios overflow 320px viewport: '+retirementWidth);
+    await page.setViewportSize({width:1365,height:900});
 
     // 11. Student loan payoff: amortization, zero balance and insufficient payment.
     await calculate('student-loan-payoff.html','student-calc',{'student-balance':5000,'student-rate':6.8,'student-payment':100});

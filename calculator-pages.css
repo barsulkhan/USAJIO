@@ -82,3 +82,14 @@ button,.primary-btn,.nav a{min-height:42px}
 .compare-table caption{text-align:left;font-weight:700;padding:10px;color:var(--text)}
 .compare-table td,.compare-table th{white-space:nowrap}
 @media(max-width:620px){.scenario-comparison{padding:12px}.scenario-cards{grid-template-columns:1fr}.scenario-card .fields{grid-template-columns:1fr}.scenario-card label:last-child{grid-column:auto}.scenario-highlights{grid-template-columns:1fr}}
+
+
+/* Optional inflation-adjusted retirement scenarios. */
+.retirement-scenarios{margin-top:22px;padding:16px;border:1px solid var(--line);border-radius:14px;background:#fbfcfd;min-width:0}
+.retirement-scenarios>summary{font-weight:700;cursor:pointer;color:var(--text);padding:4px 0}
+.retirement-scenarios>summary:focus-visible{outline:3px solid #0c9b83;outline-offset:4px}
+.retirement-scenario-inputs{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}
+.retirement-scenario-status{font-size:13px;line-height:1.55;color:var(--muted);margin:14px 0}
+.retirement-scenario-table{min-width:650px}
+.retirement-scenario-table td,.retirement-scenario-table th{white-space:nowrap}
+@media(max-width:420px){.retirement-scenarios{padding:12px}.retirement-scenario-inputs{grid-template-columns:1fr}}
