@@ -830,3 +830,29 @@ First verify deployment run #45030278000 for merge commit `d61f0498a1fbc965ec527
 - Documentation PR #53 was squash-merged as commit 9d0b2b64a487850f49e1f2ef28e45e46ef468109.
 - PR #52 release status is now: implementation merged, Browser QA passed, mobile and desktop Lighthouse passed, GitHub Pages deployment passed.
 - Next active item remains Advanced Budget Planner (PR #54 currently under validation).
+---
+
+## 2026-11-22 — Advanced Budget Planner completed and deployed
+
+### Loan Amortization release record
+- PR #52 squash-merged as 623611353a62df1f48f105c6b8a93204dbb02635.
+- Browser QA run #45046620695 passed; mobile and desktop Lighthouse run #45046620712 passed.
+- GitHub Pages deployment run #45046936416 passed for the PR #52 merge commit.
+- Documentation PR #53 merged as 9d0b2b64a487850f49e1f2ef28e45e46ef468109; PR #55 merged as 757ee5cf48a6225399d49d197ee59219e392d3a3 and recorded the deployment evidence.
+
+### Advanced Budget Planner release record
+- Research, competitor analysis and improvement plan: docs/ADVANCED_BUDGET_PLANNER_RESEARCH.md.
+- PR #54, feat: add advanced budget allocation planner, squash-merged as 41e13db4259b82e78932a85c30514c50b57eaab3.
+- Browser QA run #45047728008 passed on head d0dfa2d2a5d2a16ca655e5fec43cc7791607e2cc. This includes budget arithmetic, default/custom targets, unassigned-category handling, zero income, invalid percentages, 10 responsive widths, and an explicit expanded-panel 320px overflow check; all 12 calculator known-answer/edge-case tests and axe WCAG 2.1 A/AA checks passed.
+- Lighthouse run #45047662620 passed on commit dcdc3c4305b745ef75286ff30cdafc3c7c85faac. The only subsequent commit before the passing Browser QA head added a Browser QA-only 320px expanded-panel assertion; no application HTML/CSS/JS changed between those commits.
+- Mobile Lighthouse: Performance 99–100, Accessibility 100, Best Practices 100, SEO 100; maximum reported LCP about 1,444 ms, maximum CLS about 0.0414, TBT 0 ms.
+- Desktop Lighthouse: Performance 99–100, Accessibility 100, Best Practices 100, SEO 100; maximum reported LCP about 729 ms, maximum CLS about 0.0121, TBT 0 ms.
+- GitHub Pages deployment run #45047971297 passed for merge commit 41e13db4259b82e78932a85c30514c50b57eaab3. Configure Pages, upload artifact, artifact-registration wait and Deploy to GitHub Pages all completed successfully.
+
+### Current roadmap and controls
+- Milestone 1 — Loan Amortization Schedule: complete, merged, CI passed and GitHub Pages deployment verified.
+- Milestone 2 — Advanced Budget Planner: complete, merged, CI passed and GitHub Pages deployment verified.
+- Next active roadmap item: Milestone 3 — Compare Scenarios. Begin with research, competitor analysis and an improvement plan before coding. Initial scope should compare supported loan assumptions side by side, preserve transparent assumptions, avoid mixing currencies and keep all financial inputs browser-local.
+- Search Console/indexing and AdSense/monetization remain paused. Do not resume unless explicitly requested.
+- Physical Android visual/touch and TalkBack tests remain NOT TESTED until performed on a real device. Automated Browser QA and axe checks are not substitutes.
+- USAJIO only. Do not modify InfoJano. No paid domain, service or subscription.
