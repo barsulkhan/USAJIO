@@ -777,3 +777,14 @@ This is the single ordered backlog for USAJIO. Work in sequence unless a critica
 
 ### Current resume point
 First verify deployment run #45030278000 for merge commit `d61f0498a1fbc965ec5278a1185fb92458ecf85f`. Then begin Milestone 1 research by inspecting the current loan calculator source and reviewing reputable competitor schedule patterns. Do not jump directly into coding before recording the research and improvement plan.
+
+
+### Milestone 1 progress update — 2026-11-22
+- Roadmap and ordered task schedule were merged in PR #49 as `74df7d946040d511f80ebd9b76566fb13fa8e329`.
+- PR #48 homepage card nesting fix was merged as `d61f0498a1fbc965ec5278a1185fb92458ecf85f`; GitHub Pages deployment run #45030278000 completed successfully for that exact commit.
+- Loan amortization research was documented and merged in PR #50 as `8ca9229df7b5702d12efbe6babef6a3c264268b6`; see `docs/LOAN_AMORTIZATION_RESEARCH.md`.
+- Inspected current `loan-calculator.html` and `script.js`: current tool shows payment including extra, total interest and total repayment, but has no payment-by-payment schedule. It uses fixed-rate monthly calculations, recurring extra monthly payment and a 600-payment cap.
+- Public patterns reviewed: TransUnion amortization and loan-payment calculators, DexoCalc and PayoffSchedule. Primary grounding reviewed from CFPB mortgage and auto-loan amortization explainers and its negative-amortization guidance.
+- Proposed first release: monthly schedule with opening balance, scheduled payment, extra principal, interest, principal reduction, ending balance and cumulative interest; consistent summary; final payment capped; local-only computation. Variable rates, irregular frequencies, one-time extras, dates and PDF/Excel exports remain out of scope initially.
+- Proposed calculation policy: a cent-rounded monthly ledger with summary totals derived from the same rows. This still needs to be implemented and validated against independent examples; no production feature code has been changed yet.
+- Next exact action: implement the schedule on a dedicated feature branch, add known-answer/zero-rate/extra-payment/final-payment/rounding/input/privacy/accessibility tests, then run browser QA and relevant Lighthouse checks. Merge only after required checks pass.
