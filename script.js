@@ -84,10 +84,10 @@
     const principal=read("loan-amount",0,1e12);
     const inputs=[
       {label:"Scenario A",rate:read("loan-rate",0,100),years:read("loan-years",1,50),extra:read("loan-extra",0,1e12)},
-      {label:"Scenario B",rate:read("compare-rate-b",0,100),years:read("compare-years-b",1,50),extra:read("compare-extra-b",0,1e12)},
-      {label:"Scenario C",rate:read("compare-rate-c",0,100),years:read("compare-years-c",1,50),extra:read("compare-extra-c",0,1e12)}
+      {label:"Scenario B",rate:read("compare-rate-b",0,100),years:read("compare-years-b",1,50),extra:read("compare-extra-input-b",0,1e12)},
+      {label:"Scenario C",rate:read("compare-rate-c",0,100),years:read("compare-years-c",1,50),extra:read("compare-extra-input-c",0,1e12)}
     ];
-    const outputIds=["compare-scheduled-a","compare-scheduled-b","compare-scheduled-c","compare-monthly-a","compare-monthly-b","compare-monthly-c","compare-interest-a","compare-interest-b","compare-interest-c","compare-total-a","compare-total-b","compare-total-c","compare-count-a","compare-count-b","compare-count-c","compare-extra-a","compare-extra-b","compare-extra-c","compare-delta-monthly-b","compare-delta-monthly-c","compare-delta-interest-b","compare-delta-interest-c","compare-delta-total-b","compare-delta-total-c","compare-delta-count-b","compare-delta-count-c"];
+    const outputIds=["compare-scheduled-a","compare-scheduled-b","compare-scheduled-c","compare-monthly-a","compare-monthly-b","compare-monthly-c","compare-interest-a","compare-interest-b","compare-interest-c","compare-total-a","compare-total-b","compare-total-c","compare-count-a","compare-count-b","compare-count-c","compare-extra-paid-a","compare-extra-paid-b","compare-extra-paid-c","compare-delta-monthly-b","compare-delta-monthly-c","compare-delta-interest-b","compare-delta-interest-c","compare-delta-total-b","compare-delta-total-c","compare-delta-count-b","compare-delta-count-c"];
     if(principal===null||principal<=0||inputs.some(x=>[x.rate,x.years,x.extra].some(v=>v===null))){
       invalid(outputIds);put("compare-status","Check the shared loan amount and all scenario inputs.");return;
     }
@@ -100,7 +100,7 @@
       put("compare-interest-"+key,fmt(r.interestTotal));
       put("compare-total-"+key,fmt(r.paidTotal));
       put("compare-count-"+key,r.count+" payments");
-      put("compare-extra-"+key,fmt(r.extraTotal));
+      put("compare-extra-paid-"+key,fmt(r.extraTotal));
     });
     const deltaMoney=(value)=>{const amount=Math.round((value+Number.EPSILON)*100)/100;return amount===0?"No difference":(amount>0?"+":"−")+fmt(Math.abs(amount));};
     ["b","c"].forEach((key,index)=>{
