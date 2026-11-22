@@ -56,7 +56,7 @@
       const afterScheduled=cents(Math.max(0,opening-scheduledPrincipal));
       const extraApplied=Math.min(extraPayment,afterScheduled);
       const principal=cents(scheduledPrincipal+extraApplied);
-      balance=cents(Math.max(0,opening+interest-principal));
+      balance=cents(Math.max(0,opening-principal));
       const payment=cents(interest+principal);
       interestTotal=cents(interestTotal+interest);
       paidTotal=cents(paidTotal+payment);
