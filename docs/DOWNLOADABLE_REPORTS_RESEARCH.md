@@ -2,7 +2,7 @@
 
 **Project:** USAJIO  
 **Research date:** 2026-11-22  
-**Status:** Research and scope definition; implementation not yet started.
+**Status:** Research complete; first implementation slice (loan amortization CSV and print report) is in PR #63 and validation is in progress.
 
 ## 1. Existing USAJIO baseline
 - Loan Calculator has a complete monthly amortization schedule (up to 600 payments), extra principal, cent-rounded interest and final-payment cap.
@@ -105,3 +105,13 @@ Sources:
 - Competitor review uses public feature pages and descriptions, not hands-on testing of all products.
 - Native browser Print → Save as PDF depends on the user's browser/OS print UI; USAJIO must not claim a PDF file was automatically created.
 - Spreadsheet formula handling varies by application and version. Test the actual generated CSV in a text editor and representative spreadsheet software before making strong compatibility claims.
+
+## 9. Implementation progress — 2026-11-22
+- PR #63 implements the first approved slice on the Loan Payment Calculator only: a client-side UTF-8 CSV download and native browser Print / Save as PDF action.
+- CSV is generated from the validated cent-rounded amortization result object, not formatted DOM text. It includes currency, principal, rate, term, extra principal, payment totals, assumptions, exclusions and every schedule row (including final capped payment).
+- All CSV fields are consistently quoted and embedded quotes are doubled; rows use CRLF. Numeric fields are emitted as decimal values without currency symbols. Static labels and allowlisted currency codes are used; no user-controlled free-text fields are exported, and financial inputs are not sent to a server or included in filenames.
+- The CSV filename is fixed (usajio-loan-amortization.csv). Object URLs are revoked after download.
+- Print / Save as PDF invokes the browser's native print UI; a print stylesheet hides navigation, calculator inputs, action buttons and scenario controls while retaining report assumptions, summary, disclaimer and the full schedule table. This is not represented as an automatic PDF download.
+- Editing any loan assumption invalidates the prior report actions until recalculation, preventing stale exports.
+- Browser QA adds checks for download filename, UTF-8 BOM, currency/assumption metadata, CRLF row count, all 60 schedule rows, final zero balance, static non-formula row prefixes, native print invocation, print stylesheet visibility and stale-report invalidation. Automated run results are pending.
+- This PR deliberately implements only the loan amortization export slice. Compare Scenarios, Advanced Budget Planner and Retirement Projection exports remain future work after this slice is reviewed and validated.
