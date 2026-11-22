@@ -2,7 +2,7 @@
 
 **Project:** USAJIO  
 **Research date:** 2026-11-22  
-**Status:** Research complete; first implementation slice (loan amortization CSV and print report) is in PR #63 and validation is in progress.
+**Status:** Research complete; first implementation slice (loan amortization CSV and print report) is merged, tested and deployed.
 
 ## 1. Existing USAJIO baseline
 - Loan Calculator has a complete monthly amortization schedule (up to 600 payments), extra principal, cent-rounded interest and final-payment cap.
@@ -115,3 +115,14 @@ Sources:
 - Editing any loan assumption invalidates the prior report actions until recalculation, preventing stale exports.
 - Browser QA adds checks for download filename, UTF-8 BOM, currency/assumption metadata, CRLF row count, all 60 schedule rows, final zero balance, static non-formula row prefixes, native print invocation, print stylesheet visibility and stale-report invalidation. Automated run results are pending.
 - This PR deliberately implements only the loan amortization export slice. Compare Scenarios, Advanced Budget Planner and Retirement Projection exports remain future work after this slice is reviewed and validated.
+
+
+## 10. Release verification — 2026-11-22 (PR #63)
+- PR #63 was squash-merged as `8c7bb010a925a7d47ae0ec322cc4ebbfec9ca270`.
+- Browser QA run #45050335877 passed on the PR head. The automated suite checked the CSV filename, UTF-8 BOM, metadata, CRLF rows, all 60 payment rows, final zero balance, formula-safe static labels, print invocation, print stylesheet and stale-result invalidation, in addition to the broader calculator/responsive/keyboard/axe checks.
+- Lighthouse run #45050335847: Mobile and Desktop jobs passed.
+- User supplied a generated CSV for review; the conversation review recorded the expected metadata, UTF-8 BOM, CRLF row structure and complete 60-payment schedule with final zero balance.
+- User supplied a browser-generated PDF for review. The inspected PDF contains 3 pages and all 60 payments in sequence, with the 8-column table continuing across page boundaries. For the PDF example ($100 principal, 7% annual rate, 5 years), the final payment is $1.30, ending balance is $0.00 and cumulative interest is $18.71.
+- GitHub Pages deployment run #45050740122 for merge commit `8c7bb010a925a7d47ae0ec322cc4ebbfec9ca270` completed with conclusion `success`.
+- A non-blocking Node.js 20 deprecation warning appeared in the Pages workflow. It did not prevent deployment; review runtime/action upgrades in a separate maintenance change.
+- This release implements only the loan export slice. Compare Scenarios, Advanced Budget Planner and Retirement Projection exports remain planned, not complete.
