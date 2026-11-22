@@ -580,3 +580,81 @@ Follow the established process for every new feature: **Research → Competitor 
 - GitHub Pages deployment run #45023314659 for this exact latest `main` commit completed successfully.
 - Latest `main` is now `dd1906eb746176957e34684be04af63a8924855e`; open PR count remains 0.
 - PR #33 changed documentation only; the website source released by PR #32 remains the deployed site content.
+
+
+---
+
+## 2026-11-22 — Five follow-up tasks: guide quality, social metadata, manual QA and Search Console readiness
+
+### Verified GitHub state for this checkpoint
+- PR #35: official-source refresh and social-preview metadata across all nine finance guides — merged as `5c352bcd4412d0a2e9f77a7777edef5db1994b49`.
+- PR #36: physical Android and TalkBack manual QA checklist — merged as `e23116afeb481b53d6ec8c680077b927981d41d7`.
+- PR #37: USAJIO Search Console verification/indexing setup checklist — merged as `6b371f4faa7e84098d3bfa76dbdd4bbc053bf74d`.
+- PR #38: official Google Search Console help references — merged as `cda19c45b0d28ec0ebeff3c491c0c9c0e8899e69`.
+- Main after PR #35–#38: `5c352bcd4412d0a2e9f77a7777edef5db1994b49`.
+- Open PR count after these merges: **0**.
+- GitHub Pages deployment run #45024192053 for this exact code commit completed successfully.
+- No InfoJano repository, file or setting was changed. No paid service/domain was purchased.
+
+### Task 1 — Physical Android visual review
+- A detailed checklist is now committed at `docs/ANDROID_TALKBACK_MANUAL_QA.md`.
+- It covers the homepage and cash-flow guide, mobile menu, layout, touch targets, text zoom, orientation, calculator interactions and all 12 calculator pages.
+- **Actual physical Android visual/touch review remains NOT TESTED.** The assistant cannot operate or observe the user's physical Android handset in this session. Existing responsive Playwright widths and mobile Lighthouse emulation are automated tests, not a substitute for the physical-device review.
+- The prior user-provided Android screenshot confirmed an earlier homepage build only; it does not verify the new guide or current deployment.
+
+### Task 2 — Improve the remaining finance guides
+- Reviewed and refreshed all eight pre-existing guides: budgeting, emergency fund, debt payoff, credit score, mortgage basics, auto financing, retirement planning and student loans.
+- Added visible review date (November 22, 2026) and dedicated official-source/further-reading links to each.
+- Official references include CFPB, FTC, IRS, SEC Investor.gov and Federal Student Aid. The student-loan guide now warns that 2026 federal repayment eligibility depends on loan type and first-disbursement timing; readers are directed to current StudentAid.gov information rather than relying on stale plan names.
+- Preserved the existing original educational content, disclaimers and internal calculator links. No invented author credentials, guaranteed outcomes or affiliate claims.
+- The ninth guide, `cash-flow-budget-guide.html`, retains its official source section and review date.
+- All nine finance guides are now consistently supplied with Open Graph article/site/title/description/url and Twitter summary metadata.
+
+### Task 3 — Google Search Console readiness
+- OpenSEO's connected project list returned only the existing **InfoJano SEO** project. No USAJIO project or Search Console property was visible.
+- To preserve project separation, no InfoJano project, account, property or setting was accessed, rebound or modified.
+- Added `docs/SEARCH_CONSOLE_SETUP.md` with the recommended URL-prefix property, verification process, sitemap submission, URL Inspection and evidence log.
+- Added official Google help links for ownership verification and URL Inspection. Follow the exact verification file path/name/content that Google provides; do not alter the token.
+- **Search Console ownership, sitemap submission, indexing status and USAJIO Search Console connection remain NOT VERIFIED / NOT CONNECTED.**
+- User-side prerequisite: create the URL-prefix property `https://barsulkhan.github.io/USAJIO/` in the user's Google account, choose HTML file or meta-tag verification, then provide the exact Google-generated file/tag for a dedicated USAJIO-only PR. Never share Google account credentials.
+- After verification, submit `https://barsulkhan.github.io/USAJIO/sitemap.xml` and inspect the homepage, cash-flow guide and a calculator. Sitemap submission and a live test do not guarantee indexing.
+
+### Task 4 — Social-preview metadata
+- Standardized Open Graph `og:type`, `og:site_name`, `og:title`, `og:description`, `og:url` and `twitter:card` on all nine finance guides.
+- Added Playwright assertions for the guide review date, source section/link and social metadata.
+- The browser QA on final PR #35 head commit `cad5cc11f793ffe3d07f3c731f241c9373d3e20f` passed as run #45023893130.
+- An earlier QA attempt (#45023797601) failed because the first assertion incorrectly searched for CSS-selector-like text instead of the actual HTML attributes. The test was corrected in a follow-up commit and rerun successfully before merge. The initial failure is not being represented as a pass.
+
+### Task 5 — Physical screen-reader review
+- Added a detailed TalkBack checklist in `docs/ANDROID_TALKBACK_MANUAL_QA.md`, covering navigation landmarks, heading navigation, link names, menu state, form labels, units, errors, result announcements, table reading order, focus order and Net Worth totals.
+- Automated axe WCAG 2.1 A/AA audit returned no findings on the PR #35 final head; the browser QA also passed keyboard focus/activation and result-announcement checks.
+- **Actual TalkBack / assistive-technology review remains NOT TESTED.** Axe and keyboard automation cannot confirm real TalkBack speech, rotor/gesture navigation or Android accessibility behavior.
+
+### Automated validation for PR #35 final head
+- Browser QA run #45023893130: **completed / success**.
+  - 12-calculator known-answer, zero-rate, boundary, invalid, deficit/negative, insufficient-payment and amortization tests passed.
+  - Net Worth browser-local privacy regression passed.
+  - 10 responsive widths across homepage and all 12 calculators passed; form labels and keyboard-only calculation/focus checks passed.
+  - All 28 HTML pages served and passed unique title, description, canonical, H1, language, sitemap/robots, footer policy links and internal path/fragment checks.
+  - axe WCAG 2.1 A/AA findings: `[]`.
+  - New guide-source/social metadata assertions passed as part of the site-wide browser audit.
+- Performance run #45023893131: **completed / success**, mobile and desktop.
+  - Mobile Performance: **94–100**; Desktop Performance: **99–100**.
+  - Accessibility, Best Practices and SEO: **100** on all audited homepage/calculator pages.
+  - Maximum mobile LCP: approximately **2,468 ms**; maximum desktop LCP: approximately **720 ms**.
+  - Maximum mobile CLS: approximately **0.0476**; maximum desktop CLS: approximately **0.0121**.
+  - TBT: **0 ms** throughout.
+  - These Lighthouse results cover homepage and 12 calculators, not all nine guide pages. They are CI lab measurements, not field Core Web Vitals.
+
+### Next exact actions
+1. Confirm GitHub Pages deployment run #45024192053 for main commit `5c352bcd4412d0a2e9f77a7777edef5db1994b49` completes successfully; verify the resulting deployment status before claiming release.
+2. The user should complete the physical Android visual/touch checklist for the homepage and new cash-flow guide. Record model, Android/Chrome versions and observed results.
+3. The user should complete the TalkBack manual checklist on a physical Android device; do not mark it pass from CI.
+4. The user should create/verify the USAJIO URL-prefix property in Search Console and provide the exact Google-generated verification file or meta tag. Then implement it on a dedicated USAJIO branch/PR, deploy, submit the sitemap and inspect representative URLs.
+5. Continue guide improvements only where research supports useful new substance; do not mass-produce thin SEO content.
+6. Keep USAJIO and InfoJano separate; do not buy a domain, paid service or subscription.
+
+### Copy-ready continuation prompt
+USAJIO এখান থেকে চালিয়ে যাও। আগে `docs/USAJIO_MASTER_PROJECT_2026-11-11.md` সম্পূর্ণ পড়বে। PR #35–#38 merged; all nine finance guides now have official sources, review dates and social metadata; browser QA #45023893130 and Lighthouse #45023893131 passed. Android visual/touch and TalkBack physical testing are still NOT TESTED; use `docs/ANDROID_TALKBACK_MANUAL_QA.md`. Search Console is NOT VERIFIED because the connected OpenSEO workspace exposes only InfoJano; do not touch InfoJano. Follow `docs/SEARCH_CONSOLE_SETUP.md`; wait for the user's exact Google verification file/meta tag before adding it in a separate USAJIO PR. First verify deployment run #45024192053 for main commit `5c352bcd4412d0a2e9f77a7777edef5db1994b49`. Use separate branches and PRs; merge only after relevant tests pass. বাংলায় কথা বলবে, কোনো paid service/domain কিনবে না, এবং বাস্তব Android/TalkBack বা Search Console পরীক্ষা না করে pass/indexed বলবে না.
+
+- Final deployment verification: run #45024192053 completed with **success** for main commit `5c352bcd4412d0a2e9f77a7777edef5db1994b49`; all deploy steps completed, including GitHub Pages deployment.
