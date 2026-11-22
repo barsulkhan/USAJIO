@@ -187,6 +187,14 @@ const server = http.createServer((req,res) => {
     near(await money('budget-remaining'),-250,'Budget deficit');
     await page.locator('#budget-income').fill('-1'); await page.locator('#budget-calc').click(); await expectInvalid('budget-remaining','Negative budget income');
 
+    // Expanded advanced allocation must remain within a 320px mobile viewport.
+    await page.setViewportSize({width:320,height:800});
+    await page.goto('http://127.0.0.1:4173/monthly-budget.html');
+    await page.locator('#budget-advanced > summary').click();
+    const expandedBudgetWidth=await page.evaluate(()=>document.documentElement.scrollWidth);
+    if(expandedBudgetWidth>320) throw new Error('Expanded advanced budget panel overflows 320px viewport: '+expandedBudgetWidth);
+    await page.setViewportSize({width:1365,height:900});
+
     // 4. Savings goal: ordinary gap, already-funded target, invalid duration.
     await calculate('savings-goal.html','save-calc',{'save-target':5000,'save-current':500,'save-months':18});
     near(await money('save-monthly'),250,'Savings monthly contribution');
