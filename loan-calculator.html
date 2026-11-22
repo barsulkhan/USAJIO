@@ -7,4 +7,42 @@
 <table class="schedule-table">
 <thead><tr><th scope="col">Payment</th><th scope="col">Starting balance</th><th scope="col">Scheduled payment</th><th scope="col">Extra payment</th><th scope="col">Interest</th><th scope="col">Principal</th><th scope="col">Ending balance</th><th scope="col">Cumulative interest</th></tr></thead>
 <tbody id="loan-schedule"><tr><td colspan="8">Calculate to view your schedule.</td></tr></tbody>
-</table></div></div></div></section><section class="methodology"><h2>How this estimate works</h2><p>The estimate uses a standard fixed-rate amortizing loan payment based on the amount, annual rate and term. Any extra monthly amount is added to the scheduled payment and reduces the balance faster.</p><p class="disclaimer">Assumes monthly payments and a constant rate. Taxes, fees, insurance, lender charges and prepayment penalties are excluded.</p></section><section class="related-tools"><h2>Explore other tools</h2><a href="compound-interest.html">Compound Interest</a><a href="loan-calculator.html">Loan</a><a href="monthly-budget.html">Monthly Budget</a><a href="savings-goal.html">Savings Goal</a><a href="emergency-fund.html">Emergency Fund</a><a href="debt-payoff.html">Debt Payoff</a></section></main><footer><a class="brand footer-brand" href="index.html"><img class="brand-logo" src="assets/logo.svg" alt="USAJIO"></a><div class="footer-links"><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="disclaimer.html">Disclaimer</a><a href="editorial.html">Editorial Policy</a></div><p>© <span id="year"></span> USAJIO. Educational information only.</p></footer><script src="script.js"></script></body></html>
+</table></div></div>
+<details class="scenario-comparison" id="scenario-comparison">
+<summary>Compare scenarios (optional)</summary>
+<p class="disclaimer">Scenario A uses the loan amount, rate, term and extra payment above. Enter alternative rate, term and extra monthly principal for scenarios B and C. All scenarios use the same principal and currency.</p>
+<div class="scenario-cards">
+<fieldset class="scenario-card"><legend>Scenario B</legend><div class="fields">
+<label>Annual interest rate (%)<input id="compare-rate-b" type="number" min="0" max="100" step=".1" value="6.5"></label>
+<label>Term (years)<input id="compare-years-b" type="number" min="1" max="50" value="5"></label>
+<label>Extra monthly payment<input id="compare-extra-b" type="number" min="0" value="0"></label>
+</div></fieldset>
+<fieldset class="scenario-card"><legend>Scenario C</legend><div class="fields">
+<label>Annual interest rate (%)<input id="compare-rate-c" type="number" min="0" max="100" step=".1" value="7"></label>
+<label>Term (years)<input id="compare-years-c" type="number" min="1" max="50" value="4"></label>
+<label>Extra monthly payment<input id="compare-extra-c" type="number" min="0" value="0"></label>
+</div></fieldset>
+</div>
+<button class="primary-btn" id="compare-calc">Compare scenarios</button>
+<p id="compare-status" class="scenario-status" role="status" aria-live="polite">Calculate to compare the current loan settings with scenarios B and C.</p>
+<div class="scenario-results" aria-live="polite" aria-atomic="true">
+<div class="scenario-highlights"><div><small>Lowest monthly outflow</small><strong id="compare-lowest-monthly">—</strong></div><div><small>Lowest total interest</small><strong id="compare-lowest-interest">—</strong></div></div>
+<div class="schedule-table-wrap" role="region" aria-label="Loan scenario comparison results" tabindex="0">
+<table class="schedule-table compare-table"><thead><tr><th scope="col">Measure</th><th scope="col">Scenario A</th><th scope="col">Scenario B</th><th scope="col">Scenario C</th></tr></thead><tbody>
+<tr><th scope="row">Scheduled monthly payment</th><td id="compare-scheduled-a">—</td><td id="compare-scheduled-b">—</td><td id="compare-scheduled-c">—</td></tr>
+<tr><th scope="row">Monthly outflow incl. extra</th><td id="compare-monthly-a">—</td><td id="compare-monthly-b">—</td><td id="compare-monthly-c">—</td></tr>
+<tr><th scope="row">Total interest</th><td id="compare-interest-a">—</td><td id="compare-interest-b">—</td><td id="compare-interest-c">—</td></tr>
+<tr><th scope="row">Total repayment</th><td id="compare-total-a">—</td><td id="compare-total-b">—</td><td id="compare-total-c">—</td></tr>
+<tr><th scope="row">Payments to payoff</th><td id="compare-count-a">—</td><td id="compare-count-b">—</td><td id="compare-count-c">—</td></tr>
+<tr><th scope="row">Extra principal paid</th><td id="compare-extra-a">—</td><td id="compare-extra-b">—</td><td id="compare-extra-c">—</td></tr>
+</tbody></table></div>
+<div class="schedule-table-wrap" role="region" aria-label="Scenario differences compared with scenario A" tabindex="0">
+<table class="schedule-table compare-table"><caption>Difference compared with Scenario A</caption><thead><tr><th scope="col">Measure</th><th scope="col">Scenario B vs A</th><th scope="col">Scenario C vs A</th></tr></thead><tbody>
+<tr><th scope="row">Monthly outflow</th><td id="compare-delta-monthly-b">—</td><td id="compare-delta-monthly-c">—</td></tr>
+<tr><th scope="row">Total interest</th><td id="compare-delta-interest-b">—</td><td id="compare-delta-interest-c">—</td></tr>
+<tr><th scope="row">Total repayment</th><td id="compare-delta-total-b">—</td><td id="compare-delta-total-c">—</td></tr>
+<tr><th scope="row">Payments to payoff</th><td id="compare-delta-count-b">—</td><td id="compare-delta-count-c">—</td></tr>
+</tbody></table></div></div>
+<p class="disclaimer">Illustrative fixed-rate estimates using monthly payments and cent-rounded interest. Fees, APR, taxes, insurance and prepayment penalties are excluded. This is not a lender-offer comparison or a recommendation.</p>
+</details>
+</div></section><section class="methodology"><h2>How this estimate works</h2><p>The estimate uses a standard fixed-rate amortizing loan payment based on the amount, annual rate and term. Any extra monthly amount is added to the scheduled payment and reduces the balance faster.</p><p class="disclaimer">Assumes monthly payments and a constant rate. Taxes, fees, insurance, lender charges and prepayment penalties are excluded.</p></section><section class="related-tools"><h2>Explore other tools</h2><a href="compound-interest.html">Compound Interest</a><a href="loan-calculator.html">Loan</a><a href="monthly-budget.html">Monthly Budget</a><a href="savings-goal.html">Savings Goal</a><a href="emergency-fund.html">Emergency Fund</a><a href="debt-payoff.html">Debt Payoff</a></section></main><footer><a class="brand footer-brand" href="index.html"><img class="brand-logo" src="assets/logo.svg" alt="USAJIO"></a><div class="footer-links"><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="disclaimer.html">Disclaimer</a><a href="editorial.html">Editorial Policy</a></div><p>© <span id="year"></span> USAJIO. Educational information only.</p></footer><script src="script.js"></script></body></html>
