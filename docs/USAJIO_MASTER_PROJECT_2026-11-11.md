@@ -390,3 +390,11 @@ Consolidated integration branch: `quality/integrated-final-qa-2026-11-21`. Premi
 - User: open `https://barsulkhan.github.io/USAJIO/` on the device/browser they normally use and confirm whether the new hero design is visible. This cannot be confirmed by GitHub Actions alone.
 - User/device: physical Android touch/layout check; this cannot be emulated as a real device here.
 - Not tested: keyboard-only and screen-reader audit, visual regression, Lighthouse/Core Web Vitals.
+
+
+### Additional static content/navigation checks — 2026-11-22
+- All 8 Money Guide pages inspected: each has a page-specific title, meta description, canonical URL and exactly one H1 — **Pass**.
+- About, Contact, Privacy, Terms, Disclaimer and Editorial pages inspected: each has a title, meta description, canonical URL and exactly one H1 — **Pass**.
+- Static local HTML-link audit across all 26 HTML pages in the repository tree: **Pass**; no missing relative `.html` targets were found.
+- Sitemap URL count (26) matches the current HTML page count (26) — **Pass (count only)**. Sitemap URLs are project-relative GitHub Pages absolute URLs; live URL reachability remains **Not Tested**.
+- No source code or calculator logic was modified during this QA pass.
