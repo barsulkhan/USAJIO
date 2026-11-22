@@ -93,7 +93,7 @@
       ["Payment","Starting balance","Scheduled payment","Extra principal","Interest","Principal paid","Ending balance","Cumulative interest"],
       ...report.result.rows.map(row => [row.count,row.opening,row.scheduled,row.extra,row.interest,row.principal,row.ending,row.cumulative].map((value,index)=>index===0?String(value):loanCsvNumber(value)))
     ];
-    const csv="\\uFEFF"+rows.map(row=>row.map(loanCsvCell).join(",")).join("\\r\\n");
+    const csv="\uFEFF"+rows.map(row=>row.map(loanCsvCell).join(",")).join("\r\n");
     const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
     const url=URL.createObjectURL(blob);
     const link=document.createElement("a");
@@ -110,7 +110,7 @@
 
   bind("loan-calc", () => {
     const p=read("loan-amount",0,1e12), annual=read("loan-rate",0,100), years=read("loan-years",1,50), extra=read("loan-extra",0,1e12);
-    if([p,annual,years,extra].some(v=>v===null)||p<=0){invalid(["loan-monthly","loan-interest","loan-total"]);put("loan-schedule","");return;}
+    if([p,annual,years,extra].some(v=>v===null)||p<=0){latestLoanReport=null;setLoanReportActions(false);invalid(["loan-monthly","loan-interest","loan-total"]);put("loan-schedule","");return;}
     const result=calculateLoanSchedule(p,annual,years,extra);
     if(!result){latestLoanReport=null;setLoanReportActions(false);invalid(["loan-monthly","loan-interest","loan-total"]);put("loan-schedule","");return;}
     latestLoanReport={principal:p,annual,years,extra,currency:$("currency")?.value||"USD",result};
@@ -127,7 +127,6 @@
       "loan-print-count":String(result.count)
     };
     Object.entries(printValues).forEach(([id,value])=>{if($(id)) $(id).textContent=value;});
-    if(!result){invalid(["loan-monthly","loan-interest","loan-total"]);put("loan-schedule","");return;}
     put("loan-monthly",fmt(result.monthlyPayment));
     put("loan-interest",fmt(result.interestTotal));
     put("loan-total",fmt(result.paidTotal));
