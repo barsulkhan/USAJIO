@@ -264,6 +264,73 @@
     put("ef-goal",fmt(goal)); put("ef-gap",fmt(Math.max(0,goal-current)));
   });
 
+  bind("multi-debt-calc", () => {
+    const status = $("multi-debt-status");
+    const results = $("multi-debt-results");
+    if (results) results.hidden = true;
+    const debts = [];
+    for (let i=1;i<=4;i++) {
+      const nameEl=$("multi-debt-name-"+i), balanceEl=$("multi-debt-balance-"+i), rateEl=$("multi-debt-rate-"+i), minEl=$("multi-debt-min-"+i);
+      const raw=[nameEl?.value.trim()||"",balanceEl?.value.trim()||"",rateEl?.value.trim()||"",minEl?.value.trim()||""];
+      if(raw.every(v=>v==="")) continue;
+      if(raw.some(v=>v==="")) { if(status) status.textContent="Complete the name, balance, APR and minimum payment for each debt row you use."; return; }
+      const balance=Number(raw[1]), apr=Number(raw[2]), minimum=Number(raw[3]);
+      if(!raw[0]||!Number.isFinite(balance)||balance<=0||!Number.isFinite(apr)||apr<0||apr>100||!Number.isFinite(minimum)||minimum<=0) {
+        if(status) status.textContent="Check each debt: enter a name, positive balance, APR from 0–100%, and a positive minimum payment.";
+        return;
+      }
+      const firstInterest=Math.round((balance*apr/1200+Number.EPSILON)*100)/100;
+      if(minimum<=firstInterest) { if(status) status.textContent=raw[0]+": minimum payment must be greater than the first month's estimated interest ("+fmt(firstInterest)+")."; return; }
+      debts.push({name:raw[0],balance:Math.round(balance*100)/100,apr,minimum:Math.round(minimum*100)/100,originalIndex:i});
+    }
+    const extraRaw=$("multi-debt-extra")?.value.trim()||"";
+    const extra=Number(extraRaw);
+    if(!debts.length||extraRaw===""||!Number.isFinite(extra)||extra<0||extra>1e12) {
+      if(status) status.textContent="Enter at least one complete debt and a non-negative extra monthly amount.";
+      return;
+    }
+    const cents=v=>Math.round((v+Number.EPSILON)*100)/100;
+    const simulate=(method)=>{
+      const state=debts.map(d=>({...d,remaining:d.balance,interestTotal:0,paidMonth:0}));
+      const order=[...state].sort((a,b)=>method==="snowball"
+        ? a.balance-b.balance || b.apr-a.apr || a.originalIndex-b.originalIndex
+        : b.apr-a.apr || a.balance-b.balance || a.originalIndex-b.originalIndex);
+      const priority=order.map(d=>d.originalIndex);
+      const monthlyBudget=cents(state.reduce((sum,d)=>sum+d.minimum,0)+extra);
+      let totalInterest=0,month=0;
+      while(state.some(d=>d.remaining>0)&&month<1200){
+        month++;
+        state.forEach(d=>{if(d.remaining>0){const charge=cents(d.remaining*d.apr/1200);d.remaining=cents(d.remaining+charge);d.interestTotal=cents(d.interestTotal+charge);totalInterest=cents(totalInterest+charge);}});
+        let available=monthlyBudget;
+        state.forEach(d=>{
+          if(d.remaining<=0)return;
+          const payment=Math.min(d.minimum,d.remaining,available);
+          d.remaining=cents(Math.max(0,d.remaining-payment));available=cents(available-payment);
+          if(d.remaining===0&&!d.paidMonth)d.paidMonth=month;
+        });
+        for(const id of priority){
+          if(available<=0)break;
+          const d=state.find(item=>item.originalIndex===id);
+          if(!d||d.remaining<=0)continue;
+          const payment=Math.min(d.remaining,available);
+          d.remaining=cents(Math.max(0,d.remaining-payment));available=cents(available-payment);
+          if(d.remaining===0&&!d.paidMonth)d.paidMonth=month;
+        }
+      }
+      if(state.some(d=>d.remaining>0))return null;
+      const payoffOrder=[...state].sort((a,b)=>a.paidMonth-b.paidMonth||priority.indexOf(a.originalIndex)-priority.indexOf(b.originalIndex)).map(d=>d.name);
+      return {months:month,interest:cents(totalInterest),order:payoffOrder};
+    };
+    const snowball=simulate("snowball"), avalanche=simulate("avalanche");
+    if(!snowball||!avalanche){if(status)status.textContent="This plan cannot be paid off within 100 years at the entered monthly budget. Increase the payment or review the minimums.";return;}
+    put("snowball-months",String(snowball.months));put("snowball-interest",fmt(snowball.interest));put("snowball-order",snowball.order.join(" → "));
+    put("avalanche-months",String(avalanche.months));put("avalanche-interest",fmt(avalanche.interest));put("avalanche-order",avalanche.order.join(" → "));
+    const diff=cents(snowball.interest-avalanche.interest);
+    put("multi-debt-difference",diff>0?"Avalanche estimates "+fmt(diff)+" less interest than Snowball.":diff<0?"Snowball estimates "+fmt(Math.abs(diff))+" less interest in this scenario.":"Both strategies estimate the same total interest.");
+    if(results)results.hidden=false;
+    if(status)status.textContent="Comparison complete. Both methods use the same monthly budget of "+fmt(monthlyBudget)+".";
+  });
+
   bind("debt-calc", () => {
     let balance=read("debt-balance",0,1e12), annual=read("debt-rate",0,100), payment=read("debt-payment",0,1e12);
     if([balance,annual,payment].some(v=>v===null)){invalid(["debt-months","debt-interest"]);return;}
