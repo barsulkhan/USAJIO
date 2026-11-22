@@ -823,3 +823,10 @@ First verify deployment run #45030278000 for merge commit `d61f0498a1fbc965ec527
 - Milestone 2 — Advanced Budget Planner: next feature. Begin with current Monthly Budget Planner source inspection, research, competitor analysis and a written improvement plan before implementation. Consider optional 50/30/20 guidance and actual-vs-target breakdown only where research supports them. Preserve existing simple entry flow and browser-local privacy.
 - Every next change must use a dedicated branch and PR; run relevant tests and Lighthouse before merge; verify deployment after merge.
 - Search Console/indexing and AdSense remain paused. Android/TalkBack physical-device checks remain NOT TESTED. No paid domain/service/subscription. USAJIO only; never modify InfoJano.
+### Deployment verification addendum — 2026-11-22
+- Follow-up after the PR #53 documentation update: GitHub Pages deployment for PR #52 merge commit 623611353a62df1f48f105c6b8a93204dbb02635 is now confirmed.
+- Deployment workflow run #45046936416 (Deploy USAJIO to GitHub Pages) completed with conclusion SUCCESS.
+- Deployment job #137283503415 completed successfully; Checkout, Configure Pages, Upload site artifact, artifact-registration wait and Deploy to GitHub Pages all completed successfully.
+- Documentation PR #53 was squash-merged as commit 9d0b2b64a487850f49e1f2ef28e45e46ef468109.
+- PR #52 release status is now: implementation merged, Browser QA passed, mobile and desktop Lighthouse passed, GitHub Pages deployment passed.
+- Next active item remains Advanced Budget Planner (PR #54 currently under validation).
