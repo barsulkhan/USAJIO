@@ -75,6 +75,16 @@ Request indexing only after checking that the page is public, returns successful
 | Indexing / coverage review | NOT VERIFIED | |
 | USAJIO OpenSEO project connected | NOT CONNECTED | |
 
+
+## Official Google help references
+
+- Search Console ownership verification (HTML file and HTML tag requirements): https://support.google.com/webmasters/answer/9008080
+- URL Inspection and indexing troubleshooting: https://support.google.com/webmasters/answer/12482179
+- URL Inspection reference: https://support.google.com/webmasters/answer/9012289
+- Google Search Central SEO Starter Guide: https://developers.google.com/search/docs/fundamentals/seo-starter-guide
+
+Google's verification instructions require the downloaded HTML file to be published at the exact location specified by the verification wizard, without changing its filename or contents. For the USAJIO URL-prefix property, follow the exact URL shown in the wizard; do not assume a token intended for a different path will verify this property.
+
 ## Important limitations
 
 - Search Console data can be delayed and may omit some queries.
