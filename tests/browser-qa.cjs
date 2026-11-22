@@ -34,9 +34,10 @@ const server = http.createServer((req,res) => {
 
     const home=await page.goto('http://127.0.0.1:4173/index.html');
     const axe = require('axe-core');
-    await page.addScriptTag({content:axe.source});
     const auditA11y=async(label)=>{
-      const result=await page.evaluate(async()=>await axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21a','wcag21aa']}}));
+      // Each page navigation replaces the document, so inject axe for every page.
+      await page.addScriptTag({content:axe.source});
+      const result=await page.evaluate(async()=>await window.axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21a','wcag21aa']}}));
       for(const v of result.violations){
         accessibilityFindings.push({page:label,id:v.id,impact:v.impact,description:v.help,nodes:v.nodes.length});
       }
