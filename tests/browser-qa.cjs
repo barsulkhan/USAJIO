@@ -138,13 +138,13 @@ const server = http.createServer((req,res) => {
     near(await money('compare-scheduled-b'),195.67,'Scenario B scheduled payment');
     near(await money('compare-interest-b'),1739.63,'Scenario B interest');
     near(await money('compare-total-b'),11739.63,'Scenario B total repayment');
-    await page.locator('#compare-extra-c').fill('100');
+    await page.locator('#compare-extra-input-c').fill('100');
     await page.locator('#compare-calc').click();
     near(await money('compare-monthly-c'),339.47,'Scenario C monthly outflow');
     near(await money('compare-interest-c'),1004.51,'Scenario C interest with extra payment');
     near(await money('compare-total-c'),11004.51,'Scenario C total repayment');
     if(await textOf('compare-count-c')!=='33 payments') throw new Error('Scenario C payoff count mismatch');
-    near(await money('compare-extra-c'),3200,'Scenario C extra principal');
+    near(await money('compare-extra-paid-c'),3200,'Scenario C extra principal');
     if(await textOf('compare-lowest-monthly')!=='Scenario B') throw new Error('Lowest monthly outflow scenario mismatch');
     if(await textOf('compare-lowest-interest')!=='Scenario C') throw new Error('Lowest total interest scenario mismatch');
     if(!/^−/.test(await textOf('compare-delta-interest-b'))) throw new Error('Scenario B interest delta should be negative');
@@ -153,7 +153,7 @@ const server = http.createServer((req,res) => {
     // Zero-rate scenario and identical-scenario reconciliation.
     await page.locator('#compare-rate-b').fill('0');
     await page.locator('#compare-years-b').fill('5');
-    await page.locator('#compare-extra-c').fill('0');
+    await page.locator('#compare-extra-input-c').fill('0');
     await page.locator('#compare-rate-c').fill('7');
     await page.locator('#compare-years-c').fill('5');
     await page.locator('#loan-rate').fill('7');
@@ -162,7 +162,7 @@ const server = http.createServer((req,res) => {
     near(await money('compare-interest-b'),0,'Scenario B zero-rate interest');
     near(await money('compare-total-b'),10000,'Scenario B zero-rate total');
     await page.locator('#compare-rate-b').fill('7');
-    await page.locator('#compare-extra-b').fill('0');
+    await page.locator('#compare-extra-input-b').fill('0');
     await page.locator('#compare-calc').click();
     if(await textOf('compare-delta-interest-b')!=='No difference') throw new Error('Identical scenarios should have no interest difference');
     await page.locator('#compare-rate-b').fill('-1');
