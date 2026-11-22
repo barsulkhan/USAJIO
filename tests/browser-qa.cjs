@@ -246,6 +246,43 @@ const server = http.createServer((req,res) => {
     const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>document.documentElement.clientWidth+1);
     if(overflow) throw new Error('Homepage has horizontal overflow at 390px');
 
+
+    // Responsive and keyboard-only review across common phone/tablet widths.
+    const responsiveWidths=[320,360,375,390,412,430,620,700,768,1024];
+    for(const file of ['index.html',...pages]){
+      await page.goto('http://127.0.0.1:4173/'+file);
+      for(const width of responsiveWidths){
+        await page.setViewportSize({width,height:844});
+        const metrics=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,client:document.documentElement.clientWidth}));
+        if(metrics.scroll>metrics.client+1) throw new Error(file+' horizontal overflow at '+width+'px: '+JSON.stringify(metrics));
+      }
+      if(file!=='index.html'){
+        const unlabeled=await page.locator('input,select,textarea').evaluateAll(elements=>elements.filter(el=>!(el.labels&&el.labels.length)&&!el.getAttribute('aria-label')&&!el.getAttribute('aria-labelledby')).map(el=>el.id||el.outerHTML.slice(0,100)));
+        if(unlabeled.length) throw new Error(file+' has unlabeled form controls: '+unlabeled.join(', '));
+        await page.setViewportSize({width:390,height:844});
+        await page.keyboard.press('Tab');
+        let reached=false;
+        for(let i=0;i<40;i++){
+          const active=await page.evaluate(()=>({id:document.activeElement?.id||'',tag:document.activeElement?.tagName||'',outline:getComputedStyle(document.activeElement).outlineStyle}));
+          if(active.id.endsWith('-calc')){
+            reached=true;
+            if(active.outline==='none') throw new Error(file+' calculator action lacks a visible keyboard focus indicator');
+            await page.keyboard.press('Enter');
+            const result=(await page.locator('.result-grid').innerText()).trim();
+            if(!result||/—|Check inputs/.test(result)) throw new Error(file+' calculator did not run by keyboard');
+            break;
+          }
+          await page.keyboard.press('Tab');
+        }
+        if(!reached) throw new Error(file+' calculator action is not reachable by keyboard Tab');
+      }
+    }
+    await page.setViewportSize({width:390,height:844});
+    await page.goto('http://127.0.0.1:4173/index.html');
+    const menuRect=await page.locator('.menu-toggle').boundingBox();
+    if(menuRect&&(menuRect.width<44||menuRect.height<44)) throw new Error('Mobile menu touch target is smaller than 44x44px: '+JSON.stringify(menuRect));
+    console.log('PASS: 10 responsive widths across homepage and all 12 calculators; labeled controls and keyboard-only calculation/focus checks.');
+
     // Verify every local HTML link resolves against the repository files.
     const htmlFiles=fs.readdirSync(root).filter(x=>x.endsWith('.html'));
     const missing=[];
