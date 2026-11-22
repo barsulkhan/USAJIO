@@ -2,7 +2,7 @@
 
 **Project:** USAJIO  
 **Research date:** 2026-11-22  
-**Status:** Research and scope definition; implementation not yet started.
+**Status:** Research complete; first implementation is in PR #54 and validation is in progress.
 
 ## 1. Existing USAJIO baseline
 - Current page: `monthly-budget.html`.
@@ -93,3 +93,8 @@ Sources:
 - Research is based on the linked public guidance and competitor feature descriptions, not hands-on testing of competitor apps.
 - Product features and availability can change; re-check primary product documentation if implementation depends on a specific behavior.
 - The 50/30/20 method is an optional rule of thumb, not a regulatory standard or individualized financial recommendation.
+## 8. Implementation note — 2026-11-22
+- PR #54 keeps the existing five expense categories and adds an optional savings/debt contribution field to the main form; its default is zero, so existing base calculations are preserved.
+- Advanced allocation is revealed in a native expandable details section. Users manually assign the five expense categories to Needs, Wants or Savings & debt; non-zero unassigned categories block only the advanced comparison, not the basic budget result.
+- The 50/30/20 targets are editable and must total 100%. The remaining-cash output subtracts both ordinary expenses and the separate savings/debt contribution; the expense subtotal remains distinct.
+- Automated browser tests and mobile/desktop Lighthouse checks are running for the current PR head. Do not treat the feature as complete until all checks pass and deployment is verified.
