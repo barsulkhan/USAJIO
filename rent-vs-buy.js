@@ -32,7 +32,7 @@ function calc(){
   buyer+=ownerMonthly;
   renter+=rent+v["rvb-rent-insurance"];
   if(m%12===0||m===stay){
-   const selling=home*v["rvb-selling"]/100,proceeds=Math.max(0,home-selling-balance);
+   const selling=home*v["rvb-selling"]/100,proceeds=home-selling-balance;
    const buyerNet=buyer-proceeds;
    rows.push({year:Math.ceil(m/12),rent:round(renter),buy:round(buyerNet),home:round(home),balance});
    if(breakeven===null&&buyerNet<=renter)breakeven=Math.ceil(m/12);
