@@ -877,3 +877,24 @@ First verify deployment run #45030278000 for merge commit `d61f0498a1fbc965ec527
 - Next active item: Milestone 4 — Inflation-adjusted Retirement Projection. Research official/reputable sources, nominal versus real returns, contribution timing and uncertainty before implementation. Clearly state assumptions and avoid presenting deterministic projections as promises or personalized investment advice.
 - Search Console/indexing and AdSense remain paused. Physical Android/TalkBack tests remain NOT TESTED until performed on a real device. No paid domain/service/subscription. USAJIO only; never modify InfoJano.
 - Documentation PR #56 merge commit c37e206d5ab493123e4dee6f407d0644fcc3b2a5 also deployed successfully in GitHub Pages run #45048075625.
+---
+
+## 2026-11-22 — Inflation-adjusted Retirement Projection completed and deployed
+
+### Retirement projection release record
+- Research, DOL/FINRA guidance, competitor analysis and improvement plan: docs/INFLATION_ADJUSTED_RETIREMENT_RESEARCH.md.
+- PR #59, feat: add inflation-adjusted retirement scenarios, squash-merged as f5d50f749effc461b7e803aa8a258547dc6ab829.
+- The existing Retirement Savings Calculator's nominal base formula and outputs remain unchanged. A collapsed optional section adds editable inflation and conservative/base/optimistic annual-return assumptions.
+- The scenario model uses the existing monthly-equivalent return and month-end contribution timing. It shows nominal future balance and today's-dollar purchasing power, contributions and nominal growth for each scenario.
+- Browser QA run #45049291104 passed on PR head 247356adae0073a20916fb18267f1fcd605788a8, including base calculation parity, zero return, zero inflation, negative real return, invalid scenario ordering/inflation, all 12 calculator tests, 10 responsive widths, keyboard operation and WCAG 2.1 A/AA checks.
+- Mobile and desktop Lighthouse run #45049198576 passed on commit c70b12dd5fe0884444e9278672049fb1867b64e4. The only differences from the Browser QA head were research-document and test-only updates; application HTML/CSS/JS was identical.
+- Retirement calculator Lighthouse: mobile Performance 100, Accessibility 100, Best Practices 100, SEO 100; LCP about 1,057 ms, CLS 0, TBT 0 ms. Desktop: 100 in all four categories; LCP about 249 ms, CLS 0, TBT 0 ms.
+- GitHub Pages deployment run #45049568548 succeeded for merge commit f5d50f749effc461b7e803aa8a258547dc6ab829. Configure Pages, upload artifact, artifact-registration wait and Deploy to GitHub Pages all completed successfully.
+
+### Roadmap status and next work
+- Milestone 1 — Loan Amortization Schedule: complete, merged, CI passed and deployment verified.
+- Milestone 2 — Advanced Budget Planner: complete, merged, CI passed and deployment verified.
+- Milestone 3 — Compare Scenarios: complete, merged, CI passed and deployment verified.
+- Milestone 4 — Inflation-adjusted Retirement Projection: complete, merged, CI passed and deployment verified.
+- Next active item: Milestone 5 — Downloadable Reports (PDF/CSV). Research whether export materially helps each calculator, keep generation client-side where practical, and verify exported values match on-screen results. No inert export buttons or server upload of financial inputs.
+- Search Console/indexing and AdSense remain paused. Physical Android/TalkBack tests remain NOT TESTED until performed on a real device. No paid domain/service/subscription. USAJIO only; never modify InfoJano.
