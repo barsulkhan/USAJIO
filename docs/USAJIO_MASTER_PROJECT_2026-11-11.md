@@ -425,3 +425,63 @@ Consolidated integration branch: `quality/integrated-final-qa-2026-11-21`. Premi
 - Privacy scope: values are calculated in-page only and are not transmitted or saved by this static tool. Currency selection is formatting-only, not FX conversion.
 - Static read-back confirms 12 calculator cards and 13 Lighthouse URLs including homepage. PR-triggered browser/axe and Lighthouse results remain pending; physical-device QA remains separate.
 - Work is isolated in PR review; no merge or production deployment is included.
+
+
+---
+
+## Final checkpoint — 2026-11-22 (user paused work; PR #26 deployed successfully)
+
+### Verified repository state
+- Repository: https://github.com/barsulkhan/USAJIO
+- Default branch: `main`
+- Latest feature merge: PR #26, Net Worth Calculator; merge commit `491917ca21b713d7fc99a774c5119ea899688ffb`.
+- GitHub Pages deployment workflow run #44989840988 for that exact commit: **completed / success**.
+- Latest open pull requests API check: **0 open PRs**.
+- Repository tree was read from the exact latest main commit. Source, tests, assets, policy pages, documentation and workflows are committed in GitHub; no uncommitted local working tree is being relied upon.
+- README currently documents 12 calculators. The repo includes 12 calculator HTML pages: compound interest, loan, monthly budget, savings goal, emergency fund, debt payoff, mortgage, auto loan, credit-card payoff, retirement, student-loan payoff and net worth.
+- Latest main commit before this checkpoint: `491917ca21b713d7fc99a774c5119ea899688ffb`.
+- Live website: https://barsulkhan.github.io/USAJIO/
+- Deployment run: https://github.com/barsulkhan/USAJIO/actions/runs/44989840988
+- PR #26: https://github.com/barsulkhan/USAJIO/pull/26
+
+### What is included / preserved in the repository
+- Homepage and shared CSS/JS.
+- 12 calculator pages.
+- About, Contact, Privacy, Terms, Financial Disclaimer and Editorial Policy pages.
+- SVG logo and favicon.
+- `sitemap.xml`, `robots.txt`.
+- Playwright browser QA test source and GitHub Actions browser QA workflow.
+- Mobile and desktop Lighthouse CI configuration and performance audit workflow.
+- Research, QA and competitor-plan documentation.
+- Full file inventory is available from the repository tree at the latest main commit; all these files are committed in GitHub.
+
+### Quality / deployment evidence
+- PR #26 browser QA run #44989723413 completed successfully (recorded in the preceding session checkpoint).
+- Latest GitHub Pages deployment run #44989840988 completed successfully for commit `491917c`.
+- Previous Lighthouse performance audit run #44989462057 passed on the preceding commit; the newer performance run #449898409? was not confirmed in the final API check and should not be claimed as passing for #26.
+- The last known contrast adjustment for homepage text was committed as `9eb66129760c4624169137197419bae5e314a562` before PR #26 merge.
+- Deployment success proves the Pages workflow completed; it is not a substitute for a fresh physical Android/browser check of every page and calculator.
+- No open PRs remain. Old PRs #1 and #2 were closed as superseded; do not reopen or merge stale branches.
+
+### Next session — recommended work order
+Follow the established process for every new feature: **Research → Competitor Analysis → Improvement Plan → Development → Testing**. Keep changes in separate PRs, test before merge, and do not bother the user with repeated confirmations. User has already authorized merging when QA passes.
+1. **P0: Functional correctness audit of all 12 calculators.** Build reproducible known-answer, zero/boundary, invalid, negative, very large and rounding tests; verify payment totals, schedules and assumptions. Existing automated browser QA covers default interactions but does not prove every financial formula/edge case.
+2. **P0: Verify the Net Worth Calculator specifically.** Test assets/liabilities totals, zero values, invalid values, all currency display choices, and confirm entered data stays browser-local (no network submission/storage).
+3. **P1: Accessibility and mobile review.** Check keyboard-only operation, focus order, labels, errors, screen-reader result announcements, contrast and responsive widths including common Android phone sizes. Existing automated axe/browser coverage is useful but not a replacement for manual assistive-technology checks.
+4. **P1: Performance audit follow-through.** Inspect the latest Lighthouse mobile/desktop workflow runs for commit #26, retain the reports, and fix any real regressions. Measure actual results; never invent Core Web Vitals.
+5. **P1: Full site navigation/content review.** Check all internal links, calculator-to-guide links, footer links, Contact page placeholders and policy text. Update placeholder contact/policy language before any business launch.
+6. **P2: SEO review.** Inspect page titles/descriptions, canonical URLs for GitHub Pages, sitemap and robots; validate crawlability and structured data only where justified. Search Console/indexing status must be checked separately; a sitemap alone does not prove indexing.
+7. **P2: Improve sourced finance guides.** Expand useful original guides with primary/official sources, formulas, assumptions, update dates and clear limitations. Do not mass-produce thin SEO pages or claim unverified expertise/rankings.
+8. **Only after P0/P1 quality is stable:** consider further calculator features based on research. The competitor backlog mentions richer visual summaries, monthly cash-flow/50-30-20 guidance, savings “already reached/target gap” states, and clearer formula/assumption disclosures.
+9. Keep hosting on free GitHub Pages for now. Do not buy a domain, paid hosting, APIs, subscriptions, or activate monetization without explicit user approval.
+
+### Operating rules for the next chat
+- USAJIO is separate from InfoJano. Never modify InfoJano.
+- Use the existing GitHub repository and latest `main`; inspect current source before editing.
+- Use a separate branch and PR for each task. Do not merge until checks pass; once checks pass, merge without asking the user repeatedly.
+- User prefers simple Bengali, concise communication, and one uninterrupted work session rather than frequent progress messages.
+- User said they are stopping work now. Do not start additional feature work unless they resume.
+- Do not claim a test, deployment, browser check or merge unless the corresponding evidence exists.
+
+### Copy-ready new-chat prompt
+আমাদের USAJIO প্রজেক্ট এখান থেকে চালিয়ে যাও। আগে GitHub-এর `docs/USAJIO_MASTER_PROJECT_2026-11-11.md` ফাইলটি সম্পূর্ণ পড়ে নাও এবং সর্বশেষ checkpoint অনুসরণ করো। Repository: https://github.com/barsulkhan/USAJIO । Live site: https://barsulkhan.github.io/USAJIO/ । সর্বশেষ feature PR #26 (Net Worth Calculator) মার্জ হয়েছে; commit `491917ca21b713d7fc99a774c5119ea899688ffb`; GitHub Pages deployment run #44989840988 সফল; বর্তমানে Open PR শূন্য। সব বর্তমান source/assets/docs/tests GitHub main-এ committed আছে। প্রথম কাজ হবে P0 হিসেবে ১২টি calculator-এর reproducible formula ও edge-case QA, বিশেষ করে Net Worth Calculator-এর browser-local privacy check; তারপর accessibility/mobile, latest Lighthouse reports, internal links/policy text এবং SEO review। নতুন feature-এর আগে Research → Competitor Analysis → Improvement Plan → Development → Testing অনুসরণ করবে। প্রতিটি কাজ আলাদা branch/PR-এ করবে; checks সফল হলে merge করবে, বারবার অনুমতি চাইবে না। USAJIO ছাড়া InfoJano-তে হাত দেবে না। কোনো paid domain/hosting/API/subscription বা monetization আমার অনুমতি ছাড়া করবে না। বাংলায় সংক্ষেপে কথা বলবে, অকারণে progress update বা একই প্রশ্ন বারবার করবে না। কাজ শেষে এই একই master file আপডেট করবে।
