@@ -130,6 +130,7 @@ const server = http.createServer((req,res) => {
 
     // 3. Monthly budget: preserve the basic totals and verify advanced target allocation.
     await calculate('monthly-budget.html','budget-calc',{'budget-income':3500,'budget-housing':900,'budget-food':500,'budget-transport':300,'budget-bills':250,'budget-other':400,'budget-savings-debt':200});
+    await page.locator('#budget-advanced > summary').click();
     near(await money('budget-expenses'),2350,'Budget expenses'); near(await money('budget-remaining'),950,'Budget remainder after savings/debt');
     if(await textOf('budget-share')!=='27.1%') throw new Error('Budget remainder percentage mismatch');
     await page.locator('#budget-group-housing').selectOption('needs');
@@ -150,6 +151,7 @@ const server = http.createServer((req,res) => {
 
     // Unassigned non-zero categories must not silently enter an allocation bucket.
     await page.goto('http://127.0.0.1:4173/monthly-budget.html');
+    await page.locator('#budget-advanced > summary').click();
     await page.locator('#budget-calc').click();
     if(!/Choose a group/.test(await textOf('budget-allocation-status'))) throw new Error('Unassigned category should block allocation comparison');
     if(await textOf('budget-actual-needs')!=='—') throw new Error('Unassigned categories must not produce a misleading bucket total');
