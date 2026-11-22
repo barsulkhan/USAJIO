@@ -119,4 +119,4 @@ This is a focused public-page review, not a full hands-on audit.
 - Browser QA run #45052440913 passed.
 - Lighthouse mobile and desktop jobs in run #45052440807 passed.
 - PR #65 squash-merged as `c54fa30e9514782c56c7ffd9bad427a6dec633c4`.
-- GitHub Pages deployment for this merge commit must still be verified before calling the change live.
+- GitHub Pages deployment run #45052768814 for this merge commit completed with conclusion `success`; Compare Scenarios reports are deployed.
