@@ -45,3 +45,19 @@ button,.primary-btn,.nav a{min-height:42px}
 .schedule-table-wrap {
   min-width: 0;
 }
+
+
+/* Advanced budget allocation: compact, readable and responsive. */
+.budget-advanced{margin-top:22px;padding:16px;border:1px solid var(--line);border-radius:14px;background:#fbfcfd}
+.budget-advanced>summary{font-weight:700;cursor:pointer;color:var(--text);padding:4px 0}
+.budget-advanced>summary:focus-visible{outline:3px solid #0c9b83;outline-offset:4px}
+.budget-advanced h3{font-size:16px;margin:20px 0 10px}
+.budget-advanced .disclaimer{font-size:13px;line-height:1.6}
+.budget-targets,.budget-mappings{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.budget-allocation-status{font-size:13px;line-height:1.5;color:var(--muted);margin:16px 0}
+.budget-allocation-results{display:grid;gap:10px}
+.budget-allocation-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:13px;min-width:0}
+.budget-allocation-row>strong{grid-column:1/-1;font-size:15px}
+.budget-allocation-row span{min-width:0;overflow-wrap:anywhere}
+.budget-allocation-row b{display:block;color:var(--text);font-variant-numeric:tabular-nums}
+@media(max-width:420px){.budget-advanced{padding:12px}.budget-targets,.budget-mappings{grid-template-columns:1fr}.budget-allocation-row{grid-template-columns:1fr 1fr}}

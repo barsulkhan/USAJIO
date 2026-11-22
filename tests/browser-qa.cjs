@@ -128,13 +128,72 @@ const server = http.createServer((req,res) => {
     near(Number((await page.locator('#loan-schedule tr').last().locator('td').nth(5).innerText()).replace(/[^0-9.-]/g,'')),0,'Capped final loan balance');
     await page.locator('#loan-amount').fill('0'); await page.locator('#loan-calc').click(); await expectInvalid('loan-monthly','Zero principal loan');
 
-    // 3. Monthly budget: surplus and deficit.
-    await calculate('monthly-budget.html','budget-calc',{'budget-income':3500,'budget-housing':900,'budget-food':500,'budget-transport':300,'budget-bills':250,'budget-other':400});
-    near(await money('budget-expenses'),2350,'Budget expenses'); near(await money('budget-remaining'),1150,'Budget surplus');
-    if(await textOf('budget-share')!=='32.9%') throw new Error('Budget surplus percentage mismatch');
-    await set({'budget-income':2000,'budget-housing':900,'budget-food':500,'budget-transport':300,'budget-bills':250,'budget-other':300}); await page.locator('#budget-calc').click();
+    // 3. Monthly budget: preserve the basic totals and verify advanced target allocation.
+    await calculate('monthly-budget.html','budget-calc',{'budget-income':3500,'budget-housing':900,'budget-food':500,'budget-transport':300,'budget-bills':250,'budget-other':400,'budget-savings-debt':200});
+    await page.locator('#budget-advanced > summary').click();
+    near(await money('budget-expenses'),2350,'Budget expenses'); near(await money('budget-remaining'),950,'Budget remainder after savings/debt');
+    if(await textOf('budget-share')!=='27.1%') throw new Error('Budget remainder percentage mismatch');
+    await page.locator('#budget-group-housing').selectOption('needs');
+    await page.locator('#budget-group-food').selectOption('needs');
+    await page.locator('#budget-group-transport').selectOption('needs');
+    await page.locator('#budget-group-bills').selectOption('needs');
+    await page.locator('#budget-group-other').selectOption('wants');
+    await page.locator('#budget-calc').click();
+    near(await money('budget-actual-needs'),1950,'Budget actual needs');
+    near(await money('budget-target-needs-amount'),1750,'Budget needs target');
+    near(await money('budget-actual-wants'),400,'Budget actual wants');
+    near(await money('budget-target-wants-amount'),1050,'Budget wants target');
+    near(await money('budget-actual-savings'),200,'Budget savings/debt actual');
+    near(await money('budget-target-savings-amount'),700,'Budget savings/debt target');
+    if(await textOf('budget-share-needs')!=='55.7%') throw new Error('Budget needs actual share mismatch');
+    if(!(await textOf('budget-variance-needs')).startsWith('+')) throw new Error('Budget needs variance should be positive/above target');
+    if(!/below target/.test(await textOf('budget-allocation-status'))) throw new Error('Budget allocation completion message missing');
+
+    // Unassigned non-zero categories must not silently enter an allocation bucket.
+    await page.goto('http://127.0.0.1:4173/monthly-budget.html');
+    await page.locator('#budget-advanced > summary').click();
+    await page.locator('#budget-calc').click();
+    if(!/Choose a group/.test(await textOf('budget-allocation-status'))) throw new Error('Unassigned category should block allocation comparison');
+    if(await textOf('budget-actual-needs')!=='—') throw new Error('Unassigned categories must not produce a misleading bucket total');
+
+    // Custom targets must total 100%.
+    await page.locator('#budget-group-housing').selectOption('needs');
+    await page.locator('#budget-group-food').selectOption('needs');
+    await page.locator('#budget-group-transport').selectOption('needs');
+    await page.locator('#budget-group-bills').selectOption('needs');
+    await page.locator('#budget-group-other').selectOption('wants');
+    await page.locator('#budget-target-needs').fill('60');
+    await page.locator('#budget-target-wants').fill('20');
+    await page.locator('#budget-target-savings').fill('20');
+    await page.locator('#budget-calc').click();
+    near(await money('budget-target-needs-amount'),2100,'Custom needs target');
+    near(await money('budget-target-wants-amount'),700,'Custom wants target');
+    await page.locator('#budget-target-needs').fill('60');
+    await page.locator('#budget-target-wants').fill('30');
+    await page.locator('#budget-target-savings').fill('20');
+    await page.locator('#budget-calc').click();
+    if(!/add up to 100%/.test(await textOf('budget-allocation-status'))) throw new Error('Invalid target percentages should be rejected');
+    await page.locator('#budget-target-needs').fill('50');
+    await page.locator('#budget-target-wants').fill('30');
+    await page.locator('#budget-target-savings').fill('20');
+
+    // Zero income must not cause division by zero or NaN.
+    await set({'budget-income':0,'budget-housing':0,'budget-food':0,'budget-transport':0,'budget-bills':0,'budget-other':0,'budget-savings-debt':0});
+    await page.locator('#budget-calc').click();
+    if(!/Enter take-home income/.test(await textOf('budget-allocation-status'))) throw new Error('Zero-income allocation guidance missing');
+    if(await textOf('budget-share-needs')!=='—') throw new Error('Zero-income share must not show a percentage');
+
+    await set({'budget-income':2000,'budget-housing':900,'budget-food':500,'budget-transport':300,'budget-bills':250,'budget-other':300,'budget-savings-debt':0}); await page.locator('#budget-calc').click();
     near(await money('budget-remaining'),-250,'Budget deficit');
     await page.locator('#budget-income').fill('-1'); await page.locator('#budget-calc').click(); await expectInvalid('budget-remaining','Negative budget income');
+
+    // Expanded advanced allocation must remain within a 320px mobile viewport.
+    await page.setViewportSize({width:320,height:800});
+    await page.goto('http://127.0.0.1:4173/monthly-budget.html');
+    await page.locator('#budget-advanced > summary').click();
+    const expandedBudgetWidth=await page.evaluate(()=>document.documentElement.scrollWidth);
+    if(expandedBudgetWidth>320) throw new Error('Expanded advanced budget panel overflows 320px viewport: '+expandedBudgetWidth);
+    await page.setViewportSize({width:1365,height:900});
 
     // 4. Savings goal: ordinary gap, already-funded target, invalid duration.
     await calculate('savings-goal.html','save-calc',{'save-target':5000,'save-current':500,'save-months':18});

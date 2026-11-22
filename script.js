@@ -77,11 +77,64 @@
   bind("budget-calc", () => {
     const income=read("budget-income",0,1e12);
     const ids=["budget-housing","budget-food","budget-transport","budget-bills","budget-other"];
+    const groups=["needs","wants","savings"];
     const expenses=ids.map(id=>read(id,0,1e12));
-    if(income===null||expenses.some(v=>v===null)){invalid(["budget-expenses","budget-remaining","budget-share"]);return;}
-    const total=expenses.reduce((a,b)=>a+b,0), remaining=income-total;
+    const savingsDebt=read("budget-savings-debt",0,1e12);
+    const clearAllocation=()=>{
+      ["needs","wants","savings"].forEach(group=>{
+        put("budget-actual-"+group,"—");
+        put("budget-target-"+group+"-amount","—");
+        put("budget-share-"+group,"—");
+        put("budget-variance-"+group,"—");
+      });
+    };
+    if(income===null||expenses.some(v=>v===null)||savingsDebt===null){
+      invalid(["budget-expenses","budget-remaining","budget-share"]);
+      clearAllocation();
+      put("budget-allocation-status","Check income, expense and savings/debt inputs.");
+      return;
+    }
+    const total=expenses.reduce((a,b)=>a+b,0), remaining=income-total-savingsDebt;
     put("budget-expenses",fmt(total)); put("budget-remaining",fmt(remaining));
     put("budget-share",income?((remaining/income)*100).toFixed(1)+"%":"—");
+    const targetIds=["budget-target-needs","budget-target-wants","budget-target-savings"];
+    const targets=targetIds.map(id=>read(id,0,100));
+    if(targets.some(v=>v===null)){
+      clearAllocation();
+      put("budget-allocation-status","Check the three target percentages. Each must be between 0 and 100.");
+      return;
+    }
+    const targetTotal=targets.reduce((a,b)=>a+b,0);
+    if(Math.abs(targetTotal-100)>0.01){
+      targetIds.forEach(id=>$(id)?.setAttribute("aria-invalid","true"));
+      clearAllocation();
+      put("budget-allocation-status","Your target percentages must add up to 100%.");
+      return;
+    }
+    const groupIds=["budget-group-housing","budget-group-food","budget-group-transport","budget-group-bills","budget-group-other"];
+    const unassigned=ids.map((id,index)=>({id,amount:expenses[index],group:$(groupIds[index])?.value||""}))
+      .filter(item=>item.amount>0&&!groups.includes(item.group));
+    if(unassigned.length){
+      clearAllocation();
+      put("budget-allocation-status","Choose a group for: "+unassigned.map(item=>item.id.replace("budget-","").replaceAll("-"," ")).join(", ")+". The basic budget total above is still available.");
+      return;
+    }
+    const allocation={needs:0,wants:0,savings:savingsDebt};
+    expenses.forEach((amount,index)=>{
+      const group=$(groupIds[index])?.value;
+      if(groups.includes(group)) allocation[group]+=amount;
+    });
+    const keys=["needs","wants","savings"];
+    keys.forEach((group,index)=>{
+      const actual=allocation[group], target=income*targets[index]/100, difference=actual-target;
+      put("budget-actual-"+group,fmt(actual));
+      put("budget-target-"+group+"-amount",fmt(target));
+      put("budget-share-"+group,income?((actual/income)*100).toFixed(1)+"%":"—");
+      put("budget-variance-"+group,(difference>0?"+":difference<0?"−":"")+fmt(Math.abs(difference)));
+    });
+    put("budget-allocation-status",income>0
+      ?"Allocation comparison complete. A positive difference is above target; a negative difference is below target."
+      :"Enter take-home income above zero to compare actual percentages with targets.");
   });
 
   bind("save-calc", () => {
