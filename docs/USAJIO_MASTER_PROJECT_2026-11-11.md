@@ -795,3 +795,31 @@ First verify deployment run #45030278000 for merge commit `d61f0498a1fbc965ec527
 - Review of the example $10,000 at 7% for 5 years found that rounding the scheduled payment down to $198.01 left a small residual and generated a 61st payment. Corrected policy on the PR branch: round the scheduled payment upward to the next cent ($198.02) so the planned 60-month term is respected; the final installment is still capped to the actual payoff amount.
 - Independent decimal arithmetic for that example: 60 payments, total interest $1,880.67, total paid $11,880.67. Browser regression expectations updated accordingly.
 - Re-run CI and inspect any remaining failures before merge. No feature release until Browser QA, Mobile Lighthouse and Desktop Lighthouse all pass.
+
+---
+
+## 2026-11-22 — PR #52 merged: Loan Amortization Schedule
+
+### Verified implementation and release checks
+- PR #52, Add monthly loan amortization schedule, was squash-merged to main.
+- PR: https://github.com/barsulkhan/USAJIO/pull/52
+- Feature branch: feature/loan-amortization-schedule-2026-11-22
+- Merged commit: 623611353a62df1f48f105c6b8a93204dbb02635
+- Feature head before merge: d034b20647dae0a19b2a9f8a7531570d9796c565
+- The fix preserves the wide, readable eight-column amortization table inside its responsive horizontal scroll region and constrains calculator/grid children with min-width: 0; it does not hide columns or weaken test assertions.
+- Browser QA run #45046620695: completed / success. Logs confirm all 12 calculator known-answer/edge-case/amortization checks, 10 responsive widths, keyboard/focus checks, privacy checks and accessibility checks passed. The responsive suite covers the loan page at 320px.
+- Performance audit run #45046620712: completed / success. Both mobile Lighthouse (job #137282527604) and desktop Lighthouse (job #137282527855) passed, including report generation/upload.
+- Prior failing Browser QA run #45031992981 remains historical evidence only; it was superseded by the passing run on the corrected head.
+- The example $10,000 / 7% / 5-year loan uses a $198.02 scheduled monthly payment rounded upward to cents, pays off in 60 payments, yields $1,880.67 total interest and ends at $0.00. The final payment is capped to the remaining amount due.
+- GitHub read-back from main confirms loan-calculator.html now contains the monthly amortization schedule and accessible table structure.
+
+### Deployment verification status
+- The squash merge is confirmed, but the GitHub Actions connector available in this session only returns PR-triggered workflow runs for a commit; it returned no deployment run for merge commit 623611353a62df1f48f105c6b8a93204dbb02635.
+- A direct live-page fetch of https://barsulkhan.github.io/USAJIO/loan-calculator.html was not accessible through the available browser fetch tool. Therefore GitHub Pages deployment for this merge is NOT YET VERIFIED. Do not claim it is deployed until the Pages workflow run or live page is confirmed.
+- Next release check: inspect the repository Actions page for the deployment workflow triggered by the merge commit, confirm success, then open the live Loan Calculator page and verify the schedule is present. No Search Console or AdSense work is authorized.
+
+### Roadmap status and next work
+- Milestone 1 — Loan Amortization Schedule: implementation merged; CI passed; production deployment verification pending.
+- Milestone 2 — Advanced Budget Planner: next feature. Begin with current Monthly Budget Planner source inspection, research, competitor analysis and a written improvement plan before implementation. Consider optional 50/30/20 guidance and actual-vs-target breakdown only where research supports them. Preserve existing simple entry flow and browser-local privacy.
+- Every next change must use a dedicated branch and PR; run relevant tests and Lighthouse before merge; verify deployment after merge.
+- Search Console/indexing and AdSense remain paused. Android/TalkBack physical-device checks remain NOT TESTED. No paid domain/service/subscription. USAJIO only; never modify InfoJano.
