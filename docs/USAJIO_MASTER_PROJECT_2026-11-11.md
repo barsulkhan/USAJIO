@@ -674,3 +674,18 @@ USAJIO এখান থেকে চালিয়ে যাও। আগে `d
 - No AdSense script, ad unit, ads.txt, CMP or advertising request is active. Do not add these before custom domain connection and the relevant owner/account decisions.
 - Remaining pre-domain priorities: full content-quality audit across 12 calculators and 9 guides; improve About/publisher transparency without inventing credentials; obtain owner-approved public contact channel; resolve Search Console sitemap fetch/read error; rerun full-site QA.
 - Domain-after-purchase sequence: connect custom domain to USAJIO GitHub Pages, update canonicals/sitemap/robots, add site in AdSense, install exact account code, publish exact root ads.txt line, configure consent, request Google review, and only after Ready enable carefully placed ads.
+
+
+---
+
+## 2026-11-22 — Google indexing queue started (Batch 01)
+
+- Created `docs/INDEXING_QUEUE.md` as the single durable tracker for individual Google Search Console URL Inspection requests.
+- User's requested operating rule: provide at most 10 URLs in one daily batch; do not issue the next batch until the user reports the current batch's outcomes.
+- Batch 01 contains the first 10 canonical URLs from the live sitemap: homepage, Compound Interest, Loan, Monthly Budget, Savings Goal, Emergency Fund, Debt Payoff, Mortgage, Auto Loan and Credit Card Payoff pages. All ten are **PENDING — user action**; the user has not yet reported submission or Google approval.
+- Batch 02 (URLs 11–20) and Batch 03 (URLs 21–28) are queued in `docs/INDEXING_QUEUE.md`.
+- Status rule: mark a URL COMPLETE only after the user reports Google's indexed/approved result. A submitted request is not proof of indexing.
+- User should open the USAJIO Search Console property, paste each URL into the top “Inspect any URL” field, and select “Request indexing” if Google offers it. Direct public page links are listed in the queue file.
+- Search Console's prior sitemap detail screenshot showed **“Couldn't fetch” / “Sitemap could not be read”** and zero discovered pages. This remains a separate unresolved technical follow-up; the individual indexing queue does not fix it.
+- Continue source-based research/content-quality follow-ups for the calculator pages and finance guides. Every newly created and deployed public page must be added to the queue and sitemap.
+- Scope: USAJIO only; do not modify InfoJano. The 10-per-day cap is the user's chosen workflow, not a statement of Google's guaranteed daily quota.
