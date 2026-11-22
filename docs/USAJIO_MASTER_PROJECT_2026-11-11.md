@@ -322,3 +322,39 @@ Consolidated integration branch: `quality/integrated-final-qa-2026-11-21`. Premi
 - Homepage and all eleven calculators load; all eleven default calculator interactions produce results; polite result announcements, mobile navigation open/close, 390px homepage overflow and local HTML links pass; no browser/console errors or HTTP error responses were observed in the run.
 - This is CI Chromium with a mobile viewport, not a physical Android device. Screen-reader/manual keyboard review, Lighthouse/Core Web Vitals and visual regression remain outstanding.
 - Changes remain on the integration PR; no merge or live deployment has occurred.
+
+
+## 14. Deployment incident resolution and homepage release verification — 2026-11-22
+
+### Repository state verified
+- Repository: `barsulkhan/USAJIO` (public); default branch: `main`; repository is not archived.
+- PR #13 remains the homepage design change, merged as `e0673687ad2c3b48f8b0b921ff1fbbacd20319d9`.
+- PR #14 (`Fix Pages deployment artifact metadata timing`) was already merged into `main` as `ebe4a214ed948b5cdd36e16ef8d9c7f00d18fb76`.
+- Current `main` head at verification: `ebe4a214ed948b5cdd36e16ef8d9c7f00d18fb76`.
+- No changes were made to InfoJano.
+
+### Deployment failure root cause
+- Failed run #44936850607 checked out PR #13 commit `e0673687ad2c3b48f8b0b921ff1fbbacd20319d9`.
+- Checkout, Configure Pages, and Upload site artifact all succeeded.
+- `upload-pages-artifact@v3` finalized artifact `github-pages` (ID `14719629520`) successfully.
+- Immediately afterward, `deploy-pages@v4` queried the Actions artifact API and received `Found 0 artifact(s)` / `No artifacts named "github-pages" were found`. This was an artifact metadata visibility/race condition, not a missing upload, Pages configuration failure, or missing workflow permission.
+- The Node.js 20 deprecation warning was non-fatal and unrelated to the deployment failure.
+
+### Fix already merged and verified
+- PR #14 added a 15-second wait after `actions/upload-pages-artifact@v3` and before `actions/deploy-pages@v4` in `.github/workflows/deploy-pages.yml`.
+- Workflow permissions remain least-privilege for this deployment: `contents: read`, `pages: write`, `id-token: write`.
+- Successful run: https://github.com/barsulkhan/USAJIO/actions/runs/44937240457 (run #8; commit `ebe4a214ed948b5cdd36e16ef8d9c7f00d18fb76`).
+- Successful job steps: Checkout — Pass; Configure Pages — Pass; Upload site artifact — Pass; Wait for Pages artifact registration — Pass; Deploy to GitHub Pages — Pass.
+- Success log confirms artifact metadata lookup returned `Found 1 artifact(s)`, Pages deployment was created for commit `ebe4a214ed948b5cdd36e16ef8d9c7f00d18fb76`, deployment status `Reported success!`, and environment URL `https://barsulkhan.github.io/USAJIO/`.
+- GitHub Pages remains the free hosting platform. No paid service, domain, API, subscription, or hosting migration was introduced.
+
+### Homepage/live verification status
+- `index.html` in `main` is the homepage source included in the successful deployment artifact; it contains the PR #13 homepage implementation.
+- GitHub Actions confirms the Pages deployment succeeded and publishes the environment URL above.
+- Direct external HTTP/browser fetch of the live URL could not be completed from this execution environment because outbound DNS/network access was unavailable. Therefore direct visual rendering/HTTP response of the current deployment is **Not Tested here**; do not represent it as browser-verified. User-side Android visual confirmation from the earlier release is separate historical evidence, not a new test of this build.
+
+### Current next actions
+1. Verify the live homepage via a browser-capable check when available, then record HTTP status and confirm the new hero content.
+2. Re-run the current 11-calculator browser QA against the deployed build; do not reuse older test outcomes as current pass evidence.
+3. Check internal links, navigation, guides, SEO metadata, sitemap and robots.
+4. Continue pending keyboard accessibility, screen reader, physical Android, visual regression, and Lighthouse/Core Web Vitals checks; mark each Pass/Fail/Not Tested honestly.
