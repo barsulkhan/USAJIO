@@ -247,13 +247,64 @@
 
   bind("retirement-calc", () => {
     const current=read("retirement-current",0,1e12), monthly=read("retirement-monthly",0,1e10), years=read("retirement-years",1,70), annual=read("retirement-return",0,30), match=read("retirement-match",0,100);
-    if([current,monthly,years,annual,match].some(v=>v===null)){invalid(["retirement-balance","retirement-contrib","retirement-total"]);return;}
+    const clearScenarios=()=>{
+      ["low","base","high"].forEach(key=>{
+        ["rate-out","nominal","real","contrib","growth"].forEach(field=>put("retirement-"+key+"-"+field,"—"));
+      });
+    };
+    if([current,monthly,years,annual,match].some(v=>v===null)){
+      invalid(["retirement-balance","retirement-contrib","retirement-total"]);
+      clearScenarios();
+      put("retirement-scenario-status","Check the current savings, contribution, years, return and match inputs.");
+      return;
+    }
     const months=years*12, rate=Math.pow(1+annual/100,1/12)-1, contribution=monthly*(1+match/100);
     const growth=rate===0?months:(Math.pow(1+rate,months)-1)/rate;
     const balance=current*Math.pow(1+rate,months)+contribution*growth;
     const contrib=current+contribution*months;
-    if(!Number.isFinite(balance)||!Number.isFinite(contrib)){invalid(["retirement-balance","retirement-contrib","retirement-total"]);return;}
+    if(!Number.isFinite(balance)||!Number.isFinite(contrib)){
+      invalid(["retirement-balance","retirement-contrib","retirement-total"]);
+      clearScenarios();
+      put("retirement-scenario-status","The entered values are outside the supported calculation range.");
+      return;
+    }
     put("retirement-balance",fmt(balance));put("retirement-contrib",fmt(contrib));put("retirement-total",fmt(balance-contrib));
+
+    const inflation=read("retirement-inflation",0,30), low=read("retirement-low-return",0,30), high=read("retirement-high-return",0,30);
+    if([inflation,low,high].some(v=>v===null)){
+      clearScenarios();
+      put("retirement-scenario-status","Check inflation and conservative/optimistic return assumptions (0–30%). The base projection above is still available.");
+      return;
+    }
+    if(low>annual||annual>high){
+      $("retirement-low-return")?.setAttribute("aria-invalid",String(low>annual));
+      $("retirement-high-return")?.setAttribute("aria-invalid",String(high<annual));
+      clearScenarios();
+      put("retirement-scenario-status","Order the assumptions so Conservative return ≤ Base return ≤ Optimistic return.");
+      return;
+    }
+    const project=returnPct=>{
+      const monthlyRate=Math.pow(1+returnPct/100,1/12)-1;
+      const factor=monthlyRate===0?months:(Math.pow(1+monthlyRate,months)-1)/monthlyRate;
+      const nominal=current*Math.pow(1+monthlyRate,months)+contribution*factor;
+      const totalContributions=current+contribution*months;
+      return {nominal,real:nominal/Math.pow(1+inflation/100,years),contributions:totalContributions,growth:nominal-totalContributions};
+    };
+    const scenarios=[{key:"low",rate:low},{key:"base",rate:annual},{key:"high",rate:high}];
+    for(const scenario of scenarios){
+      const result=project(scenario.rate);
+      if(![result.nominal,result.real,result.contributions,result.growth].every(Number.isFinite)){
+        clearScenarios();
+        put("retirement-scenario-status","The scenario assumptions produced a value outside the supported range.");
+        return;
+      }
+      put("retirement-"+scenario.key+"-rate-out",scenario.rate.toFixed(1)+"%");
+      put("retirement-"+scenario.key+"-nominal",fmt(result.nominal));
+      put("retirement-"+scenario.key+"-real",fmt(result.real));
+      put("retirement-"+scenario.key+"-contrib",fmt(result.contributions));
+      put("retirement-"+scenario.key+"-growth",fmt(result.growth));
+    }
+    put("retirement-scenario-status","Today's-dollar values use "+inflation.toFixed(1)+"% annual inflation. Return scenarios are user-entered assumptions, not forecasts.");
   });
   bind("student-calc", () => {
     const principal=read("student-balance",0,1e12), annual=read("student-rate",0,100), payment=read("student-payment",0,1e12);
