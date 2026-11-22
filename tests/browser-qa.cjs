@@ -181,6 +181,58 @@ const server = http.createServer((req,res) => {
 
     console.log('PASS: 12-calculator known-answer, zero-rate, boundary, invalid, deficit/negative, insufficient-payment and amortization checks.');
 
+
+    // Net Worth privacy regression: entered amounts must stay in this browser tab.
+    const privacyPage=await browser.newPage({viewport:{width:390,height:844}});
+    const privacyLeaks=[];
+    const privateValues=['87654321','76543210','65432109','54321098','43210987','32109876','21098765','10987654','99887766','88776655'];
+    await privacyPage.addInitScript(()=>{
+      window.__privacyCalls={fetch:0,xhr:0,beacon:0};
+      const originalFetch=window.fetch;
+      window.fetch=function(...args){window.__privacyCalls.fetch++;return originalFetch.apply(this,args);};
+      const originalOpen=XMLHttpRequest.prototype.open;
+      XMLHttpRequest.prototype.open=function(method,...args){if(!/^(GET|HEAD)$/i.test(String(method)))window.__privacyCalls.xhr++;return originalOpen.call(this,method,...args);};
+      if(Navigator.prototype.sendBeacon){
+        const originalBeacon=Navigator.prototype.sendBeacon;
+        Navigator.prototype.sendBeacon=function(...args){window.__privacyCalls.beacon++;return originalBeacon.apply(this,args);};
+      }
+    });
+    privacyPage.on('request',request=>{
+      const payload=(request.url()+' '+(request.postData()||''));
+      if(!['GET','HEAD'].includes(request.method().toUpperCase())) privacyLeaks.push('non-read request: '+request.method()+' '+request.url());
+      for(const value of privateValues) if(payload.includes(value)) privacyLeaks.push('financial value appeared in request: '+request.url());
+    });
+    await privacyPage.goto('http://127.0.0.1:4173/net-worth-calculator.html');
+    await privacyPage.waitForLoadState('networkidle');
+    const privateIds=['net-cash','net-investments','net-retirement','net-home','net-other-assets','net-mortgage','net-auto','net-student','net-credit','net-other-debt'];
+    for(let i=0;i<privateIds.length;i++) await privacyPage.locator('#'+privateIds[i]).fill(privateValues[i]);
+    await privacyPage.locator('#networth-calc').click();
+    const privateResult=await privacyPage.locator('#net-result').innerText();
+    if(!privateResult || privateResult==='—') throw new Error('Net Worth privacy test did not calculate the supplied local values');
+    // Currency selection is formatting-only: numeric net worth must remain unchanged.
+    for(const currency of ['USD','EUR','GBP','CAD','AUD','INR']){
+      await privacyPage.locator('#currency').selectOption(currency);
+      const raw=(await privacyPage.locator('#net-result').innerText()).replace(/[^0-9.-]/g,'');
+      near(Number(raw),74301009,'Net Worth '+currency+' display');
+    }
+    const storage=await privacyPage.evaluate(async()=>({
+      local:localStorage.length,
+      session:sessionStorage.length,
+      calls:window.__privacyCalls,
+      databases:typeof indexedDB.databases==='function'?(await indexedDB.databases()).length:0
+    }));
+    const databaseCount=storage.databases;
+    if(storage.local!==0||storage.session!==0||databaseCount!==0) throw new Error('Net Worth values may be persisted: '+JSON.stringify({local:storage.local,session:storage.session,databases:databaseCount}));
+    if(storage.calls.fetch||storage.calls.xhr||storage.calls.beacon) throw new Error('Net Worth triggered an application data-transfer API: '+JSON.stringify(storage.calls));
+    await privacyPage.reload();
+    for(let i=0;i<privateIds.length;i++){
+      const value=await privacyPage.locator('#'+privateIds[i]).inputValue();
+      if(value===privateValues[i]) throw new Error('Net Worth value persisted across reload for '+privateIds[i]);
+    }
+    if(privacyLeaks.length) throw new Error('Net Worth privacy/network leakage: '+privacyLeaks.join(' | '));
+    console.log('PASS: Net Worth entered figures stay browser-local; no non-read request, fetch/XHR/beacon, storage persistence or financial-value URL/body leakage.');
+    await privacyPage.close();
+
     // Mobile menu interaction and layout smoke test.
     await page.setViewportSize({width:390,height:844});
     await page.goto('http://127.0.0.1:4173/index.html');
