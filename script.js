@@ -18,7 +18,7 @@
   if ($("year")) $("year").textContent = new Date().getFullYear();
   if ($("currency")) $("currency").addEventListener("change", event => {
     currency = event.target.value;
-    ["ci-calc","loan-calc","budget-calc","save-calc","ef-calc","debt-calc","mortgage-calc","auto-calc","card-calc","retirement-calc","student-calc","networth-calc"].forEach(id => { if ($(id)) $(id).click(); });
+    ["ci-calc","loan-calc","compare-calc","budget-calc","save-calc","ef-calc","debt-calc","mortgage-calc","auto-calc","card-calc","retirement-calc","student-calc","networth-calc"].forEach(id => { if ($(id)) $(id).click(); });
   });
 
   bind("ci-calc", () => {
@@ -37,15 +37,13 @@
     put("ci-result",fmt(balance)); put("ci-paid",fmt(paid)); put("ci-interest",fmt(interest));
   });
 
-  bind("loan-calc", () => {
-    const p=read("loan-amount",0,1e12), annual=read("loan-rate",0,100), years=read("loan-years",1,50), extra=read("loan-extra",0,1e12);
-    if([p,annual,years,extra].some(v=>v===null)||p<=0){invalid(["loan-monthly","loan-interest","loan-total"]);put("loan-schedule","");return;}
+  const calculateLoanSchedule = (principal, annual, years, extra) => {
     const rate=annual/1200, months=Math.max(1,Math.round(years*12));
-    const base=rate ? p*rate/(1-Math.pow(1+rate,-months)) : p/months;
-    if(!Number.isFinite(base)||base<=0){invalid(["loan-monthly","loan-interest","loan-total"]);return;}
+    const base=rate ? principal*rate/(1-Math.pow(1+rate,-months)) : principal/months;
+    if(!Number.isFinite(base)||base<=0) return null;
     const cents=value=>Math.round((value+Number.EPSILON)*100)/100;
     const basePayment=Math.ceil((base-1e-10)*100)/100, extraPayment=cents(extra);
-    let balance=cents(p), interestTotal=0, paidTotal=0, extraTotal=0, count=0;
+    let balance=cents(principal), interestTotal=0, paidTotal=0, extraTotal=0, count=0;
     const rows=[];
     while(balance>0 && count<600){
       const opening=balance;
@@ -55,23 +53,69 @@
       const scheduledPrincipal=cents(Math.max(0,scheduled-interest));
       const afterScheduled=cents(Math.max(0,opening-scheduledPrincipal));
       const extraApplied=Math.min(extraPayment,afterScheduled);
-      const principal=cents(scheduledPrincipal+extraApplied);
-      balance=cents(Math.max(0,opening-principal));
-      const payment=cents(interest+principal);
+      const principalPaid=cents(scheduledPrincipal+extraApplied);
+      balance=cents(Math.max(0,opening-principalPaid));
+      const payment=cents(interest+principalPaid);
       interestTotal=cents(interestTotal+interest);
       paidTotal=cents(paidTotal+payment);
       extraTotal=cents(extraTotal+extraApplied);
       count++;
-      rows.push({count,opening,scheduled,extra:extraApplied,interest,principal,ending:balance,cumulative:interestTotal});
+      rows.push({count,opening,scheduled,extra:extraApplied,interest,principal:principalPaid,ending:balance,cumulative:interestTotal});
     }
-    if(balance>0){invalid(["loan-monthly","loan-interest","loan-total"]);return;}
-    put("loan-monthly",fmt(cents(basePayment+extraPayment)));
-    put("loan-interest",fmt(interestTotal));
-    put("loan-total",fmt(paidTotal));
-    put("loan-payment-count",count+" payments");
-    put("loan-extra-total","Extra principal: "+fmt(extraTotal));
+    if(balance>0) return null;
+    return {basePayment:cents(basePayment),extraPayment,monthlyPayment:cents(basePayment+extraPayment),interestTotal,paidTotal,extraTotal,count,finalBalance:balance,rows};
+  };
+
+  bind("loan-calc", () => {
+    const p=read("loan-amount",0,1e12), annual=read("loan-rate",0,100), years=read("loan-years",1,50), extra=read("loan-extra",0,1e12);
+    if([p,annual,years,extra].some(v=>v===null)||p<=0){invalid(["loan-monthly","loan-interest","loan-total"]);put("loan-schedule","");return;}
+    const result=calculateLoanSchedule(p,annual,years,extra);
+    if(!result){invalid(["loan-monthly","loan-interest","loan-total"]);put("loan-schedule","");return;}
+    put("loan-monthly",fmt(result.monthlyPayment));
+    put("loan-interest",fmt(result.interestTotal));
+    put("loan-total",fmt(result.paidTotal));
+    put("loan-payment-count",result.count+" payments");
+    put("loan-extra-total","Extra principal: "+fmt(result.extraTotal));
     const body=$("loan-schedule");
-    if(body) body.innerHTML=rows.map(row=>"<tr><th scope=\"row\">"+row.count+"</th><td>"+fmt(row.opening)+"</td><td>"+fmt(row.scheduled)+"</td><td>"+fmt(row.extra)+"</td><td>"+fmt(row.interest)+"</td><td>"+fmt(row.principal)+"</td><td>"+fmt(row.ending)+"</td><td>"+fmt(row.cumulative)+"</td></tr>").join("");
+    if(body) body.innerHTML=result.rows.map(row=>"<tr><th scope=\"row\">"+row.count+"</th><td>"+fmt(row.opening)+"</td><td>"+fmt(row.scheduled)+"</td><td>"+fmt(row.extra)+"</td><td>"+fmt(row.interest)+"</td><td>"+fmt(row.principal)+"</td><td>"+fmt(row.ending)+"</td><td>"+fmt(row.cumulative)+"</td></tr>").join("");
+  });
+
+  bind("compare-calc", () => {
+    const principal=read("loan-amount",0,1e12);
+    const inputs=[
+      {label:"Scenario A",rate:read("loan-rate",0,100),years:read("loan-years",1,50),extra:read("loan-extra",0,1e12)},
+      {label:"Scenario B",rate:read("compare-rate-b",0,100),years:read("compare-years-b",1,50),extra:read("compare-extra-b",0,1e12)},
+      {label:"Scenario C",rate:read("compare-rate-c",0,100),years:read("compare-years-c",1,50),extra:read("compare-extra-c",0,1e12)}
+    ];
+    const outputIds=["compare-scheduled-a","compare-scheduled-b","compare-scheduled-c","compare-monthly-a","compare-monthly-b","compare-monthly-c","compare-interest-a","compare-interest-b","compare-interest-c","compare-total-a","compare-total-b","compare-total-c","compare-count-a","compare-count-b","compare-count-c","compare-extra-a","compare-extra-b","compare-extra-c","compare-delta-monthly-b","compare-delta-monthly-c","compare-delta-interest-b","compare-delta-interest-c","compare-delta-total-b","compare-delta-total-c","compare-delta-count-b","compare-delta-count-c"];
+    if(principal===null||principal<=0||inputs.some(x=>[x.rate,x.years,x.extra].some(v=>v===null))){
+      invalid(outputIds);put("compare-status","Check the shared loan amount and all scenario inputs.");return;
+    }
+    const results=inputs.map(x=>calculateLoanSchedule(principal,x.rate,x.years,x.extra));
+    if(results.some(x=>!x)){invalid(outputIds);put("compare-status","One or more scenarios could not be calculated. Check the inputs.");return;}
+    results.forEach((r,index)=>{
+      const key=["a","b","c"][index];
+      put("compare-scheduled-"+key,fmt(r.basePayment));
+      put("compare-monthly-"+key,fmt(r.monthlyPayment));
+      put("compare-interest-"+key,fmt(r.interestTotal));
+      put("compare-total-"+key,fmt(r.paidTotal));
+      put("compare-count-"+key,r.count+" payments");
+      put("compare-extra-"+key,fmt(r.extraTotal));
+    });
+    const deltaMoney=(value)=>value===0?"No difference":(value>0?"+":"−")+fmt(Math.abs(value));
+    ["b","c"].forEach((key,index)=>{
+      const r=results[index+1], baseline=results[0];
+      put("compare-delta-monthly-"+key,deltaMoney(cents(r.monthlyPayment-baseline.monthlyPayment)));
+      put("compare-delta-interest-"+key,deltaMoney(cents(r.interestTotal-baseline.interestTotal)));
+      put("compare-delta-total-"+key,deltaMoney(cents(r.paidTotal-baseline.paidTotal)));
+      const countDiff=r.count-baseline.count;
+      put("compare-delta-count-"+key,countDiff===0?"No difference":(countDiff>0?"+":"−")+Math.abs(countDiff)+" payments");
+    });
+    const lowestMonthly=results.reduce((best,item,index)=>item.monthlyPayment<results[best].monthlyPayment?index:best,0);
+    const lowestInterest=results.reduce((best,item,index)=>item.interestTotal<results[best].interestTotal?index:best,0);
+    put("compare-lowest-monthly",inputs[lowestMonthly].label);
+    put("compare-lowest-interest",inputs[lowestInterest].label);
+    put("compare-status","All scenarios use the same loan amount and currency. Fixed rate and monthly payments; fees, taxes, insurance and prepayment penalties are excluded.");
   });
 
   bind("budget-calc", () => {
@@ -234,5 +278,5 @@
     put("net-assets",fmt(assets));put("net-liabilities",fmt(liabilities));put("net-result",fmt(netWorth));
   });
 
-  ["ci-calc","loan-calc","budget-calc","save-calc","ef-calc","debt-calc","mortgage-calc","auto-calc","card-calc","retirement-calc","student-calc","networth-calc"].forEach(id=>{if($(id))$(id).click();});
+  ["ci-calc","loan-calc","compare-calc","budget-calc","save-calc","ef-calc","debt-calc","mortgage-calc","auto-calc","card-calc","retirement-calc","student-calc","networth-calc"].forEach(id=>{if($(id))$(id).click();});
 })();
