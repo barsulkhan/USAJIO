@@ -127,7 +127,7 @@ const server = http.createServer((req,res) => {
     // Loan amortization schedule: ledger reconciles, extra principal accelerates payoff, zero rate works.
     await calculate('loan-calculator.html','loan-calc',{'loan-amount':10000,'loan-rate':7,'loan-years':5,'loan-extra':0});
     const scheduleRows=page.locator('#loan-schedule tr');
-    if(await scheduleRows.count()!==60) throw new Error('Rounded scheduled payment should clear the loan in 60 months; found '+await ccmpScheduleRows.count());
+    if(await scheduleRows.count()!==60) throw new Error('Rounded scheduled payment should clear the loan in 60 months; found '+await scheduleRows.count());
     near(await money('loan-monthly'),198.02,'Loan rounded scheduled payment',0.001);
     near(await money('loan-interest'),1880.67,'Loan schedule interest reconciliation');
     near(await money('loan-total'),11880.67,'Loan schedule total reconciliation');
