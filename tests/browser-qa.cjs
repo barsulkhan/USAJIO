@@ -289,10 +289,10 @@ const server = http.createServer((req,res) => {
     const siteOrigin='https://barsulkhan.github.io';
     const basePath='/USAJIO/';
     const sitemapSource=fs.readFileSync(path.join(root,'sitemap.xml'),'utf8');
-    const sitemapUrls=[...sitemapSource.matchAll(/<loc>([^<]+)<\\/loc>/g)].map(match=>match[1]);
+    const sitemapUrls=[...sitemapSource.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match=>match[1]);
     const sitemapFiles=new Set(sitemapUrls.map(value=>{
       const url=new URL(value);
-      const relative=decodeURIComponent(url.pathname.startsWith(basePath)?url.pathname.slice(basePath.length):url.pathname.replace(/^\\//,''));
+      const relative=decodeURIComponent(url.pathname.startsWith(basePath)?url.pathname.slice(basePath.length):url.pathname.replace(/^\//,''));
       return relative||'index.html';
     }));
     const robots=fs.readFileSync(path.join(root,'robots.txt'),'utf8');
