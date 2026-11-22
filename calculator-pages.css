@@ -132,3 +132,17 @@ button,.primary-btn,.nav a{min-height:42px}
   .schedule-table thead{display:table-header-group}
   .schedule-table tr{break-inside:avoid}
 }
+
+
+/* Optional multi-debt snowball/avalanche comparison. */
+.multi-debt-planner{margin-top:18px}
+.multi-debt-fields{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.multi-debt-fields label{min-width:0}
+.multi-debt-fields input{min-width:0;width:100%}
+.multi-debt-extra{grid-column:1/-1}
+.multi-debt-planner .scenario-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+.multi-debt-planner .scenario-card h3{margin-top:0}
+.multi-debt-planner .scenario-card p{overflow-wrap:anywhere}
+#multi-debt-difference{font-weight:600}
+@media(max-width:760px){.multi-debt-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.multi-debt-fields{grid-template-columns:1fr}.multi-debt-extra{grid-column:auto}.multi-debt-planner .scenario-cards{grid-template-columns:1fr}}
