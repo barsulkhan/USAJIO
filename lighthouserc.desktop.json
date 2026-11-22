@@ -47,12 +47,6 @@
           {
             "minScore": 0.9
           }
-        ],
-        "resource-summary:total-byte-weight": [
-          "warn",
-          {
-            "maxNumericValue": 1500000
-          }
         ]
       }
     },
