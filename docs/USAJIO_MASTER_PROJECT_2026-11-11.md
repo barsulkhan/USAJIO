@@ -856,3 +856,24 @@ First verify deployment run #45030278000 for merge commit `d61f0498a1fbc965ec527
 - Search Console/indexing and AdSense/monetization remain paused. Do not resume unless explicitly requested.
 - Physical Android visual/touch and TalkBack tests remain NOT TESTED until performed on a real device. Automated Browser QA and axe checks are not substitutes.
 - USAJIO only. Do not modify InfoJano. No paid domain, service or subscription.
+---
+
+## 2026-11-22 — Compare Scenarios completed and deployed
+
+### Compare Scenarios release record
+- Research, CFPB guidance, competitor analysis and first-release improvement plan: docs/COMPARE_SCENARIOS_RESEARCH.md.
+- PR #57, feat: add loan scenario comparison, squash-merged as b6db38e85322e963fd6e243b11d0b6d24821cff9.
+- The optional collapsed comparison section is embedded in the existing Loan Payment Calculator; Scenario A uses the current inputs and B/C use alternative rate, term and extra monthly principal. All scenarios share the same loan principal and currency.
+- The existing loan calculator and the comparison now use the same cent-rounded monthly amortization helper. Results include scheduled payment, monthly outflow, total interest, total repayment, payoff count, extra principal and deltas versus Scenario A.
+- Browser QA run #45048481516 passed on PR head 00cd09b2e83141d2a893eb972b006d6e8fa8c5f7, including comparison known answers, zero rate, extra payment, identical scenarios, invalid input, 320px expanded-table overflow, keyboard and WCAG 2.1 A/AA automated checks.
+- Mobile and desktop Lighthouse run #45048417846 passed on commit da3db1a28ee4dee7e5f0933655ae6321938f353a. The only difference from the Browser QA head was a documentation-only update; application HTML/CSS/JS was identical.
+- Mobile loan calculator: Performance 93, Accessibility 100, Best Practices 100, SEO 100; LCP about 2,563 ms, CLS about 0.0113, TBT 0 ms. Desktop loan calculator: 100 for all four Lighthouse categories; LCP about 680 ms, CLS about 0.00031, TBT 0 ms.
+- GitHub Pages deployment run #45048757092 succeeded for merge commit b6db38e85322e963fd6e243b11d0b6d24821cff9. Configure Pages, upload artifact, artifact-registration wait and Deploy to GitHub Pages all completed successfully.
+
+### Roadmap status and next work
+- Milestone 1 — Loan Amortization Schedule: complete, merged, CI passed and deployment verified.
+- Milestone 2 — Advanced Budget Planner: complete, merged, CI passed and deployment verified.
+- Milestone 3 — Compare Scenarios: complete, merged, CI passed and deployment verified.
+- Next active item: Milestone 4 — Inflation-adjusted Retirement Projection. Research official/reputable sources, nominal versus real returns, contribution timing and uncertainty before implementation. Clearly state assumptions and avoid presenting deterministic projections as promises or personalized investment advice.
+- Search Console/indexing and AdSense remain paused. Physical Android/TalkBack tests remain NOT TESTED until performed on a real device. No paid domain/service/subscription. USAJIO only; never modify InfoJano.
+- Documentation PR #56 merge commit c37e206d5ab493123e4dee6f407d0644fcc3b2a5 also deployed successfully in GitHub Pages run #45048075625.
