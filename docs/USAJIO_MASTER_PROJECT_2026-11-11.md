@@ -689,3 +689,13 @@ USAJIO এখান থেকে চালিয়ে যাও। আগে `d
 - Search Console's prior sitemap detail screenshot showed **“Couldn't fetch” / “Sitemap could not be read”** and zero discovered pages. This remains a separate unresolved technical follow-up; the individual indexing queue does not fix it.
 - Continue source-based research/content-quality follow-ups for the calculator pages and finance guides. Every newly created and deployed public page must be added to the queue and sitemap.
 - Scope: USAJIO only; do not modify InfoJano. The 10-per-day cap is the user's chosen workflow, not a statement of Google's guaranteed daily quota.
+
+
+---
+
+## 2026-11-22 — Batch 01 indexing requests submitted
+
+- User reports live-testing all ten Batch 01 URLs and submitting a Google Search Console indexing request for each.
+- Updated `docs/INDEXING_QUEUE.md`: all ten URLs now have status **SUBMITTED — awaiting Google**.
+- No URL is marked indexed/complete yet. Wait for Google processing and user confirmation of indexing results.
+- Keep Batch 02 queued until the user reports outcomes for Batch 01.
