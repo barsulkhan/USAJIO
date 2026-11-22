@@ -494,14 +494,14 @@ Follow the established process for every new feature: **Research → Competitor 
 ### Current verified GitHub state
 - Repository: https://github.com/barsulkhan/USAJIO
 - Live site: https://barsulkhan.github.io/USAJIO/
-- Current `main` commit: `1d9c27af961e6d63cc01d8c80b5c7f92754cfe87`
+- Current `main` commit: `dd1906eb746176957e34684be04af63a8924855e`
 - Open PR count: **0** (checked after PR #32 merge).
 - PR #27: calculator QA/formula regression tests and retirement calculation fix — merged.
 - PR #28: Net Worth browser-local privacy regression tests — merged.
 - PR #29: responsive/keyboard accessibility QA and 44×44px mobile menu touch target — merged.
 - PR #30: Lighthouse report artifact retention and actual metric summaries — merged.
 - PR #31: full page/navigation/policy/sitemap audit; corrected homepage calculator count from 11 to 12 and connected the Resources nav item to the footer resource/policy links — merged as `4b6e2c5374b755784e60fad6169b8632fa8552c8`.
-- PR #32: sourced cash-flow budgeting guide, homepage and calculator cross-links, sitemap/README updates, SEO regression checks — merged as `1d9c27af961e6d63cc01d8c80b5c7f92754cfe87`.
+- PR #32: sourced cash-flow budgeting guide, homepage and calculator cross-links, sitemap/README updates, SEO regression checks — merged as `dd1906eb746176957e34684be04af63a8924855e`.
 - GitHub Pages deployment run #45023188599 for the latest main commit: **completed / success**. Environment URL: https://barsulkhan.github.io/USAJIO/.
 - No InfoJano files or settings were changed. No paid service or domain was purchased.
 
@@ -572,4 +572,11 @@ Follow the established process for every new feature: **Research → Competitor 
 - Keep this file as the single canonical project master and append future verified checkpoints here.
 
 ### Copy-ready continuation prompt
-আমাদের USAJIO প্রজেক্ট এখান থেকে চালিয়ে যাও। আগে `docs/USAJIO_MASTER_PROJECT_2026-11-11.md` সম্পূর্ণ পড়বে এবং এই সর্বশেষ checkpoint অনুসরণ করবে। Repository: https://github.com/barsulkhan/USAJIO । Live site: https://barsulkhan.github.io/USAJIO/ । সর্বশেষ main commit `1d9c27af961e6d63cc01d8c80b5c7f92754cfe87`; PR #27–#32 মার্জ হয়েছে; GitHub Pages deployment run #45023188599 সফল; Open PR শূন্য। ১২টি Calculator-এর formula/edge-case tests, Net Worth privacy, ১০টি responsive width, keyboard/axe QA, ২৮টি HTML page navigation/SEO metadata, sitemap/robots checks পাস। Lighthouse mobile performance 96–100, desktop 100; accessibility/SEO/best-practices 100। নতুন `cash-flow-budget-guide.html` তৈরি ও deploy হয়েছে। পরের কাজ: Android-এ নতুন guide ও homepage manual visual review, তারপর official-source-ভিত্তিক finance guide উন্নয়ন এবং Search Console readiness/indexing যাচাই (যদি access থাকে)। প্রতিটি নতুন কাজ আলাদা branch/PR-এ করবে; tests সফল হলে merge করবে। USAJIO ছাড়া InfoJano-তে কোনো পরিবর্তন করবে না। কোনো paid service/domain কিনবে না। বাংলায় কথা বলবে, অকারণে প্রশ্ন করবে না, এবং পরীক্ষা না করে pass বলবে না।
+আমাদের USAJIO প্রজেক্ট এখান থেকে চালিয়ে যাও। আগে `docs/USAJIO_MASTER_PROJECT_2026-11-11.md` সম্পূর্ণ পড়বে এবং এই সর্বশেষ checkpoint অনুসরণ করবে। Repository: https://github.com/barsulkhan/USAJIO । Live site: https://barsulkhan.github.io/USAJIO/ । সর্বশেষ main commit `dd1906eb746176957e34684be04af63a8924855e`; PR #27–#32 মার্জ হয়েছে; GitHub Pages deployment run #45023188599 সফল; Open PR শূন্য। ১২টি Calculator-এর formula/edge-case tests, Net Worth privacy, ১০টি responsive width, keyboard/axe QA, ২৮টি HTML page navigation/SEO metadata, sitemap/robots checks পাস। Lighthouse mobile performance 96–100, desktop 100; accessibility/SEO/best-practices 100। নতুন `cash-flow-budget-guide.html` তৈরি ও deploy হয়েছে। পরের কাজ: Android-এ নতুন guide ও homepage manual visual review, তারপর official-source-ভিত্তিক finance guide উন্নয়ন এবং Search Console readiness/indexing যাচাই (যদি access থাকে)। প্রতিটি নতুন কাজ আলাদা branch/PR-এ করবে; tests সফল হলে merge করবে। USAJIO ছাড়া InfoJano-তে কোনো পরিবর্তন করবে না। কোনো paid service/domain কিনবে না। বাংলায় কথা বলবে, অকারণে প্রশ্ন করবে না, এবং পরীক্ষা না করে pass বলবে না।
+
+
+### Final verification after master-file PR #33 — 2026-11-22
+- PR #33 (canonical master checkpoint update) merged successfully as `dd1906eb746176957e34684be04af63a8924855e`.
+- GitHub Pages deployment run #45023314659 for this exact latest `main` commit completed successfully.
+- Latest `main` is now `dd1906eb746176957e34684be04af63a8924855e`; open PR count remains 0.
+- PR #33 changed documentation only; the website source released by PR #32 remains the deployed site content.
