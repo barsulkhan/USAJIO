@@ -21,6 +21,7 @@
 <details class="scenario-comparison" id="scenario-comparison">
 <summary>Compare scenarios (optional)</summary>
 <p class="disclaimer">Scenario A uses the loan amount, rate, term and extra payment above. Enter alternative rate, term and extra monthly principal for scenarios B and C. All scenarios use the same principal and currency.</p>
+<div class="report-print-heading compare-print-heading" id="compare-print-heading"><h1>USAJIO — Loan Scenario Comparison Report</h1><p>Currency: <strong id="compare-print-currency">USD</strong> · Shared principal: <strong id="compare-print-principal">—</strong></p><p>Fixed-rate monthly estimates. APR, lender fees, points, credits, taxes, insurance and prepayment penalties are excluded.</p></div>
 <div class="scenario-cards">
 <fieldset class="scenario-card"><legend>Scenario B</legend><div class="fields">
 <label>Annual interest rate (%)<input id="compare-rate-b" type="number" min="0" max="100" step=".1" value="6.5"></label>
@@ -33,7 +34,7 @@
 <label>Extra monthly payment<input id="compare-extra-input-c" type="number" min="0" value="0"></label>
 </div></fieldset>
 </div>
-<button class="primary-btn" id="compare-calc">Compare scenarios</button>
+<div class="report-actions" aria-label="Scenario comparison report actions"><button type="button" class="primary-btn" id="compare-download-csv" disabled>Download comparison CSV</button><button type="button" class="primary-btn" id="compare-print-report" disabled>Print / Save as PDF</button></div><button class="primary-btn" id="compare-calc">Compare scenarios</button>
 <p id="compare-status" class="scenario-status" role="status" aria-live="polite">Calculate to compare the current loan settings with scenarios B and C.</p>
 <div class="scenario-results" aria-live="polite" aria-atomic="true">
 <div class="scenario-highlights"><div><small>Lowest monthly outflow</small><strong id="compare-lowest-monthly">—</strong></div><div><small>Lowest total interest</small><strong id="compare-lowest-interest">—</strong></div></div>

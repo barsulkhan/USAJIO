@@ -179,6 +179,21 @@ const server = http.createServer((req,res) => {
     if(!/^−/.test(await textOf('compare-delta-interest-b'))) throw new Error('Scenario B interest delta should be negative');
     if(await textOf('compare-delta-count-b')!=='No difference') throw new Error('Scenario B payment-count delta mismatch');
 
+    if(await page.locator('#compare-download-csv').isDisabled()||await page.locator('#compare-print-report').isDisabled()) throw new Error('Valid scenario results should enable report actions');
+    const compareDownloadPromise=page.waitForEvent('download');await page.locator('#compare-download-csv').click();const compareDownload=await compareDownloadPromise;
+    if(compareDownload.suggestedFilename()!=='usajio-loan-scenario-comparison.csv') throw new Error('Unexpected comparison CSV filename');
+    const compareCsv=fs.readFileSync(await compareDownload.path(),'utf8');if(compareCsv.charCodeAt(0)!==0xFEFF) throw new Error('Comparison CSV must include UTF-8 BOM');
+    if(!compareCsv.includes('"Shared principal","10000.00"')||!compareCsv.includes('"Scenario A"')||!compareCsv.includes('"Scenario B"')||!compareCsv.includes('"Scenario C"')||!compareCsv.includes('"Total interest"')||!compareCsv.includes('"1880.67"')) throw new Error('Comparison CSV missing scenario metadata or results');
+    const compareLines=compareCsv.slice(1).split(String.fromCharCode(13,10));if(compareLines.length!==16) throw new Error('Comparison CSV row count mismatch: '+compareLines.length);
+    if(!compareLines[6].includes('"Scenario","Annual interest rate (%)"')||!compareLines[11].includes('"Difference vs Scenario A"')) throw new Error('Comparison CSV headers missing');
+    await page.evaluate(()=>{window.__comparePrintCalled=false;window.print=()=>{window.__comparePrintCalled=true;};});await page.locator('#compare-print-report').click();
+    if(!(await page.evaluate(()=>window.__comparePrintCalled))) throw new Error('Comparison print did not invoke native print');
+    if(!(await page.locator('body').evaluate(el=>el.classList.contains('compare-print')))) throw new Error('Comparison print mode not applied');
+    await page.emulateMedia({media:'print'});if(await page.locator('.scenario-comparison').evaluate(el=>getComputedStyle(el).display)==='none') throw new Error('Comparison report hidden in print mode');
+    if(await page.locator('.amortization').evaluate(el=>getComputedStyle(el).display)!=='none') throw new Error('Loan schedule should be hidden in comparison print mode');
+    await page.emulateMedia({media:'screen'});await page.evaluate(()=>document.body.classList.remove('compare-print'));
+    await page.locator('#compare-rate-b').fill('6.4');if(!(await page.locator('#compare-download-csv').isDisabled())||!(await page.locator('#compare-print-report').isDisabled())) throw new Error('Editing comparison input must invalidate stale report actions');await page.locator('#compare-calc').click();
+
     // Zero-rate scenario and identical-scenario reconciliation.
     await page.locator('#compare-rate-b').fill('0');
     await page.locator('#compare-years-b').fill('5');

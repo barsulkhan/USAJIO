@@ -126,3 +126,11 @@ Sources:
 - GitHub Pages deployment run #45050740122 for merge commit `8c7bb010a925a7d47ae0ec322cc4ebbfec9ca270` completed with conclusion `success`.
 - A non-blocking Node.js 20 deprecation warning appeared in the Pages workflow. It did not prevent deployment; review runtime/action upgrades in a separate maintenance change.
 - This release implements only the loan export slice. Compare Scenarios, Advanced Budget Planner and Retirement Projection exports remain planned, not complete.
+
+## 11. Compare Scenarios export — implementation in progress (2026-11-22)
+- Dedicated feature branch: `feature/compare-scenarios-reports-2026-11-22`.
+- Existing comparison remains inside the optional collapsed section of `loan-calculator.html`; the basic loan calculator flow and shared cent-rounded amortization engine are preserved.
+- Planned CSV includes shared principal/currency, assumptions and exclusions, all three scenario inputs and modeled totals, final balances, and deltas versus Scenario A for monthly outflow, total interest, total repayment and payoff count.
+- Print / Save as PDF uses the browser-native print dialog and a comparison-specific print mode so the comparison tables are printed while the single-loan amortization schedule is hidden.
+- Actions remain disabled until a valid comparison is calculated and are invalidated when any shared or scenario input changes.
+- Automated tests are being added for filename, UTF-8 BOM, CRLF row structure, three-scenario contents, deltas, native print invocation, print layout and stale-report invalidation. No merge until Browser QA and mobile/desktop Lighthouse pass.

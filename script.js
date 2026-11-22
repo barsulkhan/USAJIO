@@ -106,7 +106,7 @@
     if(element) element.addEventListener("input",()=>{latestLoanReport=null;setLoanReportActions(false);});
   });
   bind("loan-download-csv",()=>{if(latestLoanReport) downloadLoanCsv(latestLoanReport);});
-  bind("loan-print-report",()=>{if(latestLoanReport) window.print();});
+  bind("loan-print-report",()=>{if(latestLoanReport){document.body.classList.remove("compare-print");document.body.classList.add("loan-print");window.print();}});
 
   bind("loan-calc", () => {
     const p=read("loan-amount",0,1e12), annual=read("loan-rate",0,100), years=read("loan-years",1,50), extra=read("loan-extra",0,1e12);
@@ -136,6 +136,18 @@
     if(body) body.innerHTML=result.rows.map(row=>"<tr><th scope=\"row\">"+row.count+"</th><td>"+fmt(row.opening)+"</td><td>"+fmt(row.scheduled)+"</td><td>"+fmt(row.extra)+"</td><td>"+fmt(row.interest)+"</td><td>"+fmt(row.principal)+"</td><td>"+fmt(row.ending)+"</td><td>"+fmt(row.cumulative)+"</td></tr>").join("");
   });
 
+  let latestCompareReport=null;
+  const compareReportControls=["loan-amount","loan-rate","loan-years","loan-extra","currency","compare-rate-b","compare-years-b","compare-extra-input-b","compare-rate-c","compare-years-c","compare-extra-input-c"];
+  const setCompareReportActions=enabled=>["compare-download-csv","compare-print-report"].forEach(id=>{if($(id))$(id).disabled=!enabled;});
+  const downloadCompareCsv=report=>{
+    const rows=[["Report","USAJIO Loan Scenario Comparison"],["Currency",report.currency],["Shared principal",loanCsvNumber(report.principal)],["Assumptions","Same principal and currency; fixed annual rate divided monthly; monthly payments; cent-rounded interest; extra monthly amounts reduce principal."],["Exclusions","APR, lender fees, points, credits, taxes, insurance and prepayment penalties are excluded. Not a lender-offer comparison."],[],["Scenario","Annual interest rate (%)","Term (years)","Extra monthly principal","Scheduled monthly payment","Monthly outflow incl. extra","Total interest","Total repayment","Payments to payoff","Extra principal paid","Final balance"],...report.scenarios.map(s=>[s.label,loanCsvNumber(s.rate),loanCsvNumber(s.years),loanCsvNumber(s.extra),loanCsvNumber(s.result.basePayment),loanCsvNumber(s.result.monthlyPayment),loanCsvNumber(s.result.interestTotal),loanCsvNumber(s.result.paidTotal),String(s.result.count),loanCsvNumber(s.result.extraTotal),loanCsvNumber(s.result.finalBalance)]),[],["Difference vs Scenario A","Scenario B","Scenario C"],["Monthly outflow",loanCsvNumber(report.scenarios[1].result.monthlyPayment-report.scenarios[0].result.monthlyPayment),loanCsvNumber(report.scenarios[2].result.monthlyPayment-report.scenarios[0].result.monthlyPayment)],["Total interest",loanCsvNumber(report.scenarios[1].result.interestTotal-report.scenarios[0].result.interestTotal),loanCsvNumber(report.scenarios[2].result.interestTotal-report.scenarios[0].result.interestTotal)],["Total repayment",loanCsvNumber(report.scenarios[1].result.paidTotal-report.scenarios[0].result.paidTotal),loanCsvNumber(report.scenarios[2].result.paidTotal-report.scenarios[0].result.paidTotal)],["Payments to payoff",String(report.scenarios[1].result.count-report.scenarios[0].result.count),String(report.scenarios[2].result.count-report.scenarios[0].result.count)]];
+    const csv="\uFEFF"+rows.map(row=>row.map(loanCsvCell).join(",")).join("\r\n");const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const link=document.createElement("a");link.href=url;link.download="usajio-loan-scenario-comparison.csv";document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  };
+  compareReportControls.forEach(id=>{const el=$(id);if(el)el.addEventListener("input",()=>{latestCompareReport=null;setCompareReportActions(false);});});
+  bind("compare-download-csv",()=>{if(latestCompareReport)downloadCompareCsv(latestCompareReport);});
+  bind("compare-print-report",()=>{if(latestCompareReport){document.body.classList.remove("loan-print");document.body.classList.add("compare-print");window.print();}});
+  window.addEventListener("afterprint",()=>document.body.classList.remove("compare-print","loan-print"));
+
   bind("compare-calc", () => {
     const principal=read("loan-amount",0,1e12);
     const inputs=[
@@ -149,6 +161,8 @@
     }
     const results=inputs.map(x=>calculateLoanSchedule(principal,x.rate,x.years,x.extra));
     if(results.some(x=>!x)){invalid(outputIds);put("compare-status","One or more scenarios could not be calculated. Check the inputs.");return;}
+    latestCompareReport={principal,currency:$("currency")?.value||"USD",scenarios:inputs.map((item,index)=>({...item,result:results[index]}))};
+    setCompareReportActions(true);put("compare-print-currency",latestCompareReport.currency);put("compare-print-principal",fmt(principal));
     results.forEach((r,index)=>{
       const key=["a","b","c"][index];
       put("compare-scheduled-"+key,fmt(r.basePayment));

@@ -104,7 +104,19 @@ button,.primary-btn,.nav a{min-height:42px}
   @page{size:landscape;margin:12mm}
   body{background:#fff!important;color:#111!important;font-size:9pt}
   .site-header,.page-intro,.calc-copy,.calculator>.fields,.calculator>#loan-calc,
-  .report-actions,.scenario-comparison,.methodology,.related-tools,footer{display:none!important}
+  .report-actions,.methodology,.related-tools,footer{display:none!important}
+  .scenario-comparison{display:none!important}
+  body.compare-print .amortization{display:none!important}
+  body.compare-print .scenario-comparison{display:block!important;border:0!important;padding:0!important;margin:0!important;background:#fff!important}
+  body.compare-print .scenario-comparison>summary{display:none!important}
+  body.compare-print #loan-print-heading{display:none!important}
+  body.compare-print .compare-print-heading{display:block!important}
+  body.loan-print #compare-print-heading{display:none!important}
+  body.compare-print .scenario-cards,body.compare-print #compare-calc,body.compare-print #compare-status{display:none!important}
+  body.compare-print .scenario-results{display:grid!important}
+  body.compare-print .compare-table{min-width:0!important;width:100%!important;font-size:8pt!important}
+  body.compare-print .compare-table td,body.compare-print .compare-table th{white-space:normal!important}
+  body.loan-print .scenario-comparison{display:none!important}
   main,.calculator-page,.calculator{display:block!important;width:100%!important;max-width:none!important;margin:0!important;padding:0!important;border:0!important;box-shadow:none!important}
   .report-print-heading{display:block!important;margin:0 0 12px;break-inside:avoid}
   .report-print-heading h1{font-size:18pt;margin:0 0 8px}
