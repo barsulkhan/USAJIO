@@ -313,8 +313,8 @@ const server = http.createServer((req,res) => {
     // Optional multi-debt comparison: expand its disclosure before interacting with the fields.
     await calculate('debt-payoff.html','debt-calc',{'debt-balance':5000,'debt-rate':12,'debt-payment':250});
     await page.locator('#multi-debt-details > summary').click();
-    await set({'multi-debt-name-1':'Small low-rate','multi-debt-balance-1':1200,'multi-debt-rate-1':8,'multi-debt-min-1':40,
-      'multi-debt-name-2':'Large high-rate','multi-debt-balance-2':5000,'multi-debt-rate-2':24,'multi-debt-min-2':150,
+    await set({'multi-debt-name-1':'Small low-rate','multi-debt-balance-1':1500,'multi-debt-rate-1':8,'multi-debt-min-1':40,
+      'multi-debt-name-2':'Large high-rate','multi-debt-balance-2':3000,'multi-debt-rate-2':24,'multi-debt-min-2':90,
       'multi-debt-extra':50});
     await page.locator('#multi-debt-calc').click();
     if(await page.locator('#multi-debt-results').isHidden()) throw new Error('Multi-debt comparison did not render');
