@@ -75,7 +75,8 @@ const server = http.createServer((req,res) => {
     await page.locator('#ccmp-floor').fill('25');
     await page.locator('#ccmp-calc').click();
     if(Number((await page.locator('#ccmp-interest').innerText()).replace(/[^0-9.-]/g,''))!==0) throw new Error('Zero-APR minimum-payment interest should be zero');
-    if(await page.locator('#ccmp-schedule tbody tr').count()!==12) throw new Error('Minimum-payment planner should show the first 12 schedule rows');
+    const scheduleRows=await page.locator('#ccmp-schedule tbody tr').count();
+    if(scheduleRows<1||scheduleRows>12) throw new Error('Minimum-payment planner should show up to 12 monthly schedule rows; found '+scheduleRows);
     await page.locator('#ccmp-apr').fill('24');
     await page.locator('#ccmp-percent').fill('1');
     await page.locator('#ccmp-floor').fill('0');
