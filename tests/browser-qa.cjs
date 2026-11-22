@@ -317,7 +317,7 @@ const server = http.createServer((req,res) => {
     await set({'retirement-return':6,'retirement-low-return':8,'retirement-high-return':4});
     await page.locator('#retirement-calc').click();
     if(!/Conservative return/.test(await textOf('retirement-scenario-status'))) throw new Error('Invalid retirement scenario order should be rejected');
-    near(await money('retirement-balance'),await money('retirement-balance'),'Base retirement result remains available after scenario-order error');
+    near(await money('retirement-balance'),168102.9445,'Base retirement result remains available after scenario-order error');
 
     // Invalid inflation must be rejected without breaking the base projection.
     await set({'retirement-return':6,'retirement-low-return':4,'retirement-high-return':8,'retirement-inflation':-1});
