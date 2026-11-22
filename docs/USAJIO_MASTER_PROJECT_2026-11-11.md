@@ -485,3 +485,91 @@ Follow the established process for every new feature: **Research → Competitor 
 
 ### Copy-ready new-chat prompt
 আমাদের USAJIO প্রজেক্ট এখান থেকে চালিয়ে যাও। আগে GitHub-এর `docs/USAJIO_MASTER_PROJECT_2026-11-11.md` ফাইলটি সম্পূর্ণ পড়ে নাও এবং সর্বশেষ checkpoint অনুসরণ করো। Repository: https://github.com/barsulkhan/USAJIO । Live site: https://barsulkhan.github.io/USAJIO/ । সর্বশেষ feature PR #26 (Net Worth Calculator) মার্জ হয়েছে; commit `491917ca21b713d7fc99a774c5119ea899688ffb`; GitHub Pages deployment run #44989840988 সফল; বর্তমানে Open PR শূন্য। সব বর্তমান source/assets/docs/tests GitHub main-এ committed আছে। প্রথম কাজ হবে P0 হিসেবে ১২টি calculator-এর reproducible formula ও edge-case QA, বিশেষ করে Net Worth Calculator-এর browser-local privacy check; তারপর accessibility/mobile, latest Lighthouse reports, internal links/policy text এবং SEO review। নতুন feature-এর আগে Research → Competitor Analysis → Improvement Plan → Development → Testing অনুসরণ করবে। প্রতিটি কাজ আলাদা branch/PR-এ করবে; checks সফল হলে merge করবে, বারবার অনুমতি চাইবে না। USAJIO ছাড়া InfoJano-তে হাত দেবে না। কোনো paid domain/hosting/API/subscription বা monetization আমার অনুমতি ছাড়া করবে না। বাংলায় সংক্ষেপে কথা বলবে, অকারণে progress update বা একই প্রশ্ন বারবার করবে না। কাজ শেষে এই একই master file আপডেট করবে।
+
+
+---
+
+## 2026-11-22 — Continuation checkpoint: full QA, site audit, SEO and new finance guide
+
+### Current verified GitHub state
+- Repository: https://github.com/barsulkhan/USAJIO
+- Live site: https://barsulkhan.github.io/USAJIO/
+- Current `main` commit: `1d9c27af961e6d63cc01d8c80b5c7f92754cfe87`
+- Open PR count: **0** (checked after PR #32 merge).
+- PR #27: calculator QA/formula regression tests and retirement calculation fix — merged.
+- PR #28: Net Worth browser-local privacy regression tests — merged.
+- PR #29: responsive/keyboard accessibility QA and 44×44px mobile menu touch target — merged.
+- PR #30: Lighthouse report artifact retention and actual metric summaries — merged.
+- PR #31: full page/navigation/policy/sitemap audit; corrected homepage calculator count from 11 to 12 and connected the Resources nav item to the footer resource/policy links — merged as `4b6e2c5374b755784e60fad6169b8632fa8552c8`.
+- PR #32: sourced cash-flow budgeting guide, homepage and calculator cross-links, sitemap/README updates, SEO regression checks — merged as `1d9c27af961e6d63cc01d8c80b5c7f92754cfe87`.
+- GitHub Pages deployment run #45023188599 for the latest main commit: **completed / success**. Environment URL: https://barsulkhan.github.io/USAJIO/.
+- No InfoJano files or settings were changed. No paid service or domain was purchased.
+
+### Calculator correctness and Net Worth privacy — verified
+- Browser QA run #45022893157 passed on the PR #32 commit.
+- The automated suite reports: `PASS: 12-calculator known-answer, zero-rate, boundary, invalid, deficit/negative, insufficient-payment and amortization checks.`
+- Net Worth privacy regression passed: entered financial figures stayed in the browser; no non-read request, fetch/XHR/beacon transfer, local/session storage or IndexedDB persistence, or financial values in request URL/body. Reload did not restore values.
+- Currency display checks cover USD, EUR, GBP, CAD, AUD and INR; selector changes formatting only, not FX conversion.
+- These are reproducible headless Chromium tests, not a professional review of every financial product assumption.
+
+### Accessibility, mobile and navigation — automated QA passed
+- Responsive widths tested: 320, 360, 375, 390, 412, 430, 620, 700, 768 and 1024 CSS pixels across the homepage and all 12 calculator pages.
+- All calculator form controls tested for programmatic labels. Each calculator action was reached by keyboard Tab, checked for visible focus, and activated with Enter.
+- Mobile menu target was enlarged to at least 44×44 CSS pixels.
+- axe WCAG 2.1 A/AA audit passed.
+- PR #32 browser run additionally served all **28 HTML pages** and passed unique title, meta description, canonical URL, H1, language, sitemap/robots, footer policy links, internal file links and fragment-target checks.
+- Physical Android touch review and a real assistive-technology/screen-reader audit remain **Not Tested**. Headless browser results do not replace those manual checks.
+
+### Lighthouse results — actual PR #32 run
+- Performance workflow run #45022893143 completed successfully for mobile and desktop.
+- Across the homepage and all 12 calculator pages:
+  - Mobile Performance: **96–100**; Desktop Performance: **100** on every audited page.
+  - Accessibility, Best Practices and SEO: **100** on every audited page in both profiles.
+  - Maximum mobile LCP: approximately **2,214 ms**; maximum desktop LCP: approximately **693 ms**.
+  - Maximum mobile CLS: approximately **0.0475**; maximum desktop CLS: approximately **0.0019**.
+  - TBT: **0 ms** for every audited page.
+- The Lighthouse configuration audits the homepage and 12 calculators, not every guide and policy page. Browser QA did load and validate all 28 HTML pages.
+- Reports are retained as GitHub Actions artifacts by the updated performance workflow. These are CI lab results; field Core Web Vitals and live Search Console data have not been checked.
+
+### Full navigation, policy and technical SEO review
+- PR #31 browser QA run #45022418844 passed; its Lighthouse run #45022418845 passed.
+- All 27 pre-guide HTML pages were inspected. Every page had a unique title, meta description, canonical link and exactly one H1.
+- After adding the new guide, PR #32 automated QA verified the same metadata conditions across all 28 HTML pages and enforced unique page titles.
+- Sitemap contains **28 unique URLs**, all on the correct GitHub Pages project path. `robots.txt` allows crawling and references `https://barsulkhan.github.io/USAJIO/sitemap.xml`.
+- Homepage now correctly states 12 calculators; Resources nav anchor targets the footer policy/resource list.
+- Privacy, Terms and Financial Disclaimer pages show a review date of 21 November 2026.
+- Contact page deliberately does not invent an email address or form. It says no dedicated public email/contact form has been published. Before any business launch, publish a verified contact channel and review policy wording with appropriate legal guidance.
+- Technical metadata and crawl paths were checked in source/CI. Google indexing, search rankings, Search Console ownership/coverage and real public HTTP status for every URL are **Not Tested**.
+
+### SEO research and new finance guide
+- Google Search Central documentation reviewed: people-first, original, useful content; descriptive titles/headings; crawlable links; avoid thin or mass-produced search-first pages.
+  - https://developers.google.com/search/docs/fundamentals/creating-helpful-content
+  - https://developers.google.com/search/docs/essentials
+- Primary financial education sources reviewed:
+  - CFPB — Assess your spending: https://www.consumerfinance.gov/owning-a-home/prepare/assess-your-spending/
+  - CFPB — Get your money situation in order: https://www.consumerfinance.gov/owning-a-home/prepare/get-your-money-situation-in-order/
+  - CFPB — Your Money, Your Goals toolkit: https://files.consumerfinance.gov/f/documents/cfpb_your-money-your-goals_financial-empowerment_toolkit.pdf
+  - consumer.gov — Making a budget: https://consumer.gov/your-money/making-budget
+- Competitor pattern review: NerdWallet budgeting pages explain take-home pay, tracking spending, optional 50/30/20 methods and regular review. USAJIO's content angle adds payday/bill-date timing, pay-frequency conversions, annual-cost set-asides and an illustrative worked example; wording was written independently.
+- Added `cash-flow-budget-guide.html`, an original U.S.-focused educational guide with official source links, review date, monthly-budget and related-tool links, clear scope limitations and social-preview metadata.
+- Linked the guide from the homepage and Monthly Budget Planner; added it to sitemap, README and research documentation. Corrected the Monthly Budget page's outdated “View all six calculators” label to “View all calculators”.
+- Current site has 12 calculators and 9 finance guides. Sitemap has 28 HTML URLs including homepage and information/policy pages.
+
+### Current next actions
+1. Do a manual visual check of the newly deployed cash-flow guide and updated homepage on a physical Android browser when practical; record separately from CI.
+2. Continue improving the remaining finance guides one at a time with official sources, examples, assumptions, review dates and useful links; do not mass-produce thin pages or fabricate author credentials.
+3. If Search Console becomes available, verify ownership, sitemap submission and indexing/coverage. Do not claim indexed until Search Console or a reliable search check confirms it.
+4. Consider social-preview metadata consistency across the older guide pages; current CI enforces titles, descriptions and canonical URLs, not complete Open Graph coverage.
+5. Keep physical screen-reader testing outstanding until a real device/assistive technology is used.
+6. Continue using separate branches and PRs; merge only after browser QA and relevant Lighthouse checks pass.
+
+### Operating rules reaffirmed
+- USAJIO only. Do not modify InfoJano.
+- No paid domain, hosting, APIs, subscriptions, monetization or purchases without explicit permission.
+- Keep hosting on free GitHub Pages.
+- Speak Bengali; avoid repeated questions and unnecessary progress chatter.
+- Do not claim physical-device testing, Search Console indexing or live visual verification from CI results.
+- Keep this file as the single canonical project master and append future verified checkpoints here.
+
+### Copy-ready continuation prompt
+আমাদের USAJIO প্রজেক্ট এখান থেকে চালিয়ে যাও। আগে `docs/USAJIO_MASTER_PROJECT_2026-11-11.md` সম্পূর্ণ পড়বে এবং এই সর্বশেষ checkpoint অনুসরণ করবে। Repository: https://github.com/barsulkhan/USAJIO । Live site: https://barsulkhan.github.io/USAJIO/ । সর্বশেষ main commit `1d9c27af961e6d63cc01d8c80b5c7f92754cfe87`; PR #27–#32 মার্জ হয়েছে; GitHub Pages deployment run #45023188599 সফল; Open PR শূন্য। ১২টি Calculator-এর formula/edge-case tests, Net Worth privacy, ১০টি responsive width, keyboard/axe QA, ২৮টি HTML page navigation/SEO metadata, sitemap/robots checks পাস। Lighthouse mobile performance 96–100, desktop 100; accessibility/SEO/best-practices 100। নতুন `cash-flow-budget-guide.html` তৈরি ও deploy হয়েছে। পরের কাজ: Android-এ নতুন guide ও homepage manual visual review, তারপর official-source-ভিত্তিক finance guide উন্নয়ন এবং Search Console readiness/indexing যাচাই (যদি access থাকে)। প্রতিটি নতুন কাজ আলাদা branch/PR-এ করবে; tests সফল হলে merge করবে। USAJIO ছাড়া InfoJano-তে কোনো পরিবর্তন করবে না। কোনো paid service/domain কিনবে না। বাংলায় কথা বলবে, অকারণে প্রশ্ন করবে না, এবং পরীক্ষা না করে pass বলবে না।
