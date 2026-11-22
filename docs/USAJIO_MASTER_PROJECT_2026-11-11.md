@@ -898,3 +898,13 @@ First verify deployment run #45030278000 for merge commit `d61f0498a1fbc965ec527
 - Milestone 4 — Inflation-adjusted Retirement Projection: complete, merged, CI passed and deployment verified.
 - Next active item: Milestone 5 — Downloadable Reports (PDF/CSV). Research whether export materially helps each calculator, keep generation client-side where practical, and verify exported values match on-screen results. No inert export buttons or server upload of financial inputs.
 - Search Console/indexing and AdSense remain paused. Physical Android/TalkBack tests remain NOT TESTED until performed on a real device. No paid domain/service/subscription. USAJIO only; never modify InfoJano.
+---
+
+## 2026-11-22 — Downloadable Reports research completed
+- Research, competitor analysis, tool-by-tool export decisions, RFC 4180 CSV structure, OWASP formula-injection safeguards and client-side print/PDF plan: docs/DOWNLOADABLE_REPORTS_RESEARCH.md.
+- Research PR #61 merged as f52f01a5e41e7e8b591ca10034703102801c286d.
+- GitHub Pages deployment run #45049889576 succeeded for the research-document merge commit.
+- Milestone 5 — Downloadable Reports (PDF/CSV) is now the active implementation task. Start with client-side CSV for the loan amortization schedule and native browser Print / Save as PDF; then add exports to Compare Scenarios, Advanced Budget Planner and Retirement Projection using structured calculation results.
+- Keep report generation local, use RFC 4180 quoting, test spreadsheet formula-injection safeguards, include assumptions/units/currency/disclaimers, and never upload financial inputs.
+- Do not add paid PDF services or libraries. Native browser print is not an automatic PDF download; label it accurately.
+- Search Console/indexing and AdSense remain paused. Physical Android/TalkBack tests remain NOT TESTED until performed on a real device. USAJIO only; no InfoJano changes or paid services.
