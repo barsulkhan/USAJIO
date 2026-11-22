@@ -18,7 +18,7 @@
   if ($("year")) $("year").textContent = new Date().getFullYear();
   if ($("currency")) $("currency").addEventListener("change", event => {
     currency = event.target.value;
-    ["ci-calc","loan-calc","budget-calc","save-calc","ef-calc","debt-calc","mortgage-calc","auto-calc","card-calc","retirement-calc","student-calc"].forEach(id => { if ($(id)) $(id).click(); });
+    ["ci-calc","loan-calc","budget-calc","save-calc","ef-calc","debt-calc","mortgage-calc","auto-calc","card-calc","retirement-calc","student-calc","networth-calc"].forEach(id => { if ($(id)) $(id).click(); });
   });
 
   bind("ci-calc", () => {
@@ -148,5 +148,16 @@
     put("student-months",months>=1200?"Over 100 years":String(months)+" months");put("student-interest",months>=1200?"—":fmt(interest));put("student-total",months>=1200?"—":fmt(total));
   });
 
-  ["ci-calc","loan-calc","budget-calc","save-calc","ef-calc","debt-calc","mortgage-calc","auto-calc","card-calc","retirement-calc","student-calc"].forEach(id=>{if($(id))$(id).click();});
+  bind("networth-calc", () => {
+    const ids=["net-cash","net-investments","net-retirement","net-home","net-other-assets","net-mortgage","net-auto","net-student","net-credit","net-other-debt"];
+    const values=ids.map(id=>read(id,0,1e12));
+    if(values.some(v=>v===null)){invalid(["net-assets","net-liabilities","net-result"]);return;}
+    const assets=values.slice(0,5).reduce((sum,value)=>sum+value,0);
+    const liabilities=values.slice(5).reduce((sum,value)=>sum+value,0);
+    const netWorth=assets-liabilities;
+    if(![assets,liabilities,netWorth].every(Number.isFinite)){invalid(["net-assets","net-liabilities","net-result"]);return;}
+    put("net-assets",fmt(assets));put("net-liabilities",fmt(liabilities));put("net-result",fmt(netWorth));
+  });
+
+  ["ci-calc","loan-calc","budget-calc","save-calc","ef-calc","debt-calc","mortgage-calc","auto-calc","card-calc","retirement-calc","student-calc","networth-calc"].forEach(id=>{if($(id))$(id).click();});
 })();

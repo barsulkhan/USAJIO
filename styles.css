@@ -36,3 +36,8 @@
 .feature-icon svg{width:34px;height:34px;display:block;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .feature-calculator{background:linear-gradient(145deg,#e6f3ff,#cfe5ff);color:#216fca}
 .feature-guides{background:linear-gradient(145deg,#fff1dc,#ffe0b2);color:#c77b12}
+
+
+/* Homepage WCAG AA contrast corrections found by the PR browser audit. */
+.eyebrow,.guide-grid article span{color:#08745f!important}
+.about-band p{color:#626f84}
