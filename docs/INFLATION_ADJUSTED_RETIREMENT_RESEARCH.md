@@ -2,7 +2,7 @@
 
 **Project:** USAJIO  
 **Research date:** 2026-11-22  
-**Status:** Research complete; optional inflation-adjusted scenarios are implemented in PR #59 and validation is in progress.
+**Status:** Complete — PR #59 merged and GitHub Pages deployment verified.
 
 ## 1. Existing USAJIO baseline
 - Current page: retirement-calculator.html.
@@ -108,3 +108,8 @@ Sources:
 - The engine preserves the current monthly-equivalent return and month-end contribution formula. It shows nominal future balance and today's-dollar value for conservative/base/optimistic scenarios, using nominal balance divided by the inflation factor.
 - Conservative ≤ Base ≤ Optimistic is validated. Invalid advanced assumptions do not erase the base nominal projection.
 - Browser QA now covers scenario reconciliation, zero return, zero inflation, negative real return, invalid ordering/inflation and the expanded 320px mobile layout. Full Browser QA and Lighthouse results are pending.
+## 9. Release evidence — 2026-11-22
+- PR #59 merged as f5d50f749effc461b7e803aa8a258547dc6ab829.
+- Browser QA #45049291104 passed on the PR head, including zero return/inflation, negative real return, invalid assumptions, responsive and accessibility checks.
+- Mobile and desktop Lighthouse #45049198576 passed; only documentation/test-only changes differ from the browser-tested head.
+- GitHub Pages deployment #45049568548 succeeded for the merge commit.
