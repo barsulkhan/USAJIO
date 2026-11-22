@@ -398,3 +398,7 @@ Consolidated integration branch: `quality/integrated-final-qa-2026-11-21`. Premi
 - Static local HTML-link audit across all 26 HTML pages in the repository tree: **Pass**; no missing relative `.html` targets were found.
 - Sitemap URL count (26) matches the current HTML page count (26) — **Pass (count only)**. Sitemap URLs are project-relative GitHub Pages absolute URLs; live URL reachability remains **Not Tested**.
 - No source code or calculator logic was modified during this QA pass.
+
+### CI automation follow-up
+- PR #16 opened: https://github.com/barsulkhan/USAJIO/pull/16. It adds a `pull_request` trigger for the existing Playwright browser QA workflow when site HTML/CSS/JS, assets, tests or the workflow itself change. This is a CI-only change; it does not modify the website or deployment workflow.
+- GitHub will not execute the newly added PR trigger for PR #16 itself because the workflow definition is not yet present on the base branch. After approval/merge, future site PRs will run the browser QA automatically.
