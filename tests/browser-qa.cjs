@@ -283,6 +283,62 @@ const server = http.createServer((req,res) => {
     if(menuRect&&(menuRect.width<44||menuRect.height<44)) throw new Error('Mobile menu touch target is smaller than 44x44px: '+JSON.stringify(menuRect));
     console.log('PASS: 10 responsive widths across homepage and all 12 calculators; labeled controls and keyboard-only calculation/focus checks.');
 
+
+    // Crawl every public HTML page and verify all local links, fragments and sitemap entries.
+    const allHtmlFiles=fs.readdirSync(root).filter(name=>name.endsWith('.html')).sort();
+    const siteOrigin='https://barsulkhan.github.io';
+    const basePath='/USAJIO/';
+    const sitemapSource=fs.readFileSync(path.join(root,'sitemap.xml'),'utf8');
+    const sitemapUrls=[...sitemapSource.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match=>match[1]);
+    const sitemapFiles=new Set(sitemapUrls.map(value=>{
+      const url=new URL(value);
+      const relative=decodeURIComponent(url.pathname.startsWith(basePath)?url.pathname.slice(basePath.length):url.pathname.replace(/^\//,''));
+      return relative||'index.html';
+    }));
+    const robots=fs.readFileSync(path.join(root,'robots.txt'),'utf8');
+    if(!robots.includes('https://barsulkhan.github.io/USAJIO/sitemap.xml')) throw new Error('robots.txt does not advertise the canonical sitemap');
+    if(sitemapFiles.size!==allHtmlFiles.length) throw new Error('Sitemap/page count mismatch: '+sitemapFiles.size+' sitemap entries vs '+allHtmlFiles.length+' HTML pages');
+    const pageIssues=[];
+    for(const file of allHtmlFiles){
+      const response=await page.goto('http://127.0.0.1:4173/'+file);
+      if(!response||response.status()>=400) pageIssues.push(file+' returned '+(response?response.status():'no response'));
+      const meta=await page.evaluate(()=>({
+        title:document.title.trim(),
+        h1:document.querySelectorAll('h1').length,
+        lang:document.documentElement.lang,
+        links:[...document.querySelectorAll('a[href]')].map(a=>a.getAttribute('href'))
+      }));
+      if(!meta.title) pageIssues.push(file+' has no document title');
+      if(meta.h1<1) pageIssues.push(file+' has no H1 heading');
+      if(meta.lang!=='en') pageIssues.push(file+' has missing or unexpected html lang');
+      if(!sitemapFiles.has(file)) pageIssues.push(file+' is missing from sitemap.xml');
+      const source=fs.readFileSync(path.join(root,file),'utf8');
+      if(/TODO|FIXME|lorem ipsum|example\\.com|\\[your (email|name|url)\\]/i.test(source)) pageIssues.push(file+' contains placeholder text');
+      if(['privacy.html','terms.html','disclaimer.html'].includes(file)&&!source.includes('Last reviewed:')) pageIssues.push(file+' has no policy review date');
+      for(const href of meta.links){
+        if(!href||/^(mailto:|tel:|javascript:|data:)/i.test(href)) continue;
+        let url;
+        try{url=new URL(href,'https://barsulkhan.github.io/USAJIO/'+file);}catch{pageIssues.push(file+' has invalid href '+href);continue;}
+        if(url.origin!==siteOrigin||!url.pathname.startsWith(basePath)) continue;
+        const relative=decodeURIComponent(url.pathname.slice(basePath.length))||'index.html';
+        const target=path.join(root,relative);
+        if(!fs.existsSync(target)){pageIssues.push(file+' -> missing '+relative);continue;}
+        if(url.hash){
+          const targetSource=fs.readFileSync(target,'utf8');
+          const id=decodeURIComponent(url.hash.slice(1));
+          if(!targetSource.includes('id="'+id+'"')&&!targetSource.includes("id='"+id+"'")&&!targetSource.includes('name="'+id+'"')) pageIssues.push(file+' -> missing fragment '+relative+'#'+id);
+        }
+      }
+    }
+    if(pageIssues.length) throw new Error('Site navigation/policy audit failed: '+pageIssues.join(' | '));
+    const homepageSource=fs.readFileSync(path.join(root,'index.html'),'utf8');
+    for(const href of ['about.html','contact.html','privacy.html','terms.html','disclaimer.html','editorial.html']){
+      if(!homepageSource.includes('href="'+href+'"')) throw new Error('Homepage footer is missing '+href);
+    }
+    if(!homepageSource.includes('12 useful calculators')) throw new Error('Homepage calculator count is not 12');
+    if(!homepageSource.includes('id="resources"')) throw new Error('Resources navigation target is missing');
+    console.log('PASS: '+allHtmlFiles.length+' HTML pages served; titles, H1, language, sitemap/robots, footer policy links and all local paths/fragments verified.');
+
     // Verify every local HTML link resolves against the repository files.
     const htmlFiles=fs.readdirSync(root).filter(x=>x.endsWith('.html'));
     const missing=[];
