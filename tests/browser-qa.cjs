@@ -310,6 +310,24 @@ const server = http.createServer((req,res) => {
     await set({'debt-balance':0,'debt-rate':12,'debt-payment':0}); await page.locator('#debt-calc').click(); if(await textOf('debt-months')!=='0') throw new Error('Zero debt balance must return zero months');
     await set({'debt-balance':5000,'debt-rate':12,'debt-payment':50}); await page.locator('#debt-calc').click(); if(await textOf('debt-months')!=='Payment too low') throw new Error('Debt payment below interest must be rejected');
 
+    // Optional multi-debt comparison: same total monthly budget, distinct snowball/avalanche ordering.
+    await calculate('debt-payoff.html','debt-calc',{'debt-balance':5000,'debt-rate':12,'debt-payment':250});
+    await set({'multi-debt-name-1':'Small low-rate','multi-debt-balance-1':1200,'multi-debt-rate-1':8,'multi-debt-min-1':40,
+      'multi-debt-name-2':'Large high-rate','multi-debt-balance-2':5000,'multi-debt-rate-2':24,'multi-debt-min-2':150,
+      'multi-debt-extra':50});
+    await page.locator('#multi-debt-calc').click();
+    if(await page.locator('#multi-debt-results').isHidden()) throw new Error('Multi-debt comparison did not render');
+    const snowOrder=await textOf('snowball-order'), avalancheOrder=await textOf('avalanche-order');
+    if(!snowOrder.startsWith('Small low-rate')||!avalancheOrder.startsWith('Large high-rate')) throw new Error('Snowball and avalanche priority order incorrect: '+snowOrder+' / '+avalancheOrder);
+    if(!(await textOf('snowball-months')).match(/^\\d+$/)||!(await textOf('avalanche-months')).match(/^\\d+$/)) throw new Error('Multi-debt payoff months missing');
+    if((await textOf('snowball-interest'))==='—'||(await textOf('avalanche-interest'))==='—') throw new Error('Multi-debt interest results missing');
+    await page.locator('#multi-debt-extra').fill('75');
+    if(!(await page.locator('#multi-debt-results').isHidden())) throw new Error('Editing multi-debt inputs must invalidate old results');
+    await page.locator('#multi-debt-calc').click();
+    await page.locator('#multi-debt-min-2').fill('100');
+    await page.locator('#multi-debt-calc').click();
+    if(!(await textOf('multi-debt-status')).includes('minimum payment must be greater')) throw new Error('Minimum payment below first-month interest must be rejected');
+
     // 7. Mortgage: principal/interest, zero APR and full down payment.
     await calculate('mortgage-calculator.html','mortgage-calc',{'mortgage-price':280000,'mortgage-down':0,'mortgage-rate':6.5,'mortgage-years':30,'mortgage-tax':0,'mortgage-insurance':0,'mortgage-hoa':0});
     near(await money('mortgage-pi'),1769.7905,'Mortgage monthly P&I'); near(await money('mortgage-interest'),357124.5677,'Mortgage total interest');
