@@ -20,3 +20,19 @@
 @media(max-width:950px){.site-header{padding:0 22px}.nav{gap:15px}.nav a{font-size:13px}.hero-panel{min-height:450px;padding:35px 1%;grid-template-columns:1.1fr .9fr}.hero-benefits{gap:12px}.hero-benefits span{font-size:15px}.hero-benefits b{font-size:13px}.hero-feature-card{grid-template-columns:68px 1fr 40px;padding:16px;gap:14px}.feature-icon{width:66px;height:66px;font-size:38px}.hero-feature-card strong{font-size:20px}.hero-feature-card small{font-size:14px}}
 @media(max-width:680px){.site-header{height:68px}.brand-logo{width:145px}.menu-toggle{display:block}.nav{display:none;position:absolute;top:67px;left:0;right:0;padding:16px 22px;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 12px 20px rgba(16,38,78,.08);flex-direction:column;align-items:stretch;gap:8px}.nav.open{display:flex}.nav a{padding:10px 12px;font-size:15px}.nav .nav-search{display:none}.hero-wrap{padding:0 14px 24px}.hero-panel{display:flex;flex-direction:column;align-items:stretch;min-height:0;padding:28px 8px 18px;gap:8px}.hero-trust{font-size:12px;padding:6px 12px;margin-bottom:12px!important}.trust-shield{width:25px;height:28px;font-size:16px}.hero-panel h1{font-size:clamp(34px,9vw,48px);line-height:1.13;margin:10px 0 15px}.hero-underline:after{height:5px;bottom:-5px}.hero-panel .hero-description{font-size:16px;line-height:1.5;margin:20px 0}.hero-actions{gap:10px}.hero-actions a{flex:1;min-width:0;min-height:52px;padding:11px 12px;font-size:14px;gap:7px;border-radius:13px}.hero-benefits{margin-top:20px;gap:9px 12px}.hero-benefits span{font-size:13px;gap:5px}.hero-benefits b{font-size:11px}.hero-benefits span+span{padding-left:12px}.hero-art{display:block;width:min(100%,430px);margin:0 auto}.hero-feature-cards{grid-template-columns:1fr;gap:12px}.hero-feature-card{min-height:96px;grid-template-columns:58px 1fr 34px;padding:12px 14px;border-radius:18px;gap:12px}.feature-icon{width:56px;height:56px;border-radius:15px;font-size:31px}.hero-feature-card strong{font-size:17px;margin-bottom:3px}.hero-feature-card small{font-size:12px}.hero-feature-card i{width:34px;height:34px;font-size:22px}}
 @media(prefers-reduced-motion:reduce){.hero-actions a,.hero-feature-card{transition:none}}
+
+/* Distinct, colorful finance icons for calculator cards */
+.tool-card:nth-child(1) .tool-icon{color:#6756d8;background:linear-gradient(145deg,#f0edff,#e1dcff);border-color:#ddd6ff}
+.tool-card:nth-child(2) .tool-icon{color:#1676cf;background:linear-gradient(145deg,#e8f4ff,#d6eaff);border-color:#cfe6ff}
+.tool-card:nth-child(3) .tool-icon{color:#168b65;background:linear-gradient(145deg,#e5fbf1,#cef4e3);border-color:#c6efdc}
+.tool-card:nth-child(4) .tool-icon{color:#d58a16;background:linear-gradient(145deg,#fff6df,#ffebbd);border-color:#f8e5b4}
+.tool-card:nth-child(5) .tool-icon{color:#0d9b9b;background:linear-gradient(145deg,#e2fbfa,#c8f2ef);border-color:#c3ece9}
+.tool-card:nth-child(6) .tool-icon{color:#dc5b52;background:linear-gradient(145deg,#fff0ed,#ffddd7);border-color:#f8d8d1}
+.tool-card:nth-child(7) .tool-icon{color:#7956c9;background:linear-gradient(145deg,#f2edff,#e5dcff);border-color:#dfd5ff}
+.tool-card:nth-child(8) .tool-icon{color:#2875bd;background:linear-gradient(145deg,#eaf4ff,#d8eaff);border-color:#d0e4fa}
+.tool-card:nth-child(9) .tool-icon{color:#d18a18;background:linear-gradient(145deg,#fff6e5,#ffebc6);border-color:#f6e2b8}
+.tool-card:nth-child(10) .tool-icon{color:#15936d;background:linear-gradient(145deg,#e6faf2,#d1f2e5);border-color:#c9eddd}
+.tool-card:nth-child(11) .tool-icon{color:#bd5b9d;background:linear-gradient(145deg,#fff0f8,#f8dced);border-color:#f2d4e7}
+.feature-icon svg{width:34px;height:34px;display:block;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.feature-calculator{background:linear-gradient(145deg,#e6f3ff,#cfe5ff);color:#216fca}
+.feature-guides{background:linear-gradient(145deg,#fff1dc,#ffe0b2);color:#c77b12}
