@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Estimate how a credit card balance may change when the minimum payment is recalculated each month.">
+<link rel="canonical" href="https://barsulkhan.github.io/USAJIO/credit-card-minimum-payment.html">
+<title>Credit Card Minimum Payment Planner | USAJIO</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="calculator-pages.css"><link rel="stylesheet" href="premium.css">
+</head>
+<body>
+<header class="site-header"><a class="brand" href="index.html"><img class="brand-logo" src="assets/logo.svg" alt="USAJIO Personal Finance"></a><button class="menu-toggle" aria-label="Open menu" aria-expanded="false" onclick="const n=document.querySelector('.nav');n.classList.toggle('open');this.setAttribute('aria-expanded',n.classList.contains('open'))">☰</button><nav class="nav"><a href="index.html#calculators">All calculators</a><a href="index.html#guides">Money Guides</a><a href="index.html#about">About</a><a class="nav-cta" href="index.html#calculators">Explore tools</a></nav></header>
+<main>
+<section class="page-intro"><p class="eyebrow">CREDIT CARD PLANNING</p><h1>Minimum Payment Planner</h1><p>See how a percentage-based minimum payment can change as your balance falls.</p><a class="back-tools" href="index.html#calculators">← View all calculators</a></section>
+<section class="calculator-page">
+<div class="calc-copy"><h2>Understand the minimum-payment path</h2><p>Adjust the percentage and dollar floor to match the rule you want to model. These are editable assumptions, not a statement of your card issuer's policy.</p><p class="disclaimer">USAJIO provides educational estimates, not personalized financial advice.</p></div>
+<div class="calculator">
+<div class="fields">
+<label>Current card balance<input id="ccmp-balance" type="number" min="0" max="100000000000" step=".01" value="5000" inputmode="decimal"></label>
+<label>Annual purchase APR (%)<input id="ccmp-apr" type="number" min="0" max="100" step=".01" value="24" inputmode="decimal"></label>
+<label>Minimum payment rate (%)<input id="ccmp-percent" type="number" min=".01" max="100" step=".01" value="3" inputmode="decimal"></label>
+<label>Minimum payment floor<input id="ccmp-floor" type="number" min="0" max="100000000000" step=".01" value="25" inputmode="decimal"></label>
+<label>Currency<select id="ccmp-currency"><option value="USD">USD ($)</option><option value="EUR">EUR (€)</option><option value="GBP">GBP (£)</option><option value="CAD">CAD ($)</option><option value="AUD">AUD ($)</option><option value="INR">INR (₹)</option></select></label>
+</div>
+<button class="primary-btn" id="ccmp-calc">Calculate minimum-payment path</button>
+<p id="ccmp-status" role="status" aria-live="polite"></p>
+<div class="result-grid" id="ccmp-results" role="status" aria-live="polite" aria-atomic="true" hidden>
+<div><small>Estimated payoff time</small><strong id="ccmp-months">—</strong></div>
+<div><small>First minimum payment</small><strong id="ccmp-first">—</strong></div>
+<div><small>Total interest</small><strong id="ccmp-interest">—</strong></div>
+<div><small>Total paid</small><strong id="ccmp-total">—</strong></div>
+</div>
+<div id="ccmp-schedule-wrap" hidden><h3>First 12 monthly payments</h3><div class="table-wrap"><table class="schedule-table"><thead><tr><th scope="col">Month</th><th scope="col">Starting balance</th><th scope="col">Interest</th><th scope="col">Payment</th><th scope="col">Remaining</th></tr></thead><tbody id="ccmp-schedule"></tbody></table></div><p class="disclaimer">The schedule shows the first 12 months only. The payoff estimate uses the same monthly rule through the final payment.</p></div>
+<p class="disclaimer">Model: monthly interest = balance × APR ÷ 12. Minimum payment = the greater of (balance plus interest) × the entered percentage or the entered floor, capped at the amount owed. No new purchases, fees, rate changes or promotional balances are included. Many issuers calculate interest daily and use different minimum-payment rules; check your statement or card agreement for exact terms.</p>
+</div>
+</section>
+<section class="methodology"><h2>How this estimate works</h2><p>Interest is added once per month using APR divided by 12. The minimum is then recalculated from the interest-inclusive balance using your entered percentage and floor. The payment is capped at the amount due, and the remaining balance carries into the next month.</p><p class="disclaimer">This simplified model does not reproduce an issuer's exact billing system, average-daily-balance method, fees, penalty APR, multiple APR buckets, grace period or payment allocation. If the selected rule cannot reduce the balance, no payoff date is shown.</p></section>
+<section class="related-tools"><h2>Explore other tools</h2><a href="debt-payoff.html">Debt Payoff Planner</a><a href="index.html#calculators">All calculators</a></section>
+</main>
+<footer class="site-footer"><p>© <span id="year"></span> USAJIO. Educational tools for clearer money decisions.</p><a href="disclaimer.html">Financial disclaimer</a><a href="privacy.html">Privacy</a></footer>
+<script src="credit-card-minimum-payment.js"></script>
+</body></html>
