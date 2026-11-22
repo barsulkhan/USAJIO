@@ -158,3 +158,11 @@ Educational estimates only; no guaranteed returns or unverified rates. Do not co
 - Sitemap lists 26 URLs, matching 26 HTML files — **Pass (static count)**; live reachability remains **Not Tested**.
 
 - PR #16 opened to add pull-request-triggered Playwright QA for future site changes. **Not yet active** until merged; the current environment has no GitHub Actions workflow-dispatch action, and outbound DNS prevents a live-site browser run.
+
+
+### Browser QA and deployment confirmation — 2026-11-22
+- PR #15 merged (documentation only); PR #17 merged (CI workflow only). The stale pre-rebase PR #16 was closed unmerged.
+- New pull-request browser QA run #44984822409 — **Pass**. Playwright/Chromium executed the current PR merge preview and logged: homepage, 11 calculator default interactions, live result announcements, mobile menu, 390px overflow and local HTML links all passed.
+- GitHub Pages deployment run #44984834009 — **Pass** for `main` commit `53cc87accf1e7c2eea44e4e6e38b1a26768b4367`. Deployment log: one artifact found, deployment created for the exact commit, `Reported success!`; environment URL resolved to https://barsulkhan.github.io/USAJIO/.
+- Historical PRs #4–#11 closed unmerged after overlap/age review; their stale branches should not be merged as-is.
+- This browser run is an automated headless Chromium test at the configured 390px viewport. It does not replace physical Android verification, keyboard/screen-reader testing, visual regression or Lighthouse/Core Web Vitals.
