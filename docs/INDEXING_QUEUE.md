@@ -12,7 +12,7 @@
 
 ## Batch 01 — 10 URLs (2026-11-22)
 
-All ten are **PENDING — user action**.
+All ten are **SUBMITTED — awaiting Google**. User reports live-tested all ten URLs and submitted a Google Search Console indexing request for each on 2026-11-22. Google indexing/approval is not yet confirmed.
 
 1. https://barsulkhan.github.io/USAJIO/
 2. https://barsulkhan.github.io/USAJIO/compound-interest.html
@@ -25,7 +25,7 @@ All ten are **PENDING — user action**.
 9. https://barsulkhan.github.io/USAJIO/auto-loan-calculator.html
 10. https://barsulkhan.github.io/USAJIO/credit-card-payoff.html
 
-**User instruction:** Submit these ten individually through the URL Inspection field in the USAJIO Search Console property. When Google offers “Request indexing”, submit the request. Send the result/status for each URL or tell me which ones Google confirms. A request being submitted is not the same as indexing approval.
+**User instruction:** Submit these ten individually through the URL Inspection field in the USAJIO Search Console property. When Google offers “Request indexing”, submit the request. User has submitted all ten requests. Await Google processing and the user's per-URL or batch result; do not mark complete until indexing is confirmed. A request being submitted is not the same as indexing approval.
 
 ## Batch 02 — next 10 URLs (QUEUED)
 
@@ -55,7 +55,7 @@ All ten are **PENDING — user action**.
 
 | URL | Status | User-confirmed result/date |
 |---|---|---|
-| Batch 01 URLs 1–10 | Pending user action | Not yet reported |
+| Batch 01 URLs 1–10 | SUBMITTED — awaiting Google | User reports all ten requests submitted on 2026-11-22; indexing not yet confirmed |
 
 ## Important notes and follow-up
 
