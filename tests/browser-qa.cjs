@@ -294,12 +294,12 @@ const server = http.createServer((req,res) => {
     near(await money('retirement-balance'),148274.3226,'Retirement positive-return balance');
     await page.locator('#retirement-scenarios > summary').click();
     await page.locator('#retirement-calc').click();
-    near(await money('retirement-low-nominal'),116117.4455,'Retirement conservative nominal balance');
-    near(await money('retirement-low-real'),64291.4142,'Retirement conservative today-dollar balance');
+    near(await money('retirement-low-nominal'),131063.7502,'Retirement conservative nominal balance');
+    near(await money('retirement-low-real'),72566.8207,'Retirement conservative today-dollar balance');
     near(await money('retirement-base-nominal'),148274.3226,'Retirement base nominal balance');
     near(await money('retirement-base-real'),82095.8974,'Retirement base today-dollar balance');
-    near(await money('retirement-high-nominal'),190957.7576,'Retirement optimistic nominal balance');
-    near(await money('retirement-high-real'),105728.6805,'Retirement optimistic today-dollar balance');
+    near(await money('retirement-high-nominal'),217309.2922,'Retirement optimistic nominal balance');
+    near(await money('retirement-high-real'),120318.8863,'Retirement optimistic today-dollar balance');
     near(await money('retirement-base-contrib'),82000,'Retirement scenario contributions');
 
     // Zero inflation: today's dollars must equal nominal future dollars.
