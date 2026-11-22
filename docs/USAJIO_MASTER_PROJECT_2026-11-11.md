@@ -942,6 +942,6 @@ First verify deployment run #45030278000 for merge commit `d61f0498a1fbc965ec527
 - Compare Scenarios CSV and browser-native Print / Save as PDF: PR #65 merged as `c54fa30e9514782c56c7ffd9bad427a6dec633c4`.
 - Browser QA run #45052440913 passed after correcting a test assertion for the CSV delta-header row.
 - Lighthouse mobile and desktop run #45052440807 passed.
-- GitHub Pages deployment for this merge commit is not yet verified in this entry; verify before claiming the change is live.
+- GitHub Pages deployment run #45052768814 for this merge commit completed with conclusion `success`; the Compare Scenarios report feature is deployed.
 - Mandatory product standard: [USAJIO Competitive Research & Product Quality Charter](USAJIO_COMPETITIVE_RESEARCH_AND_QUALITY_CHARTER.md). Every future task must research relevant competitors before implementation, document user journey and gap analysis, and target parity or evidence-backed improvement while keeping the experience simple, premium, accessible and privacy-conscious.
 - USAJIO only; InfoJano untouched. Search Console/indexing and AdSense paused; no paid services. Physical Android/TalkBack testing remains NOT TESTED until performed on a real device.
