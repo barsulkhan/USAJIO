@@ -126,9 +126,9 @@ const server = http.createServer((req,res) => {
     if(csv.charCodeAt(0)!==0xFEFF) throw new Error('Loan CSV must include UTF-8 BOM');
     if(!csv.includes('"Currency","USD"')||!csv.includes('"Annual interest rate (%)","7.00"')||!csv.includes('"Total interest","1880.67"')) throw new Error('Loan CSV is missing currency, assumptions or reconciled totals');
     const csvLines=csv.replace(/^\\uFEFF/,'').split('\\r\\n');
-    if(csvLines.length!==77) throw new Error('Loan CSV should contain metadata, header and all 60 schedule rows; found '+csvLines.length);
+    if(csvLines.length!==76) throw new Error('Loan CSV should contain metadata, header and all 60 schedule rows; found '+csvLines.length);
     if(!csvLines[15].includes('"Payment","Starting balance","Scheduled payment"')) throw new Error('Loan CSV schedule header is incorrect');
-    if(!csvLines[76].includes('"60"')||!csvLines[76].endsWith('"0.00","1880.67"')) throw new Error('Loan CSV final capped payment row is missing or incorrect');
+    if(!csvLines[75].includes('"60"')||!csvLines[75].endsWith('"0.00","1880.67"')) throw new Error('Loan CSV final capped payment row is missing or incorrect');
     if(csvLines.some(line=>/^\\s*["']?[=+@]/.test(line))) throw new Error('Loan CSV contains a formula-like row prefix');
 
     // Print action calls native browser print; print CSS keeps the report and hides site controls.
