@@ -209,6 +209,12 @@ const server = http.createServer((req,res) => {
     await privacyPage.locator('#networth-calc').click();
     const privateResult=await privacyPage.locator('#net-result').innerText();
     if(!privateResult || privateResult==='—') throw new Error('Net Worth privacy test did not calculate the supplied local values');
+    // Currency selection is formatting-only: numeric net worth must remain unchanged.
+    for(const currency of ['USD','EUR','GBP','CAD','AUD','INR']){
+      await privacyPage.locator('#currency').selectOption(currency);
+      const raw=(await privacyPage.locator('#net-result').innerText()).replace(/[^0-9.-]/g,'');
+      near(Number(raw),74301009,'Net Worth '+currency+' display');
+    }
     const storage=await privacyPage.evaluate(async()=>({
       local:localStorage.length,
       session:sessionStorage.length,
