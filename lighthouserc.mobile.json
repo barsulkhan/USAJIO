@@ -14,7 +14,8 @@
         "http://localhost:4173/auto-loan-calculator.html",
         "http://localhost:4173/credit-card-payoff.html",
         "http://localhost:4173/retirement-calculator.html",
-        "http://localhost:4173/student-loan-payoff.html"
+        "http://localhost:4173/student-loan-payoff.html",
+        "http://localhost:4173/net-worth-calculator.html"
       ],
       "numberOfRuns": 1,
       "settings": {
