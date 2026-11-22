@@ -33,7 +33,8 @@ const server = http.createServer((req,res) => {
     page.on('response',r=>{if(r.status()>=400) errors.push('HTTP '+r.status()+' '+r.url());});
 
     const home=await page.goto('http://127.0.0.1:4173/index.html');
-    await page.addScriptTag({content:fs.readFileSync(require.resolve('axe-core/axe.min.js'),'utf8')});
+    const axe = require('axe-core');
+    await page.addScriptTag({content:axe.source});
     const auditA11y=async(label)=>{
       const result=await page.evaluate(async()=>await axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21a','wcag21aa']}}));
       for(const v of result.violations){
