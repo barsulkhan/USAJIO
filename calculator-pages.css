@@ -23,3 +23,25 @@ button,.primary-btn,.nav a{min-height:42px}
 :root{--teal:#08745f}
 .nav-cta,.hero-cta,.primary-btn{background-color:#08745f!important}
 .back-tools,.related-tools a,.tool-card a{color:#08745f!important}
+
+/* Loan amortization schedule */
+.amortization{margin-top:26px;padding-top:22px;border-top:1px solid var(--line);grid-column:1/-1}
+.amortization h2{font-size:clamp(20px,2.5vw,26px);margin:0 0 10px}
+.amortization>.disclaimer{max-width:900px;line-height:1.6}
+.schedule-summary{display:flex;flex-wrap:wrap;gap:18px;margin:14px 0;font-weight:700;color:var(--text)}
+.schedule-table-wrap{max-width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+.schedule-table{border-collapse:collapse;width:100%;min-width:980px;font-size:13px;font-variant-numeric:tabular-nums}
+.schedule-table th,.schedule-table td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.schedule-table thead th{background:#f4f7fa;color:var(--text);font-weight:700}
+.schedule-table th:first-child,.schedule-table td:first-child{text-align:left}
+.schedule-table tbody tr:last-child th,.schedule-table tbody tr:last-child td{border-bottom:0}
+
+
+/* Keep wide amortization data inside its own horizontal scroller on narrow screens. */
+.calculator-page,
+.calculator-page > *,
+.calculator-page .calculator,
+.amortization,
+.schedule-table-wrap {
+  min-width: 0;
+}

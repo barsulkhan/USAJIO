@@ -39,17 +39,39 @@
 
   bind("loan-calc", () => {
     const p=read("loan-amount",0,1e12), annual=read("loan-rate",0,100), years=read("loan-years",1,50), extra=read("loan-extra",0,1e12);
-    if([p,annual,years,extra].some(v=>v===null)||p<=0){invalid(["loan-monthly","loan-interest","loan-total"]);return;}
+    if([p,annual,years,extra].some(v=>v===null)||p<=0){invalid(["loan-monthly","loan-interest","loan-total"]);put("loan-schedule","");return;}
     const rate=annual/1200, months=Math.max(1,Math.round(years*12));
     const base=rate ? p*rate/(1-Math.pow(1+rate,-months)) : p/months;
-    let balance=p, interest=0, total=0, count=0;
-    while(balance>0.005 && count<600){
-      const charge=balance*rate;
-      const payment=Math.min(balance+charge,base+extra);
-      interest+=charge; balance=Math.max(0,balance+charge-payment); total+=payment; count++;
+    if(!Number.isFinite(base)||base<=0){invalid(["loan-monthly","loan-interest","loan-total"]);return;}
+    const cents=value=>Math.round((value+Number.EPSILON)*100)/100;
+    const basePayment=Math.ceil((base-1e-10)*100)/100, extraPayment=cents(extra);
+    let balance=cents(p), interestTotal=0, paidTotal=0, extraTotal=0, count=0;
+    const rows=[];
+    while(balance>0 && count<600){
+      const opening=balance;
+      const interest=cents(opening*rate);
+      const due=cents(opening+interest);
+      const scheduled=Math.min(basePayment,due);
+      const scheduledPrincipal=cents(Math.max(0,scheduled-interest));
+      const afterScheduled=cents(Math.max(0,opening-scheduledPrincipal));
+      const extraApplied=Math.min(extraPayment,afterScheduled);
+      const principal=cents(scheduledPrincipal+extraApplied);
+      balance=cents(Math.max(0,opening-principal));
+      const payment=cents(interest+principal);
+      interestTotal=cents(interestTotal+interest);
+      paidTotal=cents(paidTotal+payment);
+      extraTotal=cents(extraTotal+extraApplied);
+      count++;
+      rows.push({count,opening,scheduled,extra:extraApplied,interest,principal,ending:balance,cumulative:interestTotal});
     }
-    if(balance>0.005){invalid(["loan-monthly","loan-interest","loan-total"]);return;}
-    put("loan-monthly",fmt(base+extra)); put("loan-interest",fmt(interest)); put("loan-total",fmt(total));
+    if(balance>0){invalid(["loan-monthly","loan-interest","loan-total"]);return;}
+    put("loan-monthly",fmt(cents(basePayment+extraPayment)));
+    put("loan-interest",fmt(interestTotal));
+    put("loan-total",fmt(paidTotal));
+    put("loan-payment-count",count+" payments");
+    put("loan-extra-total","Extra principal: "+fmt(extraTotal));
+    const body=$("loan-schedule");
+    if(body) body.innerHTML=rows.map(row=>"<tr><th scope=\"row\">"+row.count+"</th><td>"+fmt(row.opening)+"</td><td>"+fmt(row.scheduled)+"</td><td>"+fmt(row.extra)+"</td><td>"+fmt(row.interest)+"</td><td>"+fmt(row.principal)+"</td><td>"+fmt(row.ending)+"</td><td>"+fmt(row.cumulative)+"</td></tr>").join("");
   });
 
   bind("budget-calc", () => {

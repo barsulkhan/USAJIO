@@ -104,10 +104,28 @@ const server = http.createServer((req,res) => {
     // 2. Fixed-rate personal loan: standard payment, zero-rate and extra-payment payoff.
     await calculate('loan-calculator.html','loan-calc',{'loan-amount':10000,'loan-rate':7,'loan-years':5,'loan-extra':0});
     near(await money('loan-monthly'),198.013,'Loan scheduled payment',0.02);
-    near(await money('loan-interest'),1880.72,'Loan total interest');
-    near(await money('loan-total'),11880.72,'Loan total repayment');
+    near(await money('loan-interest'),1880.67,'Loan total interest');
+    near(await money('loan-total'),11880.67,'Loan total repayment');
     await set({'loan-amount':1200,'loan-rate':0,'loan-years':1,'loan-extra':0}); await page.locator('#loan-calc').click();
     near(await money('loan-monthly'),100,'Zero-rate loan payment'); near(await money('loan-interest'),0,'Zero-rate loan interest'); near(await money('loan-total'),1200,'Zero-rate loan total');
+    // Loan amortization schedule: ledger reconciles, extra principal accelerates payoff, zero rate works.
+    await calculate('loan-calculator.html','loan-calc',{'loan-amount':10000,'loan-rate':7,'loan-years':5,'loan-extra':0});
+    const scheduleRows=page.locator('#loan-schedule tr');
+    if(await scheduleRows.count()!==60) throw new Error('Rounded scheduled payment should clear the loan in 60 months; found '+await scheduleRows.count());
+    near(await money('loan-monthly'),198.02,'Loan rounded scheduled payment',0.001);
+    near(await money('loan-interest'),1880.67,'Loan schedule interest reconciliation');
+    near(await money('loan-total'),11880.67,'Loan schedule total reconciliation');
+    const finalBalance=await scheduleRows.last().locator('td').nth(5).innerText();
+    near(Number(finalBalance.replace(/[^0-9.-]/g,'')),0,'Loan schedule final balance');
+    await set({'loan-amount':10000,'loan-rate':7,'loan-years':5,'loan-extra':100}); await page.locator('#loan-calc').click();
+    if(await page.locator('#loan-schedule tr').count()>=60) throw new Error('Extra payment should shorten loan payoff');
+    if((await money('loan-interest'))>=1880.67) throw new Error('Extra payment should reduce total interest');
+    await set({'loan-amount':1200,'loan-rate':0,'loan-years':1,'loan-extra':0}); await page.locator('#loan-calc').click();
+    if(await page.locator('#loan-schedule tr').count()!==12) throw new Error('Zero-rate schedule should contain 12 rows');
+    near(await money('loan-interest'),0,'Zero-rate schedule interest');
+    await set({'loan-amount':100,'loan-rate':0,'loan-years':1,'loan-extra':1000}); await page.locator('#loan-calc').click();
+    if(await page.locator('#loan-schedule tr').count()!==1) throw new Error('Oversized extra payment should clear loan in one capped payment');
+    near(Number((await page.locator('#loan-schedule tr').last().locator('td').nth(5).innerText()).replace(/[^0-9.-]/g,'')),0,'Capped final loan balance');
     await page.locator('#loan-amount').fill('0'); await page.locator('#loan-calc').click(); await expectInvalid('loan-monthly','Zero principal loan');
 
     // 3. Monthly budget: surplus and deficit.
