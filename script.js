@@ -18,7 +18,7 @@
   if ($("year")) $("year").textContent = new Date().getFullYear();
   if ($("currency")) $("currency").addEventListener("change", event => {
     currency = event.target.value;
-    ["ci-calc","loan-calc","compare-calc","budget-calc","save-calc","ef-calc","debt-calc","mortgage-calc","auto-calc","card-calc","retirement-calc","student-calc","networth-calc"].forEach(id => { if ($(id)) $(id).click(); });
+    ["ci-calc","loan-calc","compare-calc","budget-calc","save-calc","ef-calc","debt-calc","mortgage-calc","auto-calc","card-calc","retirement-calc","student-calc","networth-calc","multi-debt-calc"].forEach(id => { if ($(id)) $(id).click(); });
   });
 
   bind("ci-calc", () => {
@@ -290,13 +290,13 @@
       return;
     }
     const cents=v=>Math.round((v+Number.EPSILON)*100)/100;
+    const monthlyBudget=cents(debts.reduce((sum,d)=>sum+d.minimum,0)+extra);
     const simulate=(method)=>{
       const state=debts.map(d=>({...d,remaining:d.balance,interestTotal:0,paidMonth:0}));
       const order=[...state].sort((a,b)=>method==="snowball"
         ? a.balance-b.balance || b.apr-a.apr || a.originalIndex-b.originalIndex
         : b.apr-a.apr || a.balance-b.balance || a.originalIndex-b.originalIndex);
       const priority=order.map(d=>d.originalIndex);
-      const monthlyBudget=cents(state.reduce((sum,d)=>sum+d.minimum,0)+extra);
       let totalInterest=0,month=0;
       while(state.some(d=>d.remaining>0)&&month<1200){
         month++;
@@ -329,6 +329,10 @@
     put("multi-debt-difference",diff>0?"Avalanche estimates "+fmt(diff)+" less interest than Snowball.":diff<0?"Snowball estimates "+fmt(Math.abs(diff))+" less interest in this scenario.":"Both strategies estimate the same total interest.");
     if(results)results.hidden=false;
     if(status)status.textContent="Comparison complete. Both methods use the same monthly budget of "+fmt(monthlyBudget)+".";
+  });
+
+  ["multi-debt-name-1","multi-debt-balance-1","multi-debt-rate-1","multi-debt-min-1","multi-debt-name-2","multi-debt-balance-2","multi-debt-rate-2","multi-debt-min-2","multi-debt-name-3","multi-debt-balance-3","multi-debt-rate-3","multi-debt-min-3","multi-debt-name-4","multi-debt-balance-4","multi-debt-rate-4","multi-debt-min-4","multi-debt-extra"].forEach(id=>{
+    $(id)?.addEventListener("input",()=>{if($("multi-debt-results"))$("multi-debt-results").hidden=true;if($("multi-debt-status"))$("multi-debt-status").textContent="Inputs changed. Run the comparison again to refresh results.";});
   });
 
   bind("debt-calc", () => {
