@@ -358,3 +358,35 @@ Consolidated integration branch: `quality/integrated-final-qa-2026-11-21`. Premi
 2. Re-run the current 11-calculator browser QA against the deployed build; do not reuse older test outcomes as current pass evidence.
 3. Check internal links, navigation, guides, SEO metadata, sitemap and robots.
 4. Continue pending keyboard accessibility, screen reader, physical Android, visual regression, and Lighthouse/Core Web Vitals checks; mark each Pass/Fail/Not Tested honestly.
+
+
+## 15. Today's execution plan and static QA — 2026-11-22
+
+### Work sequence for today
+1. Reconfirm `main`, deployment status, open PRs, and release source — **Pass**.
+2. Verify live homepage HTTP/rendering — **Not Tested**: this environment cannot resolve `barsulkhan.github.io` (DNS/network restriction). User confirmation is required only for the visible live page on their own device.
+3. Inspect all 11 calculator source pages and their JavaScript wiring — **Pass for static structure**; runtime/browser interactions remain **Not Tested**.
+4. Audit SEO basics, sitemap and robots directives — **Pass for static source checks**; search-engine crawl/index status remains **Not Tested**.
+5. Check internal navigation and guide-page links — **In progress**; automated runtime link crawl is not available in this execution environment.
+6. Record remaining manual-only checks and prioritize next work.
+
+### Static source QA performed against `main` at `ebe4a214ed948b5cdd36e16ef8d9c7f00d18fb76`
+- All 11 calculator HTML pages fetched from current `main`: **Pass**.
+- Each of the 11 calculator pages has one branded `<title>`, a meta description, exactly one `<h1>`, and exactly one matching calculator action ID — **Pass**.
+- Each calculator page contains a result region with `aria-live="polite"` — **Pass**.
+- JavaScript contains matching click handlers for all 11 calculator action IDs — **Pass** by source inspection.
+- Independent arithmetic spot checks using the same documented formulas: $10,000 at 7% for 60 months = $198.01/month; $28,000 at 6.9% for 60 months = $553.11/month; $5,000 at 12% with $250/month = 23 months; $1,000 initial + $100 at month-end for 12 months at 5% monthly compounding = $2,279.05 — **Pass (formula calculation only; not browser execution of current code)**.
+- Sitemap contains 26 absolute URLs under the GitHub Pages project path — **Pass (syntax/count)**; existence and live response of every URL still require a browser/HTTP crawl.
+- `robots.txt` allows crawling and references the correct sitemap URL — **Pass (static source)**.
+- Homepage source has a branded title and description and includes the new hero copy, green trust badge, both CTAs, and the three trust statements — **Pass (source inspection)**.
+- Live HTTP status, visual rendering, browser console/network errors, real mobile overflow, and interactive calculator behavior — **Not Tested** because outbound DNS/network is unavailable and no browser runner is exposed in this execution.
+
+### PR overlap / branch hygiene
+- PR #15 is documentation-only and remains open; no main-branch merge/deployment was performed.
+- PR #11 remains open but is based on the older `4f55fb9...` base and its branch diverges from current `main` (`57` commits ahead, `3` behind); its changed-file set substantially overlaps files already delivered through merged PRs #12–#14. Do not merge it as-is. Review/close as obsolete only after a patch-level comparison.
+- PRs #10, #9, #8 and #7 are also open historical branches with overlapping site files; do not merge without checking exact current diff and unique value. PR #12 is merged; PR #13 and #14 are merged.
+
+### Checks that require user/device or unavailable browser access
+- User: open `https://barsulkhan.github.io/USAJIO/` on the device/browser they normally use and confirm whether the new hero design is visible. This cannot be confirmed by GitHub Actions alone.
+- User/device: physical Android touch/layout check; this cannot be emulated as a real device here.
+- Not tested: keyboard-only and screen-reader audit, visual regression, Lighthouse/Core Web Vitals.
