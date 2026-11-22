@@ -325,8 +325,8 @@ const server = http.createServer((req,res) => {
       if(['privacy.html','terms.html','disclaimer.html'].includes(file)&&!source.includes('Last reviewed:')) pageIssues.push(file+' has no policy review date');
       const guideFiles=['budgeting-guide.html','emergency-fund-guide.html','debt-payoff-guide.html','credit-score-guide.html','mortgage-basics-guide.html','auto-financing-guide.html','retirement-planning-guide.html','student-loan-guide.html','cash-flow-budget-guide.html'];
       if(guideFiles.includes(file)){
-        for(const selector of ['meta[property="og:type"]','meta[property="og:site_name"]','meta[property="og:title"]','meta[property="og:description"]','meta[property="og:url"]','meta[name="twitter:card"]']){
-          if(!source.includes(selector)) pageIssues.push(file+' is missing social metadata '+selector);
+        for(const attribute of ['property="og:type"','property="og:site_name"','property="og:title"','property="og:description"','property="og:url"','name="twitter:card"']){
+          if(!source.includes(attribute)) pageIssues.push(file+' is missing social metadata '+attribute);
         }
         if(!source.includes('Last reviewed: November 22, 2026')) pageIssues.push(file+' is missing the current guide review date');
         if(!source.includes('Official sources and further reading')) pageIssues.push(file+' is missing its official-source section');
