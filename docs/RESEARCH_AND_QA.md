@@ -137,3 +137,17 @@ Educational estimates only; no guaranteed returns or unverified rates. Do not co
 - **Free-service compliance:** GitHub Pages only; no paid hosting/domain/API/subscription added.
 - **Live browser/HTTP check:** **Not Tested** in this execution because outbound DNS/network access was unavailable. Deployment success is confirmed by GitHub Actions; visual rendering on the current release is not newly browser-verified.
 - **Pending:** live browser check; current 11-calculator QA; internal links/navigation/guides; SEO/sitemap/robots; keyboard/screen reader/physical Android/visual regression/Lighthouse.
+
+
+## Today's execution — 2026-11-22
+
+- `main` verified at `ebe4a214ed948b5cdd36e16ef8d9c7f00d18fb76`; Pages run `44937240457` — **Pass**.
+- Static inspection of all 11 calculator pages: branded title, meta description, exactly one H1 and matching calculator button ID — **Pass**.
+- All 11 calculator pages include `aria-live="polite"` result announcements — **Pass**.
+- `script.js` contains handlers for all 11 calculator action IDs — **Pass** by source inspection only.
+- Independent formula arithmetic checks: personal loan $198.01/month; auto loan $553.11/month; $5,000 debt at 12% with $250 monthly payment = 23 months; compound balance = $2,279.05 — **Pass (independent formula calculation; not browser execution)**.
+- Sitemap has 26 GitHub Pages URLs — **Pass (static syntax/count)**. `robots.txt` allows crawling and points to the sitemap — **Pass (static source)**.
+- Homepage source includes the redesigned hero copy, trust badge, two CTAs and trust statements — **Pass (source inspection)**.
+- Live HTTP/browser check — **Not Tested**: outbound DNS resolution for `barsulkhan.github.io` fails in this environment.
+- Runtime browser tests, internal-link crawl, mobile rendering, keyboard/screen-reader, physical Android, visual regression and Lighthouse — **Not Tested** in this execution.
+- Open PR hygiene: #15 docs-only and open; PR #11 has a stale/diverged branch (57 ahead, 3 behind current main) with broad overlap; PRs #10/#9/#8/#7 also overlap historical site files. Do not merge stale branches without patch-level comparison.
