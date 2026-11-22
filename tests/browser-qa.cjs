@@ -64,6 +64,123 @@ const server = http.createServer((req,res) => {
       if(await results.getAttribute('aria-live')!=='polite') throw new Error(file+' result region is not announced politely');
     }
 
+
+    // Reproducible financial-math and input-boundary matrix for all 12 tools.
+    const money = async id => {
+      const raw=(await page.locator('#'+id).innerText()).replace(/[^0-9.-]/g,'');
+      const value=Number(raw);
+      if(!Number.isFinite(value)) throw new Error(id+' is not a finite money result: '+raw);
+      return value;
+    };
+    const textOf = async id => (await page.locator('#'+id).innerText()).trim();
+    const set = async values => { for(const [id,value] of Object.entries(values)) await page.locator('#'+id).fill(String(value)); };
+    const calculate = async (file,button,values) => {
+      await page.goto('http://127.0.0.1:4173/'+file);
+      await set(values);
+      await page.locator('#'+button).click();
+    };
+    const near = (actual,expected,label,tolerance=0.02) => {
+      if(Math.abs(actual-expected)>tolerance) throw new Error(label+': expected '+expected+', got '+actual);
+    };
+    const expectInvalid = async (id,label) => {
+      const value=await textOf(id);
+      if(!/Check inputs/.test(value)) throw new Error(label+': expected input validation, got '+value);
+    };
+
+    // 1. Compound interest: month-end deposits and all compounding choices.
+    for(const [frequency,expected] of [[12,2279.047447],[4,2278.713893],[1,2277.257753]]){
+      await calculate('compound-interest.html','ci-calc',{'ci-principal':1000,'ci-monthly':100,'ci-rate':5,'ci-years':1});
+      await page.locator('#ci-frequency').selectOption(String(frequency));
+      await page.locator('#ci-calc').click();
+      near(await money('ci-result'),expected,'Compound frequency '+frequency);
+      near(await money('ci-paid'),2200,'Compound contributions');
+    }
+    await calculate('compound-interest.html','ci-calc',{'ci-principal':0,'ci-monthly':0,'ci-rate':0,'ci-years':1});
+    near(await money('ci-result'),0,'Compound all-zero');
+    await page.locator('#ci-years').fill('0'); await page.locator('#ci-calc').click(); await expectInvalid('ci-result','Compound zero years');
+
+    // 2. Fixed-rate personal loan: standard payment, zero-rate and extra-payment payoff.
+    await calculate('loan-calculator.html','loan-calc',{'loan-amount':10000,'loan-rate':7,'loan-years':5,'loan-extra':0});
+    near(await money('loan-monthly'),198.013,'Loan scheduled payment',0.02);
+    near(await money('loan-interest'),1880.72,'Loan total interest');
+    near(await money('loan-total'),11880.72,'Loan total repayment');
+    await set({'loan-amount':1200,'loan-rate':0,'loan-years':1,'loan-extra':0}); await page.locator('#loan-calc').click();
+    near(await money('loan-monthly'),100,'Zero-rate loan payment'); near(await money('loan-interest'),0,'Zero-rate loan interest'); near(await money('loan-total'),1200,'Zero-rate loan total');
+    await page.locator('#loan-amount').fill('0'); await page.locator('#loan-calc').click(); await expectInvalid('loan-monthly','Zero principal loan');
+
+    // 3. Monthly budget: surplus and deficit.
+    await calculate('monthly-budget.html','budget-calc',{'budget-income':3500,'budget-housing':900,'budget-food':500,'budget-transport':300,'budget-bills':250,'budget-other':400});
+    near(await money('budget-expenses'),2350,'Budget expenses'); near(await money('budget-remaining'),1150,'Budget surplus');
+    if(await textOf('budget-share')!=='32.9%') throw new Error('Budget surplus percentage mismatch');
+    await set({'budget-income':2000,'budget-housing':900,'budget-food':500,'budget-transport':300,'budget-bills':250,'budget-other':300}); await page.locator('#budget-calc').click();
+    near(await money('budget-remaining'),-250,'Budget deficit');
+    await page.locator('#budget-income').fill('-1'); await page.locator('#budget-calc').click(); await expectInvalid('budget-remaining','Negative budget income');
+
+    // 4. Savings goal: ordinary gap, already-funded target, invalid duration.
+    await calculate('savings-goal.html','save-calc',{'save-target':5000,'save-current':500,'save-months':18});
+    near(await money('save-monthly'),250,'Savings monthly contribution');
+    await set({'save-target':5000,'save-current':6000,'save-months':18}); await page.locator('#save-calc').click(); near(await money('save-monthly'),0,'Savings goal already reached');
+    await page.locator('#save-months').fill('0'); await page.locator('#save-calc').click(); await expectInvalid('save-monthly','Zero savings duration');
+
+    // 5. Emergency fund: target, gap and already-funded state.
+    await calculate('emergency-fund.html','ef-calc',{'ef-cost':1800,'ef-months':6,'ef-current':1000});
+    near(await money('ef-goal'),10800,'Emergency fund target'); near(await money('ef-gap'),9800,'Emergency fund gap');
+    await page.locator('#ef-current').fill('12000'); await page.locator('#ef-calc').click(); near(await money('ef-gap'),0,'Emergency fund already funded');
+    await page.locator('#ef-months').fill('0'); await page.locator('#ef-calc').click(); await expectInvalid('ef-gap','Zero emergency months');
+
+    // 6. Debt payoff: amortization, zero APR, zero balance and insufficient payment.
+    await calculate('debt-payoff.html','debt-calc',{'debt-balance':5000,'debt-rate':12,'debt-payment':250});
+    if(await textOf('debt-months')!=='23') throw new Error('Debt payoff expected 23 months, got '+await textOf('debt-months'));
+    near(await money('debt-interest'),606.7396,'Debt payoff interest');
+    await set({'debt-balance':5000,'debt-rate':0,'debt-payment':250}); await page.locator('#debt-calc').click();
+    if(await textOf('debt-months')!=='20') throw new Error('Zero-rate debt payoff expected 20 months');
+    near(await money('debt-interest'),0,'Zero-rate debt interest');
+    await set({'debt-balance':0,'debt-rate':12,'debt-payment':0}); await page.locator('#debt-calc').click(); if(await textOf('debt-months')!=='0') throw new Error('Zero debt balance must return zero months');
+    await set({'debt-balance':5000,'debt-rate':12,'debt-payment':50}); await page.locator('#debt-calc').click(); if(await textOf('debt-months')!=='Payment too low') throw new Error('Debt payment below interest must be rejected');
+
+    // 7. Mortgage: principal/interest, zero APR and full down payment.
+    await calculate('mortgage-calculator.html','mortgage-calc',{'mortgage-price':280000,'mortgage-down':0,'mortgage-rate':6.5,'mortgage-years':30,'mortgage-tax':0,'mortgage-insurance':0,'mortgage-hoa':0});
+    near(await money('mortgage-pi'),1769.7905,'Mortgage monthly P&I'); near(await money('mortgage-interest'),357124.5677,'Mortgage total interest');
+    await set({'mortgage-price':120000,'mortgage-down':100,'mortgage-rate':0,'mortgage-years':15,'mortgage-tax':0,'mortgage-insurance':0,'mortgage-hoa':0}); await page.locator('#mortgage-calc').click();
+    near(await money('mortgage-pi'),0,'Mortgage full down payment'); near(await money('mortgage-interest'),0,'Mortgage full down interest');
+    await page.locator('#mortgage-down').fill('101'); await page.locator('#mortgage-calc').click(); await expectInvalid('mortgage-pi','Mortgage down payment above 100%');
+
+    // 8. Auto loan: scheduled payment, total interest and accelerated payoff.
+    await calculate('auto-loan-calculator.html','auto-calc',{'auto-amount':28000,'auto-rate':6.9,'auto-months':60,'auto-extra':0});
+    near(await money('auto-payment'),553.1135,'Auto scheduled payment'); near(await money('auto-interest'),5186.808,'Auto interest');
+    if(await textOf('auto-duration')!=='60 months') throw new Error('Auto loan duration expected 60 months');
+    await set({'auto-amount':28000,'auto-rate':0,'auto-months':60,'auto-extra':0}); await page.locator('#auto-calc').click(); near(await money('auto-interest'),0,'Zero-rate auto interest');
+    await page.locator('#auto-amount').fill('0'); await page.locator('#auto-calc').click(); await expectInvalid('auto-payment','Zero auto principal');
+
+    // 9. Credit card payoff: standard payoff, zero balance and insufficient payment.
+    await calculate('credit-card-payoff.html','card-calc',{'card-balance':4500,'card-rate':24.99,'card-payment':200});
+    if(await textOf('card-months')!=='31 months') throw new Error('Credit card expected 31 months, got '+await textOf('card-months'));
+    near(await money('card-interest'),1634.7115,'Credit card interest');
+    await set({'card-balance':0,'card-rate':24.99,'card-payment':0}); await page.locator('#card-calc').click(); if(await textOf('card-months')!=='0') throw new Error('Zero card balance must return zero months');
+    await set({'card-balance':4500,'card-rate':24.99,'card-payment':10}); await page.locator('#card-calc').click(); if(await textOf('card-months')!=='Payment too low') throw new Error('Credit card payment below interest must be rejected');
+
+    // 10. Retirement: zero-return and positive-return projections.
+    await calculate('retirement-calculator.html','retirement-calc',{'retirement-current':0,'retirement-monthly':100,'retirement-years':10,'retirement-return':0,'retirement-match':0});
+    near(await money('retirement-balance'),12000,'Retirement zero-return balance'); near(await money('retirement-contrib'),12000,'Retirement contributions'); near(await money('retirement-total'),0,'Retirement zero-return growth');
+    await set({'retirement-current':10000,'retirement-monthly':200,'retirement-years':20,'retirement-return':5,'retirement-match':50}); await page.locator('#retirement-calc').click();
+    near(await money('retirement-balance'),148274.3226,'Retirement positive-return balance');
+
+    // 11. Student loan payoff: amortization, zero balance and insufficient payment.
+    await calculate('student-loan-payoff.html','student-calc',{'student-balance':5000,'student-rate':6.8,'student-payment':100});
+    if(await textOf('student-months')!=='59 months') throw new Error('Student loan expected 59 months, got '+await textOf('student-months'));
+    near(await money('student-interest'),895.6729,'Student loan interest');
+    await set({'student-balance':0,'student-rate':6.8,'student-payment':0}); await page.locator('#student-calc').click(); if(await textOf('student-months')!=='0') throw new Error('Zero student balance must return zero months');
+    await set({'student-balance':5000,'student-rate':6.8,'student-payment':10}); await page.locator('#student-calc').click(); if(await textOf('student-months')!=='Payment too low') throw new Error('Student payment below interest must be rejected');
+
+    // 12. Net worth: positive and negative net worth, all-zero and invalid inputs.
+    await calculate('net-worth-calculator.html','networth-calc',{'net-cash':8000,'net-investments':12000,'net-retirement':25000,'net-home':250000,'net-other-assets':18000,'net-mortgage':190000,'net-auto':9000,'net-student':12000,'net-credit':2500,'net-other-debt':1500});
+    near(await money('net-assets'),313000,'Net worth assets'); near(await money('net-liabilities'),215000,'Net worth liabilities'); near(await money('net-result'),98000,'Net worth positive');
+    await set({'net-cash':1000,'net-investments':0,'net-retirement':0,'net-home':0,'net-other-assets':0,'net-mortgage':5000,'net-auto':0,'net-student':0,'net-credit':0,'net-other-debt':0}); await page.locator('#networth-calc').click();
+    near(await money('net-result'),-4000,'Net worth negative');
+    await page.locator('#net-cash').fill('-1'); await page.locator('#networth-calc').click(); await expectInvalid('net-result','Negative net worth input');
+
+    console.log('PASS: 12-calculator known-answer, zero-rate, boundary, invalid, deficit/negative, insufficient-payment and amortization checks.');
+
     // Mobile menu interaction and layout smoke test.
     await page.setViewportSize({width:390,height:844});
     await page.goto('http://127.0.0.1:4173/index.html');
