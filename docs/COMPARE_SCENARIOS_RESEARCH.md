@@ -2,7 +2,7 @@
 
 **Project:** USAJIO  
 **Research date:** 2026-11-22  
-**Status:** Research complete; optional comparison section is implemented in PR #57 and validation is in progress.
+**Status:** Complete — PR #57 merged and GitHub Pages deployment verified.
 
 ## 1. Existing USAJIO baseline
 - Current source page: loan-calculator.html.
@@ -109,3 +109,8 @@ Sources:
 - The shared cent-rounded amortization helper powers both the existing loan calculator and the comparison outputs, preserving the baseline schedule behavior.
 - The result view shows scheduled payment, monthly outflow including extra principal, total interest, total repayment, payoff count and extra principal, plus deltas versus Scenario A. Lowest monthly outflow and lowest total interest are separate observations.
 - The expanded comparison table is horizontally scrollable within its own region on small screens. Automated Browser QA and mobile/desktop Lighthouse checks are pending; do not merge until they pass.
+## 9. Release evidence — 2026-11-22
+- PR #57 merged as b6db38e85322e963fd6e243b11d0b6d24821cff9.
+- Browser QA #45048481516 passed on the PR head, including calculation reconciliation, edge cases, invalid input, keyboard/accessibility and the 320px expanded comparison panel.
+- Mobile and desktop Lighthouse #45048417846 passed; the only difference from the browser-tested head was this documentation-only update.
+- GitHub Pages deployment #45048757092 succeeded for the merge commit.
