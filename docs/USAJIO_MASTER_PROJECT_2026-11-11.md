@@ -788,3 +788,10 @@ First verify deployment run #45030278000 for merge commit `d61f0498a1fbc965ec527
 - Proposed first release: monthly schedule with opening balance, scheduled payment, extra principal, interest, principal reduction, ending balance and cumulative interest; consistent summary; final payment capped; local-only computation. Variable rates, irregular frequencies, one-time extras, dates and PDF/Excel exports remain out of scope initially.
 - Proposed calculation policy: a cent-rounded monthly ledger with summary totals derived from the same rows. This still needs to be implemented and validated against independent examples; no production feature code has been changed yet.
 - Next exact action: implement the schedule on a dedicated feature branch, add known-answer/zero-rate/extra-payment/final-payment/rounding/input/privacy/accessibility tests, then run browser QA and relevant Lighthouse checks. Merge only after required checks pass.
+
+
+### Loan Amortization implementation QA correction — 2026-11-22
+- PR #52 introduced the monthly table and cent-rounded ledger, but its first Browser QA run failed (run #45031330430); Mobile and Desktop Lighthouse passed. PR remains unmerged.
+- Review of the example $10,000 at 7% for 5 years found that rounding the scheduled payment down to $198.01 left a small residual and generated a 61st payment. Corrected policy on the PR branch: round the scheduled payment upward to the next cent ($198.02) so the planned 60-month term is respected; the final installment is still capped to the actual payoff amount.
+- Independent decimal arithmetic for that example: 60 payments, total interest $1,880.67, total paid $11,880.67. Browser regression expectations updated accordingly.
+- Re-run CI and inspect any remaining failures before merge. No feature release until Browser QA, Mobile Lighthouse and Desktop Lighthouse all pass.
