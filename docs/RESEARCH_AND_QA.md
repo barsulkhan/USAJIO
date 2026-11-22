@@ -166,3 +166,11 @@ Educational estimates only; no guaranteed returns or unverified rates. Do not co
 - GitHub Pages deployment run #44984834009 — **Pass** for `main` commit `53cc87accf1e7c2eea44e4e6e38b1a26768b4367`. Deployment log: one artifact found, deployment created for the exact commit, `Reported success!`; environment URL resolved to https://barsulkhan.github.io/USAJIO/.
 - Historical PRs #4–#11 closed unmerged after overlap/age review; their stale branches should not be merged as-is.
 - This browser run is an automated headless Chromium test at the configured 390px viewport. It does not replace physical Android verification, keyboard/screen-reader testing, visual regression or Lighthouse/Core Web Vitals.
+
+
+## Net worth calculator service — 2026-11-22
+
+- Added a dedicated Net Worth Calculator page with five asset categories and five liability categories. Net worth is calculated as total assets minus total liabilities.
+- Inputs are processed in the browser only; the page does not submit or persist entered figures. Currency selection changes formatting only and is not foreign-exchange conversion.
+- Added homepage discovery, sitemap entry, README catalog update, Playwright browser-QA coverage, and mobile/desktop Lighthouse collection URLs.
+- Validation scope: static source wiring and config inspection completed. The new page's real browser interaction, accessibility audit and Lighthouse collection are pending the PR-triggered GitHub Actions run. No production deployment is included.
