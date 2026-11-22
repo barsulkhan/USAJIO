@@ -151,3 +151,8 @@ Educational estimates only; no guaranteed returns or unverified rates. Do not co
 - Live HTTP/browser check — **Not Tested**: outbound DNS resolution for `barsulkhan.github.io` fails in this environment.
 - Runtime browser tests, internal-link crawl, mobile rendering, keyboard/screen-reader, physical Android, visual regression and Lighthouse — **Not Tested** in this execution.
 - Open PR hygiene: #15 docs-only and open; PR #11 has a stale/diverged branch (57 ahead, 3 behind current main) with broad overlap; PRs #10/#9/#8/#7 also overlap historical site files. Do not merge stale branches without patch-level comparison.
+
+### Additional source QA — 2026-11-22
+- All 8 guide pages and 6 informational/policy pages: unique page title present, meta description present, canonical URL present, exactly one H1 — **Pass**.
+- Local relative `.html` link audit across all 26 repository HTML pages — **Pass**, no missing local targets.
+- Sitemap lists 26 URLs, matching 26 HTML files — **Pass (static count)**; live reachability remains **Not Tested**.
