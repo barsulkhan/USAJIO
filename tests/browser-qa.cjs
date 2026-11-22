@@ -320,7 +320,7 @@ const server = http.createServer((req,res) => {
     if(await page.locator('#multi-debt-results').isHidden()) throw new Error('Multi-debt comparison did not render');
     const snowOrder=await textOf('snowball-order'), avalancheOrder=await textOf('avalanche-order');
     if(!snowOrder.startsWith('Small low-rate')||!avalancheOrder.startsWith('Large high-rate')) throw new Error('Snowball and avalanche priority order incorrect: '+snowOrder+' / '+avalancheOrder);
-    if(!(await textOf('snowball-months')).match(/^\\d+$/)||!(await textOf('avalanche-months')).match(/^\\d+$/)) throw new Error('Multi-debt payoff months missing');
+    if(!(await textOf('snowball-months')).match(/^\d+$/)||!(await textOf('avalanche-months')).match(/^\\d+$/)) throw new Error('Multi-debt payoff months missing');
     if((await textOf('snowball-interest'))==='—'||(await textOf('avalanche-interest'))==='—') throw new Error('Multi-debt interest results missing');
     await page.locator('#multi-debt-extra').fill('75');
     if(!(await page.locator('#multi-debt-results').isHidden())) throw new Error('Editing multi-debt inputs must invalidate old results');
