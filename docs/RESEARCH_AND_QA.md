@@ -183,3 +183,21 @@ Educational estimates only; no guaranteed returns or unverified rates. Do not co
 - Added the guide to the homepage guide grid, Monthly Budget Planner cross-link, sitemap and README catalog.
 - SEO source review: all 27 existing HTML pages have a unique page title, meta description, canonical link and exactly one H1. Sitemap contains 27 unique URLs on the correct GitHub Pages base path; `robots.txt` allows crawling and references that sitemap. Search Console indexing and live search visibility are not verified.
 - Google Search Central guidance used: prioritize people-first, original, helpful content; use descriptive titles/headings and crawlable links; avoid thin or mass-produced pages. See https://developers.google.com/search/docs/fundamentals/creating-helpful-content and https://developers.google.com/search/docs/essentials.
+
+
+## 2026-11-22 — Finance guide source and social-preview refresh
+- Reviewed all eight existing guides (budgeting, emergency fund, debt payoff, credit score, mortgage basics, auto financing, retirement planning and student loans) before editing; retained their original educational scope and internal calculator links.
+- Added a visible review date and a dedicated official-source section to each guide. Primary references include CFPB spending/emergency-fund/credit/mortgage/auto guidance, FTC debt-management guidance, IRS retirement-plan information, SEC Investor.gov, and Federal Student Aid repayment information.
+- Student-loan guide now explicitly warns that 2026 federal repayment eligibility can depend on loan type and first disbursement date, and directs readers to current Federal Student Aid material rather than relying on stale plan names.
+- Standardized Open Graph article/site/title/description/url and Twitter summary metadata across all nine finance guides, including the cash-flow guide. No unverified author, credential, performance promise, affiliate claim or structured-data markup was added.
+- Added browser-QA assertions for review dates, official-source sections/links and social metadata on all nine guides.
+- Research references:
+  - CFPB credit scores: https://www.consumerfinance.gov/ask-cfpb/what-is-a-credit-score-en-315/
+  - CFPB emergency savings: https://www.consumerfinance.gov/an-essential-guide-to-building-an-emergency-fund/
+  - FTC debt guidance: https://consumer.ftc.gov/articles/how-get-out-debt
+  - CFPB mortgage shopping: https://www.consumerfinance.gov/consumer-tools/mortgages/shopping-for-a-mortgage/
+  - CFPB auto loan comparisons: https://www.consumerfinance.gov/ask-cfpb/how-do-i-compare-auto-loan-offers-what-should-i-look-at-besides-the-monthly-payment-en-753/
+  - IRS 401(k) limits: https://www.irs.gov/retirement-plans/plan-participant-employee/retirement-topics-401k-and-profit-sharing-plan-contribution-limits
+  - Federal Student Aid IDR FAQs: https://studentaid.gov/articles/faqs-idr-plan/
+- Search Console connection is not available for USAJIO in the currently connected OpenSEO projects (only InfoJano appears). No InfoJano project or property was accessed or changed.
+- Physical Android visual testing and TalkBack/screen-reader testing remain NOT TESTED; the next manual checklist will record these separately from headless CI.

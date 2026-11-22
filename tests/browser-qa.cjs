@@ -323,6 +323,16 @@ const server = http.createServer((req,res) => {
       const lowerSource=source.toLowerCase();
       if(['lorem ipsum','example.com','[your email]','[your name]','[your url]'].some(token=>lowerSource.includes(token))||/TODO|FIXME/i.test(source)) pageIssues.push(file+' contains placeholder text');
       if(['privacy.html','terms.html','disclaimer.html'].includes(file)&&!source.includes('Last reviewed:')) pageIssues.push(file+' has no policy review date');
+      const guideFiles=['budgeting-guide.html','emergency-fund-guide.html','debt-payoff-guide.html','credit-score-guide.html','mortgage-basics-guide.html','auto-financing-guide.html','retirement-planning-guide.html','student-loan-guide.html','cash-flow-budget-guide.html'];
+      if(guideFiles.includes(file)){
+        for(const attribute of ['property="og:type"','property="og:site_name"','property="og:title"','property="og:description"','property="og:url"','name="twitter:card"']){
+          if(!source.includes(attribute)) pageIssues.push(file+' is missing social metadata '+attribute);
+        }
+        if(!source.includes('Last reviewed: November 22, 2026')) pageIssues.push(file+' is missing the current guide review date');
+        if(!source.includes('Official sources and further reading')) pageIssues.push(file+' is missing its official-source section');
+        const officialLinks=[...source.matchAll(/href="https:\/\/(?:www\.)?(?:consumerfinance\.gov|consumer\.gov|consumer\.ftc\.gov|irs\.gov|investor\.gov|studentaid\.gov|www\.annualcreditreport\.com)\//g)];
+        if(officialLinks.length<1) pageIssues.push(file+' has no recognized official-source link');
+      }
       for(const href of meta.links){
         if(!href||/^(mailto:|tel:|javascript:|data:)/i.test(href)) continue;
         let url;
