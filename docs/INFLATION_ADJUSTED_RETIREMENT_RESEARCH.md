@@ -2,7 +2,7 @@
 
 **Project:** USAJIO  
 **Research date:** 2026-11-22  
-**Status:** Research and scope definition; implementation not yet started.
+**Status:** Research complete; optional inflation-adjusted scenarios are implemented in PR #59 and validation is in progress.
 
 ## 1. Existing USAJIO baseline
 - Current page: retirement-calculator.html.
@@ -102,3 +102,9 @@ Sources:
 - Competitor analysis uses public documentation and methodology descriptions, not hands-on testing or independent verification of proprietary projections.
 - A constant-return projection is deterministic and does not model volatility or sequence risk; it must not be described as a probability forecast.
 - The default 3% inflation and 4%/6%/8% return values are editable examples only, not current forecasts or individualized investment advice.
+## 8. Implementation note — 2026-11-22
+- PR #59 adds a collapsed optional scenario panel to the existing Retirement Savings Calculator. The original current-balance, monthly-contribution, years, base-return and employer-match fields and nominal outputs remain the base calculator.
+- The optional panel adds editable annual inflation (default 3%), conservative return (default 4%) and optimistic return (default 8%); the existing return input is the Base scenario (default 6%). All values are user-editable assumptions.
+- The engine preserves the current monthly-equivalent return and month-end contribution formula. It shows nominal future balance and today's-dollar value for conservative/base/optimistic scenarios, using nominal balance divided by the inflation factor.
+- Conservative ≤ Base ≤ Optimistic is validated. Invalid advanced assumptions do not erase the base nominal projection.
+- Browser QA now covers scenario reconciliation, zero return, zero inflation, negative real return, invalid ordering/inflation and the expanded 320px mobile layout. Full Browser QA and Lighthouse results are pending.
