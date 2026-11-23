@@ -755,7 +755,7 @@ const server = http.createServer((req,res) => {
     for(const href of ['about.html','contact.html','privacy.html','terms.html','disclaimer.html','editorial.html']){
       if(!homepageSource.includes('href="'+href+'"')) throw new Error('Homepage footer is missing '+href);
     }
-    if(!homepageSource.includes('17 useful calculators')) throw new Error('Homepage calculator count is not 17');
+    if(!homepageSource.includes('18 useful calculators')) throw new Error('Homepage calculator count is not 18');
     if(!homepageSource.includes('id="resources"')) throw new Error('Resources navigation target is missing');
     if(!homepageSource.includes('cash-flow-budget-guide.html')) throw new Error('Homepage is missing the cash-flow guide link');
     if(!homepageSource.includes('debt-to-income.html')) throw new Error('Homepage is missing the Debt-to-Income calculator link');
