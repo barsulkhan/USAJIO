@@ -96,6 +96,7 @@ const server = http.createServer((req,res) => {
 
     // Weekly cash-flow planner: recurring events, daily shortfalls, month-end clamp and stale-result invalidation.
     await page.goto('http://127.0.0.1:4173/cash-flow-planner.html');
+    const cashNear=(actual,expected,label,tolerance=0.02)=>{if(Math.abs(actual-expected)>tolerance)throw new Error(label+': expected '+expected+', got '+actual);};
     const removeAllCashFlowEntries=async()=>{const buttons=page.locator('#cf-entries button');while(await buttons.count())await buttons.first().click();};
     const addCashFlowEntry=async(kind,name,amount,date,frequency)=>{
       await page.locator(kind==='income'?'#cf-add-income':'#cf-add-expense').click();
@@ -112,7 +113,7 @@ const server = http.createServer((req,res) => {
     await addCashFlowEntry('income','Weekly pay',500,cashFlowStart,'weekly');
     await addCashFlowEntry('expense','One-time bill',300,cashFlowStart,'once');
     await page.locator('#cf-calc').click();
-    near(Number((await page.locator('#cf-ending').innerText()).replace(/[^0-9.-]/g,'')),2700,'Weekly cash-flow ending balance');
+    cashNear(Number((await page.locator('#cf-ending').innerText()).replace(/[^0-9.-]/g,'')),2700,'Weekly cash-flow ending balance');
     if(await page.locator('#cf-schedule tr').count()!==4) throw new Error('Four-week cash-flow forecast should render four rows');
     if(Number((await page.locator('#cf-schedule tr').first().locator('td').nth(1).innerText()).replace(/[^0-9.-]/g,''))!==500) throw new Error('Weekly income total is incorrect');
     if(Number((await page.locator('#cf-schedule tr').first().locator('td').nth(2).innerText()).replace(/[^0-9.-]/g,''))!==300) throw new Error('One-time expense total is incorrect');
@@ -122,8 +123,8 @@ const server = http.createServer((req,res) => {
     await addCashFlowEntry('expense','Early bill',150,cashFlowStart,'once');
     await addCashFlowEntry('income','Later paycheck',200,shortfallIncomeDate,'once');
     await page.locator('#cf-calc').click();
-    near(Number((await page.locator('#cf-ending').innerText()).replace(/[^0-9.-]/g,'')),150,'Cash-flow same-week recovery balance');
-    near(Number((await page.locator('#cf-lowest').innerText()).replace(/[^0-9.-]/g,'')),-50,'Cash-flow lowest daily balance');
+    cashNear(Number((await page.locator('#cf-ending').innerText()).replace(/[^0-9.-]/g,'')),150,'Cash-flow same-week recovery balance');
+    cashNear(Number((await page.locator('#cf-lowest').innerText()).replace(/[^0-9.-]/g,'')),-50,'Cash-flow lowest daily balance');
     if(await page.locator('#cf-shortfall-count').innerText()!=='1') throw new Error('Cash-flow planner must detect an intrawweek shortfall even if week-end balance recovers');
     if(!(await page.locator('#cf-status').innerText()).includes('Potential shortfall')) throw new Error('Cash-flow shortfall warning is missing');
     await page.locator('#cf-add-expense').click();
@@ -138,7 +139,7 @@ const server = http.createServer((req,res) => {
     for(const row of await page.locator('#cf-schedule tr').all()){
       monthlyOut+=Number((await row.locator('td').nth(2).innerText()).replace(/[^0-9.-]/g,''));
     }
-    near(monthlyOut,20,'Month-end recurrence clamp (Jan 31 to Feb 28)');
+    cashNear(monthlyOut,20,'Month-end recurrence clamp (Jan 31 to Feb 28)');
     await page.locator('.cf-entry input[aria-label="Entry amount"]').fill('0');
     await page.locator('#cf-calc').click();
     if(!(await page.locator('#cf-status').innerText()).includes('greater than zero')) throw new Error('Zero cash-flow entry amount must be rejected');
