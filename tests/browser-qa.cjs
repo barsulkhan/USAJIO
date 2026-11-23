@@ -8,7 +8,7 @@ const pages = [
   'compound-interest.html','loan-calculator.html','monthly-budget.html',
   'savings-goal.html','emergency-fund.html','debt-payoff.html',
   'mortgage-calculator.html','auto-loan-calculator.html','credit-card-payoff.html',
-  'retirement-calculator.html','student-loan-payoff.html','net-worth-calculator.html','credit-card-minimum-payment.html','rent-vs-buy.html','cash-flow-planner.html','debt-to-income.html','rent-affordability.html'
+  'retirement-calculator.html','student-loan-payoff.html','net-worth-calculator.html','credit-card-minimum-payment.html','rent-vs-buy.html','cash-flow-planner.html','debt-to-income.html','rent-affordability.html','credit-utilization.html'
 ];
 const mime = {'.html':'text/html; charset=utf-8','.css':'text/css','.js':'text/javascript','.svg':'image/svg+xml','.xml':'application/xml','.txt':'text/plain'};
 const server = http.createServer((req,res) => {
@@ -47,7 +47,7 @@ const server = http.createServer((req,res) => {
     const homeCards=await page.locator('.tool-card a[href]').count();
     if(homeCards<12) throw new Error('Homepage calculator navigation links missing: '+homeCards);
     const directHomeCards=await page.locator('#calculators .tool-grid > .tool-card').count();
-    if(directHomeCards!==17) throw new Error('Homepage must show 16 separate calculator cards; found '+directHomeCards);
+    if(directHomeCards!==18) throw new Error('Homepage must show 18 separate calculator cards; found '+directHomeCards);
 
     for(const file of pages){
       const response=await page.goto('http://127.0.0.1:4173/'+file);
@@ -173,6 +173,23 @@ const server = http.createServer((req,res) => {
     await page.setViewportSize({width:320,height:800});
     await page.goto('http://127.0.0.1:4173/cash-flow-planner.html');
     if(await page.evaluate(()=>document.documentElement.scrollWidth)>320) throw new Error('Cash-flow planner overflows a 320px viewport');
+    await page.setViewportSize({width:1365,height:900});
+
+
+    // Credit utilization: per-card and aggregate math, target paydown, and invalid limits.
+    await page.goto('http://127.0.0.1:4173/credit-utilization.html');
+    await page.locator('#cu-calc').click();
+    const cuMoney=async id=>Number((await page.locator('#'+id).innerText()).replace(/[^0-9.-]/g,''));
+    if(Math.abs(await cuMoney('cu-total-balance')-2000)>0.01)throw new Error('Credit utilization default balance should be $2,000');
+    if(Math.abs(await cuMoney('cu-total-limit')-12000)>0.01)throw new Error('Credit utilization default limit should be $12,000');
+    if(await page.locator('#cu-total-util').innerText()!=='16.7%')throw new Error('Credit utilization default ratio should be 16.7%');
+    if(await page.locator('#cu-card-util-1').innerText()!=='24.0%')throw new Error('Per-card utilization should be 24.0%');
+    await page.locator('#cu-target').selectOption('10');await page.locator('#cu-calc').click();
+    if(Math.abs(await cuMoney('cu-paydown')-800)>0.01)throw new Error('Credit utilization 10% target paydown should be $800');
+    await page.locator('#cu-balance-1').fill('6000');await page.locator('#cu-calc').click();
+    if(!(await page.locator('#cu-status').innerText()).includes('between zero and its limit'))throw new Error('Credit utilization must reject a balance above its card limit');
+    await page.setViewportSize({width:320,height:800});await page.goto('http://127.0.0.1:4173/credit-utilization.html');
+    if(await page.evaluate(()=>document.documentElement.scrollWidth)>320)throw new Error('Credit utilization page overflows a 320px viewport');
     await page.setViewportSize({width:1365,height:900});
 
     // Rent affordability: guideline cap, cash-flow cap, and invalid income.
