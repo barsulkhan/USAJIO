@@ -8,7 +8,7 @@ const pages = [
   'compound-interest.html','loan-calculator.html','monthly-budget.html',
   'savings-goal.html','emergency-fund.html','debt-payoff.html',
   'mortgage-calculator.html','auto-loan-calculator.html','credit-card-payoff.html',
-  'retirement-calculator.html','student-loan-payoff.html','net-worth-calculator.html','credit-card-minimum-payment.html','rent-vs-buy.html','cash-flow-planner.html','debt-to-income.html'
+  'retirement-calculator.html','student-loan-payoff.html','net-worth-calculator.html','credit-card-minimum-payment.html','rent-vs-buy.html','cash-flow-planner.html','debt-to-income.html','rent-affordability.html'
 ];
 const mime = {'.html':'text/html; charset=utf-8','.css':'text/css','.js':'text/javascript','.svg':'image/svg+xml','.xml':'application/xml','.txt':'text/plain'};
 const server = http.createServer((req,res) => {
@@ -47,7 +47,7 @@ const server = http.createServer((req,res) => {
     const homeCards=await page.locator('.tool-card a[href]').count();
     if(homeCards<12) throw new Error('Homepage calculator navigation links missing: '+homeCards);
     const directHomeCards=await page.locator('#calculators .tool-grid > .tool-card').count();
-    if(directHomeCards!==16) throw new Error('Homepage must show 16 separate calculator cards; found '+directHomeCards);
+    if(directHomeCards!==17) throw new Error('Homepage must show 16 separate calculator cards; found '+directHomeCards);
 
     for(const file of pages){
       const response=await page.goto('http://127.0.0.1:4173/'+file);
@@ -173,6 +173,21 @@ const server = http.createServer((req,res) => {
     await page.setViewportSize({width:320,height:800});
     await page.goto('http://127.0.0.1:4173/cash-flow-planner.html');
     if(await page.evaluate(()=>document.documentElement.scrollWidth)>320) throw new Error('Cash-flow planner overflows a 320px viewport');
+    await page.setViewportSize({width:1365,height:900});
+
+    // Rent affordability: guideline cap, cash-flow cap, and invalid income.
+    await page.goto('http://127.0.0.1:4173/rent-affordability.html');
+    await page.locator('#ra-calc').click();
+    const rentMoney=async id=>Number((await page.locator('#'+id).innerText()).replace(/[^0-9.-]/g,''));
+    if(Math.abs(await rentMoney('ra-rent')-1800)>0.01)throw new Error('Rent affordability default rent should be $1,800');
+    if(Math.abs(await rentMoney('ra-cash')-2400)>0.01)throw new Error('Rent affordability cash available should be $2,400');
+    if(Math.abs(await rentMoney('ra-left')-400)>0.01)throw new Error('Rent affordability remaining cash should be $400');
+    await page.locator('#ra-guideline').selectOption('35'); await page.locator('#ra-calc').click();
+    if(Math.abs(await rentMoney('ra-rent')-2100)>0.01)throw new Error('Rent affordability must apply the lower of cash flow and the gross-income guideline');
+    await page.locator('#ra-net').fill('0'); await page.locator('#ra-calc').click();
+    if(!(await page.locator('#ra-status').innerText()).includes('positive gross and take-home income'))throw new Error('Rent affordability must reject zero take-home income');
+    await page.setViewportSize({width:320,height:800}); await page.goto('http://127.0.0.1:4173/rent-affordability.html');
+    if(await page.evaluate(()=>document.documentElement.scrollWidth)>320)throw new Error('Rent affordability page overflows a 320px viewport');
     await page.setViewportSize({width:1365,height:900});
 
     // Reproducible financial-math and input-boundary matrix for all 13 tools.
@@ -723,7 +738,7 @@ const server = http.createServer((req,res) => {
     for(const href of ['about.html','contact.html','privacy.html','terms.html','disclaimer.html','editorial.html']){
       if(!homepageSource.includes('href="'+href+'"')) throw new Error('Homepage footer is missing '+href);
     }
-    if(!homepageSource.includes('16 useful calculators')) throw new Error('Homepage calculator count is not 16');
+    if(!homepageSource.includes('17 useful calculators')) throw new Error('Homepage calculator count is not 17');
     if(!homepageSource.includes('id="resources"')) throw new Error('Resources navigation target is missing');
     if(!homepageSource.includes('cash-flow-budget-guide.html')) throw new Error('Homepage is missing the cash-flow guide link');
     if(!homepageSource.includes('debt-to-income.html')) throw new Error('Homepage is missing the Debt-to-Income calculator link');
