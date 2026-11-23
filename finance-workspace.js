@@ -17,7 +17,35 @@ async function encryptedRecord(data,key=cryptoKey,meta=vaultMeta){const iv=crypt
 async function decryptRecord(record,key){const plain=await crypto.subtle.decrypt({name:"AES-GCM",iv:new Uint8Array(record.iv)},key,new Uint8Array(record.ciphertext));return JSON.parse(dec.decode(plain))}
 async function save(){if(!cryptoKey)return;await dbPut(await encryptedRecord(state))}
 function showGate(mode){$("vault-gate").hidden=false;$("app").hidden=true;$("vault-form").reset();$("vault-pass").value="";$("vault-confirm").value="";$("vault-confirm").hidden=mode==="unlock";$("vault-confirm").disabled=mode==="unlock";$("confirm-label").hidden=mode==="unlock";$("vault-ack").closest("label").hidden=mode==="unlock";$("vault-ack").disabled=mode==="unlock";$("vault-pass").autocomplete=mode==="unlock"?"current-password":"new-password";$("gate-title").textContent=mode==="unlock"?"Unlock your workspace":"Create your private workspace";$("gate-copy").textContent=mode==="unlock"?"Enter your passphrase to unlock your encrypted financial workspace.":"Your financial data is encrypted in this browser. Set a strong passphrase to create your personal vault.";$("vault-submit").innerHTML=mode==="unlock"?"Unlock workspace →":"Create encrypted workspace →";$("vault-pass").focus()}
-async function boot(){try{const record=await dbGet();showGate(record?"unlock":"create");$("vault-form").onsubmit=async e=>{e.preventDefault();const pass=$("vault-pass").value;const old=await dbGet();if(old){try{cryptoKey=await derive(pass,new Uint8Array(old.salt));state=await decryptRecord(old,cryptoKey);vaultMeta={salt:old.salt};if(!state.transactions)state.transactions=[];if(!state.budgets)state.budgets=[];if(!state.goals)state.goals=[];if(!state.debts)state.debts=[];openApp()}catch(err){cryptoKey=null;toast("That passphrase did not unlock this vault.")}}else{if(pass.length<10||pass!==$("vault-confirm").value){toast("Use matching passphrases with at least 10 characters.");return}const salt=crypto.getRandomValues(new Uint8Array(16));vaultMeta={salt:Array.from(salt)};cryptoKey=await derive(pass,salt);state={currency:"USD",transactions:[],budgets:[],goals:[],debts:[]};await save();openApp()}}}catch(e){console.error(e);toast("This browser could not open secure local storage.")}}
+async function boot(){
+  $("vault-form").onsubmit=async e=>{
+    e.preventDefault();
+    const pass=$("vault-pass").value;
+    try{
+      const old=await dbGet();
+      if(old){
+        cryptoKey=await derive(pass,new Uint8Array(old.salt));
+        state=await decryptRecord(old,cryptoKey);
+        vaultMeta={salt:old.salt};
+        if(!state.transactions)state.transactions=[];
+        if(!state.budgets)state.budgets=[];
+        if(!state.goals)state.goals=[];
+        if(!state.debts)state.debts=[];
+        openApp();
+      }else{
+        if(pass.length<10||pass!==$("vault-confirm").value){toast("Use matching passphrases with at least 10 characters.");return}
+        const salt=crypto.getRandomValues(new Uint8Array(16));
+        vaultMeta={salt:Array.from(salt)};
+        cryptoKey=await derive(pass,salt);
+        state={currency:"USD",transactions:[],budgets:[],goals:[],debts:[]};
+        await save();
+        openApp();
+      }
+    }catch(err){cryptoKey=null;console.error(err);toast("Could not unlock or create the vault. Check your passphrase and browser storage.")}
+  };
+  try{const record=await dbGet();showGate(record?"unlock":"create")}
+  catch(e){console.error(e);toast("This browser could not open secure local storage.")}
+}
 function openApp(){$("vault-gate").hidden=true;$("app").hidden=false;$("today-label").textContent=new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"}).toUpperCase();$("currency").value=state.currency||"USD";render();window.addEventListener("resize",drawChart)}
 function lock(){cryptoKey=null;state={currency:"USD",transactions:[],budgets:[],goals:[],debts:[]};showGate("unlock")}
 function setView(view){activeView=view;document.querySelectorAll(".view-panel").forEach(x=>x.classList.toggle("active",x.id==="view-"+view));document.querySelectorAll(".side-nav [data-view]").forEach(x=>x.classList.toggle("active",x.dataset.view===view));$("view-title").textContent=({overview:"Overview",transactions:"Transactions",budgets:"Budgets",goals:"Savings goals",debts:"Debt planner",settings:"Privacy & data"})[view]||"Overview";window.scrollTo({top:0,behavior:"smooth"})}
