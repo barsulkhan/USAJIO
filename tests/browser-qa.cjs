@@ -690,7 +690,7 @@ const server = http.createServer((req,res) => {
     await page.locator('#vault-confirm').fill('qa-workspace-passphrase-2026');
     await page.locator('#vault-ack').check();
     await page.locator('#vault-submit').click();
-    await page.waitForSelector('#app:not([hidden])');
+    try{await page.waitForFunction(()=>!document.querySelector('#app')?.hidden,{timeout:10000})}catch(err){const diag=await page.evaluate(()=>({gate:document.querySelector('#gate-title')?.textContent,appHidden:document.querySelector('#app')?.hidden,passLength:document.querySelector('#vault-pass')?.value.length,confirmLength:document.querySelector('#vault-confirm')?.value.length,ack:document.querySelector('#vault-ack')?.checked,valid:document.querySelector('#vault-form')?.checkValidity(),validation:document.querySelector('#vault-form')?.reportValidity?.(),autocomplete:document.querySelector('#vault-pass')?.autocomplete}));throw new Error('Workspace vault did not open: '+JSON.stringify({diag,errors}))}
     await page.locator('[data-open-form="transaction"]').first().click();
     await page.locator('[name="description"]').fill('QA Salary Entry');
     await page.locator('[name="type"]').selectOption('income');
