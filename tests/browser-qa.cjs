@@ -681,7 +681,52 @@ const server = http.createServer((req,res) => {
     console.log('PASS: 10 responsive widths across homepage and all calculators; labeled controls and keyboard-only calculation/focus checks.');
 
 
-    // Crawl every public HTML page and verify all local links, fragments and sitemap entries.
+
+    // Private finance workspace: encrypted vault, entry flows, lock/unlock and responsive layout.
+    await page.goto('http://127.0.0.1:4173/finance-workspace.html');
+    await page.waitForLoadState('networkidle');
+    await page.locator('#vault-pass').fill('qa-workspace-passphrase-2026');
+    await page.locator('#vault-confirm').fill('qa-workspace-passphrase-2026');
+    await page.locator('#vault-ack').check();
+    await page.locator('#vault-submit').click();
+    await page.waitForSelector('#app:not([hidden])');
+    await page.locator('[data-open-form="transaction"]').first().click();
+    await page.locator('[name="description"]').fill('QA Salary Entry');
+    await page.locator('[name="type"]').selectOption('income');
+    await page.locator('[name="amount"]').fill('4200');
+    await page.locator('[name="category"]').selectOption('Salary');
+    await page.locator('[name="date"]').fill(new Date().toISOString().slice(0,10));
+    await page.locator('#save-entry').click();
+    if(!(await page.locator('#metric-income').innerText()).includes('4,200'))throw new Error('Finance workspace income metric did not update');
+    await page.locator('[data-open-form="budget"]').first().click();
+    await page.locator('[name="category"]').selectOption('Groceries');
+    await page.locator('[name="limit"]').fill('500');
+    await page.locator('#save-entry').click();
+    await page.locator('[data-open-form="goal"]').first().click();
+    await page.locator('[name="name"]').fill('QA Emergency Fund');
+    await page.locator('[name="target"]').fill('3000');
+    await page.locator('[name="saved"]').fill('500');
+    await page.locator('#save-entry').click();
+    await page.locator('[data-open-form="debt"]').first().click();
+    await page.locator('[name="name"]').fill('QA Card');
+    await page.locator('[name="balance"]').fill('1200');
+    await page.locator('[name="apr"]').fill('19.9');
+    await page.locator('[name="payment"]').fill('100');
+    await page.locator('#save-entry').click();
+    if(!(await page.locator('#metric-debt').innerText()).includes('1,200'))throw new Error('Finance workspace debt metric did not update');
+    const stored=await page.evaluate(async()=>new Promise((resolve,reject)=>{const req=indexedDB.open('usajio-private-workspace',1);req.onsuccess=()=>{const tx=req.result.transaction('vault');const r=tx.objectStore('vault').get('primary');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)};req.onerror=()=>reject(req.error)}));
+    if(!stored||stored.algorithm!=='AES-GCM'||JSON.stringify(stored).includes('QA Salary Entry'))throw new Error('Finance workspace data was not stored as encrypted ciphertext');
+    await page.setViewportSize({width:375,height:812});
+    if(await page.evaluate(()=>document.documentElement.scrollWidth)>375)throw new Error('Finance workspace overflows a 375px viewport');
+    await page.locator('#lock-btn').click();
+    await page.locator('#vault-pass').fill('qa-workspace-passphrase-2026');
+    await page.locator('#vault-submit').click();
+    await page.waitForSelector('#app:not([hidden])');
+    if(!(await page.locator('#metric-income').innerText()).includes('4,200'))throw new Error('Finance workspace did not restore encrypted data after unlock');
+    await page.evaluate(()=>indexedDB.deleteDatabase('usajio-private-workspace'));
+    await page.setViewportSize({width:1365,height:900});
+    console.log('PASS: private finance workspace encrypted vault, income/budget/goal/debt flows, ciphertext-only storage, lock/unlock persistence and 375px responsive layout.');
+\n    // Crawl every public HTML page and verify all local links, fragments and sitemap entries.
     const allHtmlFiles=fs.readdirSync(root).filter(name=>name.endsWith('.html')).sort();
     // Google Search Console ownership files are verification endpoints, not indexable site pages.
     const sitemapEligibleHtmlFiles=allHtmlFiles.filter(name=>!/^google[0-9a-f]+\.html$/i.test(name));
