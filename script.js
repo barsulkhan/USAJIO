@@ -276,7 +276,9 @@
   bind("multi-debt-calc", () => {
     const status = $("multi-debt-status");
     const results = $("multi-debt-results");
+    const scheduleBody = $("multi-debt-schedule-body");
     if (results) { results.hidden = true; results.style.display = "none"; }
+    if (scheduleBody) scheduleBody.replaceChildren();
     const debts = [];
     for (let i=1;i<=4;i++) {
       const nameEl=$("multi-debt-name-"+i), balanceEl=$("multi-debt-balance-"+i), rateEl=$("multi-debt-rate-"+i), minEl=$("multi-debt-min-"+i);
@@ -307,9 +309,19 @@
         : b.apr-a.apr || a.balance-b.balance || a.originalIndex-b.originalIndex);
       const priority=order.map(d=>d.originalIndex);
       let totalInterest=0,month=0;
+      const schedule=[];
       while(state.some(d=>d.remaining>0)&&month<1200){
         month++;
-        state.forEach(d=>{if(d.remaining>0){const charge=cents(d.remaining*d.apr/1200);d.remaining=cents(d.remaining+charge);d.interestTotal=cents(d.interestTotal+charge);totalInterest=cents(totalInterest+charge);}});
+        let interestThisMonth=0;
+        state.forEach(d=>{
+          if(d.remaining>0){
+            const charge=cents(d.remaining*d.apr/1200);
+            d.remaining=cents(d.remaining+charge);
+            d.interestTotal=cents(d.interestTotal+charge);
+            totalInterest=cents(totalInterest+charge);
+            interestThisMonth=cents(interestThisMonth+charge);
+          }
+        });
         let available=monthlyBudget;
         state.forEach(d=>{
           if(d.remaining<=0)return;
@@ -325,10 +337,16 @@
           d.remaining=cents(Math.max(0,d.remaining-payment));available=cents(available-payment);
           if(d.remaining===0&&!d.paidMonth)d.paidMonth=month;
         }
+        schedule.push({
+          month,
+          remaining:cents(state.reduce((sum,d)=>sum+d.remaining,0)),
+          interest:interestThisMonth,
+          paid:state.filter(d=>d.paidMonth===month).map(d=>d.name)
+        });
       }
       if(state.some(d=>d.remaining>0))return null;
       const payoffOrder=[...state].sort((a,b)=>a.paidMonth-b.paidMonth||priority.indexOf(a.originalIndex)-priority.indexOf(b.originalIndex)).map(d=>d.name);
-      return {months:month,interest:cents(totalInterest),order:payoffOrder};
+      return {months:month,interest:cents(totalInterest),order:payoffOrder,schedule};
     };
     const snowball=simulate("snowball"), avalanche=simulate("avalanche");
     if(!snowball||!avalanche){if(status)status.textContent="This plan cannot be paid off within 100 years at the entered monthly budget. Increase the payment or review the minimums.";return;}
@@ -336,12 +354,39 @@
     put("avalanche-months",String(avalanche.months));put("avalanche-interest",fmt(avalanche.interest));put("avalanche-order",avalanche.order.join(" → "));
     const diff=cents(snowball.interest-avalanche.interest);
     put("multi-debt-difference",diff>0?"Avalanche estimates "+fmt(diff)+" less interest than Snowball.":diff<0?"Snowball estimates "+fmt(Math.abs(diff))+" less interest in this scenario.":"Both strategies estimate the same total interest.");
+    if(scheduleBody){
+      const totalMonths=Math.max(snowball.schedule.length,avalanche.schedule.length);
+      for(let index=0;index<totalMonths;index++){
+        const snow=snowball.schedule[index],avalancheRow=avalanche.schedule[index];
+        const cells=[
+          String(index+1),
+          snow?fmt(snow.remaining):"Debt-free",
+          avalancheRow?fmt(avalancheRow.remaining):"Debt-free",
+          snow?fmt(snow.interest):"—",
+          avalancheRow?fmt(avalancheRow.interest):"—",
+          snow&&snow.paid.length?snow.paid.join(", "):"—",
+          avalancheRow&&avalancheRow.paid.length?avalancheRow.paid.join(", "):"—"
+        ];
+        const row=document.createElement("tr");
+        cells.forEach((value,cellIndex)=>{
+          const cell=document.createElement("td");
+          cell.textContent=value;
+          if(cellIndex===0)cell.setAttribute("scope","row");
+          row.append(cell);
+        });
+        scheduleBody.append(row);
+      }
+    }
     if(results){results.hidden=false;results.style.display="grid";}
     if(status)status.textContent="Comparison complete. Both methods use the same monthly budget of "+fmt(monthlyBudget)+".";
   });
 
   ["multi-debt-name-1","multi-debt-balance-1","multi-debt-rate-1","multi-debt-min-1","multi-debt-name-2","multi-debt-balance-2","multi-debt-rate-2","multi-debt-min-2","multi-debt-name-3","multi-debt-balance-3","multi-debt-rate-3","multi-debt-min-3","multi-debt-name-4","multi-debt-balance-4","multi-debt-rate-4","multi-debt-min-4","multi-debt-extra"].forEach(id=>{
-    $(id)?.addEventListener("input",()=>{if($("multi-debt-results")){$("multi-debt-results").hidden=true;$("multi-debt-results").style.display="none";}if($("multi-debt-status"))$("multi-debt-status").textContent="Inputs changed. Run the comparison again to refresh results.";});
+    $(id)?.addEventListener("input",()=>{
+      if($("multi-debt-results")){$("multi-debt-results").hidden=true;$("multi-debt-results").style.display="none";}
+      if($("multi-debt-schedule-body"))$("multi-debt-schedule-body").replaceChildren();
+      if($("multi-debt-status"))$("multi-debt-status").textContent="Inputs changed. Run the comparison again to refresh results.";
+    });
   });
 
   bind("debt-calc", () => {
