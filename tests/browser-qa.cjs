@@ -8,7 +8,7 @@ const pages = [
   'compound-interest.html','loan-calculator.html','monthly-budget.html',
   'savings-goal.html','emergency-fund.html','debt-payoff.html',
   'mortgage-calculator.html','auto-loan-calculator.html','credit-card-payoff.html',
-  'retirement-calculator.html','student-loan-payoff.html','net-worth-calculator.html','credit-card-minimum-payment.html','rent-vs-buy.html','cash-flow-planner.html'
+  'retirement-calculator.html','student-loan-payoff.html','net-worth-calculator.html','credit-card-minimum-payment.html','rent-vs-buy.html','cash-flow-planner.html','debt-to-income.html'
 ];
 const mime = {'.html':'text/html; charset=utf-8','.css':'text/css','.js':'text/javascript','.svg':'image/svg+xml','.xml':'application/xml','.txt':'text/plain'};
 const server = http.createServer((req,res) => {
@@ -47,7 +47,7 @@ const server = http.createServer((req,res) => {
     const homeCards=await page.locator('.tool-card a[href]').count();
     if(homeCards<12) throw new Error('Homepage calculator navigation links missing: '+homeCards);
     const directHomeCards=await page.locator('#calculators .tool-grid > .tool-card').count();
-    if(directHomeCards!==15) throw new Error('Homepage must show 15 separate calculator cards; found '+directHomeCards);
+    if(directHomeCards!==16) throw new Error('Homepage must show 16 separate calculator cards; found '+directHomeCards);
 
     for(const file of pages){
       const response=await page.goto('http://127.0.0.1:4173/'+file);
@@ -66,6 +66,20 @@ const server = http.createServer((req,res) => {
       if(await results.getAttribute('aria-live')!=='polite') throw new Error(file+' result region is not announced politely');
     }
 
+
+    // Debt-to-Income: known ratio and zero-income rejection.
+    await page.goto('http://127.0.0.1:4173/debt-to-income.html');
+    await page.locator('#dti-calc').click();
+    if(await page.locator('#dti-ratio').innerText()!=='38.3%') throw new Error('Debt-to-income default ratio should be 38.3%');
+    await page.locator('#dti-income').fill('0'); await page.locator('#dti-calc').click();
+    if(!(await page.locator('#dti-status').innerText()).includes('positive gross monthly income')) throw new Error('Debt-to-income must reject zero gross income');
+
+    // Emergency fund: goal gap and monthly savings timeline.
+    await page.goto('http://127.0.0.1:4173/emergency-fund.html');
+    await page.locator('#ef-calc').click();
+    if(await page.locator('#ef-time').innerText()!=='66 months') throw new Error('Emergency fund timeline should round up to 66 months');
+    await page.locator('#ef-current').fill('12000'); await page.locator('#ef-calc').click();
+    if(await page.locator('#ef-time').innerText()!=='Goal reached') throw new Error('Emergency fund should detect an already funded target');
 
     // Rent-vs-buy: default comparison, zero-rate mortgage and invalid stay length.
     await page.goto('http://127.0.0.1:4173/rent-vs-buy.html');
@@ -119,6 +133,7 @@ const server = http.createServer((req,res) => {
     if(Number((await page.locator('#cf-schedule tr').first().locator('td').nth(2).innerText()).replace(/[^0-9.-]/g,''))!==300) throw new Error('One-time expense total is incorrect');
     await removeAllCashFlowEntries();
     await page.locator('#cf-start-balance').fill('100');
+    await page.locator('#cf-buffer').fill('200');
     const shortfallIncomeDate=await page.evaluate(value=>{const d=new Date(value+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+2);return d.toISOString().slice(0,10);},cashFlowStart);
     await addCashFlowEntry('expense','Early bill',150,cashFlowStart,'once');
     await addCashFlowEntry('income','Later paycheck',200,shortfallIncomeDate,'once');
@@ -127,6 +142,8 @@ const server = http.createServer((req,res) => {
     cashNear(Number((await page.locator('#cf-lowest').innerText()).replace(/[^0-9.-]/g,'')),-50,'Cash-flow lowest daily balance');
     if(await page.locator('#cf-shortfall-count').innerText()!=='1') throw new Error('Cash-flow planner must detect an intrawweek shortfall even if week-end balance recovers');
     if(!(await page.locator('#cf-status').innerText()).includes('Potential shortfall')) throw new Error('Cash-flow shortfall warning is missing');
+    if(await page.locator('#cf-buffer-days').innerText()!=='2') throw new Error('Cash-flow safety buffer should detect two below-buffer days');
+    if(!(await page.locator('#cf-status').innerText()).includes('safety buffer')) throw new Error('Cash-flow safety-buffer warning is missing');
     await page.locator('#cf-add-expense').click();
     if(!(await page.locator('#cf-results').isHidden())) throw new Error('Adding a cash-flow entry must invalidate stale results');
     await removeAllCashFlowEntries();
@@ -557,7 +574,20 @@ const server = http.createServer((req,res) => {
       if(value===privateValues[i]) throw new Error('Net Worth value persisted across reload for '+privateIds[i]);
     }
     if(privacyLeaks.length) throw new Error('Net Worth privacy/network leakage: '+privacyLeaks.join(' | '));
-    console.log('PASS: Net Worth entered figures stay browser-local; no non-read request, fetch/XHR/beacon, storage persistence or financial-value URL/body leakage.');
+    // New calculators must preserve the same browser-local privacy behavior.
+    await privacyPage.goto('http://127.0.0.1:4173/debt-to-income.html');
+    await privacyPage.locator('#dti-income').fill('87654321');
+    await privacyPage.locator('#dti-housing').fill('76543210');
+    await privacyPage.locator('#dti-calc').click();
+    await privacyPage.reload();
+    if(await privacyPage.locator('#dti-income').inputValue()==='87654321') throw new Error('Debt-to-Income values persisted across reload');
+    await privacyPage.goto('http://127.0.0.1:4173/emergency-fund.html');
+    await privacyPage.locator('#ef-cost').fill('65432109');
+    await privacyPage.locator('#ef-calc').click();
+    await privacyPage.reload();
+    if(await privacyPage.locator('#ef-cost').inputValue()==='65432109') throw new Error('Emergency Fund values persisted across reload');
+    if(privacyLeaks.length) throw new Error('Finance calculator privacy/network leakage: '+privacyLeaks.join(' | '));
+    console.log('PASS: Net Worth, Emergency Fund and Debt-to-Income figures remain browser-local; no non-read request, fetch/XHR/beacon, storage persistence or financial-value URL/body leakage.');
     await privacyPage.close();
 
     // Mobile menu interaction and layout smoke test.
@@ -608,7 +638,7 @@ const server = http.createServer((req,res) => {
     await page.goto('http://127.0.0.1:4173/index.html');
     const menuRect=await page.locator('.menu-toggle').boundingBox();
     if(menuRect&&(menuRect.width<44||menuRect.height<44)) throw new Error('Mobile menu touch target is smaller than 44x44px: '+JSON.stringify(menuRect));
-    console.log('PASS: 10 responsive widths across homepage and all 12 calculators; labeled controls and keyboard-only calculation/focus checks.');
+    console.log('PASS: 10 responsive widths across homepage and all calculators; labeled controls and keyboard-only calculation/focus checks.');
 
 
     // Crawl every public HTML page and verify all local links, fragments and sitemap entries.
@@ -685,9 +715,10 @@ const server = http.createServer((req,res) => {
     for(const href of ['about.html','contact.html','privacy.html','terms.html','disclaimer.html','editorial.html']){
       if(!homepageSource.includes('href="'+href+'"')) throw new Error('Homepage footer is missing '+href);
     }
-    if(!homepageSource.includes('15 useful calculators')) throw new Error('Homepage calculator count is not 15');
+    if(!homepageSource.includes('16 useful calculators')) throw new Error('Homepage calculator count is not 16');
     if(!homepageSource.includes('id="resources"')) throw new Error('Resources navigation target is missing');
     if(!homepageSource.includes('cash-flow-budget-guide.html')) throw new Error('Homepage is missing the cash-flow guide link');
+    if(!homepageSource.includes('debt-to-income.html')) throw new Error('Homepage is missing the Debt-to-Income calculator link');
     console.log('PASS: '+sitemapEligibleHtmlFiles.length+' indexable HTML pages and Google verification endpoint served; unique titles, descriptions, canonicals, H1, language, sitemap/robots, footer policy links and all local paths/fragments verified.');
 
     // Verify every local HTML link resolves against the repository files.
@@ -707,7 +738,7 @@ const server = http.createServer((req,res) => {
     console.log('ACCESSIBILITY AUDIT: '+JSON.stringify(accessibilityFindings,null,2));
     const blocking=accessibilityFindings.filter(x=>x.impact==='critical'||x.impact==='serious');
     if(blocking.length) throw new Error('Accessibility violations (serious/critical): '+JSON.stringify(blocking));
-    console.log('PASS: homepage, 15 calculator default interactions, live result announcements, mobile menu, 390px overflow, local HTML links and axe WCAG 2.1 A/AA audit.');
+    console.log('PASS: homepage, all calculator default interactions, live result announcements, mobile menu, 390px overflow, local HTML links and axe WCAG 2.1 A/AA audit.');
   } finally {
     await browser.close();
     await new Promise(resolve=>server.close(resolve));
