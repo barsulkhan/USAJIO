@@ -8,7 +8,7 @@ const pages = [
   'compound-interest.html','loan-calculator.html','monthly-budget.html',
   'savings-goal.html','emergency-fund.html','debt-payoff.html',
   'mortgage-calculator.html','auto-loan-calculator.html','credit-card-payoff.html',
-  'retirement-calculator.html','student-loan-payoff.html','net-worth-calculator.html','credit-card-minimum-payment.html','rent-vs-buy.html','cash-flow-planner.html','debt-to-income.html','rent-affordability.html'
+  'retirement-calculator.html','student-loan-payoff.html','net-worth-calculator.html','credit-card-minimum-payment.html','rent-vs-buy.html','cash-flow-planner.html','debt-to-income.html','rent-affordability.html','credit-utilization.html'
 ];
 const mime = {'.html':'text/html; charset=utf-8','.css':'text/css','.js':'text/javascript','.svg':'image/svg+xml','.xml':'application/xml','.txt':'text/plain'};
 const server = http.createServer((req,res) => {
@@ -47,7 +47,7 @@ const server = http.createServer((req,res) => {
     const homeCards=await page.locator('.tool-card a[href]').count();
     if(homeCards<12) throw new Error('Homepage calculator navigation links missing: '+homeCards);
     const directHomeCards=await page.locator('#calculators .tool-grid > .tool-card').count();
-    if(directHomeCards!==17) throw new Error('Homepage must show 16 separate calculator cards; found '+directHomeCards);
+    if(directHomeCards!==18) throw new Error('Homepage must show 18 separate calculator cards; found '+directHomeCards);
 
     for(const file of pages){
       const response=await page.goto('http://127.0.0.1:4173/'+file);
@@ -173,6 +173,23 @@ const server = http.createServer((req,res) => {
     await page.setViewportSize({width:320,height:800});
     await page.goto('http://127.0.0.1:4173/cash-flow-planner.html');
     if(await page.evaluate(()=>document.documentElement.scrollWidth)>320) throw new Error('Cash-flow planner overflows a 320px viewport');
+    await page.setViewportSize({width:1365,height:900});
+
+
+    // Credit utilization: per-card and aggregate math, target paydown, and invalid limits.
+    await page.goto('http://127.0.0.1:4173/credit-utilization.html');
+    await page.locator('#cu-calc').click();
+    const cuMoney=async id=>Number((await page.locator('#'+id).innerText()).replace(/[^0-9.-]/g,''));
+    if(Math.abs(await cuMoney('cu-total-balance')-2000)>0.01)throw new Error('Credit utilization default balance should be $2,000');
+    if(Math.abs(await cuMoney('cu-total-limit')-12000)>0.01)throw new Error('Credit utilization default limit should be $12,000');
+    if(await page.locator('#cu-total-util').innerText()!=='16.7%')throw new Error('Credit utilization default ratio should be 16.7%');
+    if(await page.locator('#cu-card-util-1').innerText()!=='24.0%')throw new Error('Per-card utilization should be 24.0%');
+    await page.locator('#cu-target').selectOption('10');await page.locator('#cu-calc').click();
+    if(Math.abs(await cuMoney('cu-paydown')-800)>0.01)throw new Error('Credit utilization 10% target paydown should be $800');
+    await page.locator('#cu-balance-1').fill('6000');await page.locator('#cu-calc').click();
+    if(!(await page.locator('#cu-status').innerText()).includes('between zero and its limit'))throw new Error('Credit utilization must reject a balance above its card limit');
+    await page.setViewportSize({width:320,height:800});await page.goto('http://127.0.0.1:4173/credit-utilization.html');
+    if(await page.evaluate(()=>document.documentElement.scrollWidth)>320)throw new Error('Credit utilization page overflows a 320px viewport');
     await page.setViewportSize({width:1365,height:900});
 
     // Rent affordability: guideline cap, cash-flow cap, and invalid income.
@@ -664,6 +681,53 @@ const server = http.createServer((req,res) => {
     console.log('PASS: 10 responsive widths across homepage and all calculators; labeled controls and keyboard-only calculation/focus checks.');
 
 
+
+    // Private finance workspace: encrypted vault, entry flows, lock/unlock and responsive layout.
+    await page.goto('http://127.0.0.1:4173/finance-workspace.html');
+    await page.waitForLoadState('networkidle');
+    await page.waitForFunction(()=>document.querySelector('#vault-pass')?.autocomplete==='new-password');
+    await page.locator('#vault-pass').fill('qa-workspace-passphrase-2026');
+    await page.locator('#vault-confirm').fill('qa-workspace-passphrase-2026');
+    await page.locator('#vault-ack').check();
+    await page.locator('#vault-submit').click();
+    try{await page.waitForFunction(()=>!document.querySelector('#app')?.hidden,{timeout:10000})}catch(err){const diag=await page.evaluate(()=>({gate:document.querySelector('#gate-title')?.textContent,appHidden:document.querySelector('#app')?.hidden,passLength:document.querySelector('#vault-pass')?.value.length,confirmLength:document.querySelector('#vault-confirm')?.value.length,ack:document.querySelector('#vault-ack')?.checked,valid:document.querySelector('#vault-form')?.checkValidity(),validation:document.querySelector('#vault-form')?.reportValidity?.(),autocomplete:document.querySelector('#vault-pass')?.autocomplete}));throw new Error('Workspace vault did not open: '+JSON.stringify({diag,errors}))}
+    await page.locator('[data-open-form="transaction"]').first().click();
+    await page.locator('[name="description"]').fill('QA Salary Entry');
+    await page.locator('[name="type"]').selectOption('income');
+    await page.locator('[name="amount"]').fill('4200');
+    await page.locator('[name="category"]').selectOption('Salary');
+    await page.locator('[name="date"]').fill(new Date().toISOString().slice(0,10));
+    await page.locator('#save-entry').click();
+    if(!(await page.locator('#metric-income').innerText()).includes('4,200'))throw new Error('Finance workspace income metric did not update');
+    await page.locator('[data-open-form="budget"]').first().click();
+    await page.locator('[name="category"]').selectOption('Groceries');
+    await page.locator('[name="limit"]').fill('500');
+    await page.locator('#save-entry').click();
+    await page.locator('[data-open-form="goal"]').first().click();
+    await page.locator('[name="name"]').fill('QA Emergency Fund');
+    await page.locator('[name="target"]').fill('3000');
+    await page.locator('[name="saved"]').fill('500');
+    await page.locator('#save-entry').click();
+    await page.locator('[data-view="debts"]').click();
+    await page.locator('[data-open-form="debt"]').first().click();
+    await page.locator('[name="name"]').fill('QA Card');
+    await page.locator('[name="balance"]').fill('1200');
+    await page.locator('[name="apr"]').fill('19.9');
+    await page.locator('[name="payment"]').fill('100');
+    await page.locator('#save-entry').click();
+    if(!(await page.locator('#metric-debt').innerText()).includes('1,200'))throw new Error('Finance workspace debt metric did not update');
+    const stored=await page.evaluate(async()=>new Promise((resolve,reject)=>{const req=indexedDB.open('usajio-private-workspace',1);req.onsuccess=()=>{const tx=req.result.transaction('vault');const r=tx.objectStore('vault').get('primary');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)};req.onerror=()=>reject(req.error)}));
+    if(!stored||stored.algorithm!=='AES-GCM'||JSON.stringify(stored).includes('QA Salary Entry'))throw new Error('Finance workspace data was not stored as encrypted ciphertext');
+    await page.setViewportSize({width:375,height:812});
+    if(await page.evaluate(()=>document.documentElement.scrollWidth)>375)throw new Error('Finance workspace overflows a 375px viewport');
+    await page.locator('#lock-avatar').click();
+    await page.locator('#vault-pass').fill('qa-workspace-passphrase-2026');
+    await page.locator('#vault-submit').click();
+    await page.waitForSelector('#app:not([hidden])');
+    if(!(await page.locator('#metric-income').innerText()).includes('4,200'))throw new Error('Finance workspace did not restore encrypted data after unlock');
+    await page.evaluate(()=>indexedDB.deleteDatabase('usajio-private-workspace'));
+    await page.setViewportSize({width:1365,height:900});
+    console.log('PASS: private finance workspace encrypted vault, income/budget/goal/debt flows, ciphertext-only storage, lock/unlock persistence and 375px responsive layout.');
     // Crawl every public HTML page and verify all local links, fragments and sitemap entries.
     const allHtmlFiles=fs.readdirSync(root).filter(name=>name.endsWith('.html')).sort();
     // Google Search Console ownership files are verification endpoints, not indexable site pages.
@@ -738,7 +802,7 @@ const server = http.createServer((req,res) => {
     for(const href of ['about.html','contact.html','privacy.html','terms.html','disclaimer.html','editorial.html']){
       if(!homepageSource.includes('href="'+href+'"')) throw new Error('Homepage footer is missing '+href);
     }
-    if(!homepageSource.includes('17 useful calculators')) throw new Error('Homepage calculator count is not 17');
+    if(!homepageSource.includes('18 useful calculators')) throw new Error('Homepage calculator count is not 18');
     if(!homepageSource.includes('id="resources"')) throw new Error('Resources navigation target is missing');
     if(!homepageSource.includes('cash-flow-budget-guide.html')) throw new Error('Homepage is missing the cash-flow guide link');
     if(!homepageSource.includes('debt-to-income.html')) throw new Error('Homepage is missing the Debt-to-Income calculator link');
