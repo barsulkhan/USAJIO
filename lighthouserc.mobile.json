@@ -13,9 +13,12 @@
         "http://localhost:4173/mortgage-calculator.html",
         "http://localhost:4173/auto-loan-calculator.html",
         "http://localhost:4173/credit-card-payoff.html",
+        "http://localhost:4173/credit-card-minimum-payment.html",
         "http://localhost:4173/retirement-calculator.html",
         "http://localhost:4173/student-loan-payoff.html",
-        "http://localhost:4173/net-worth-calculator.html"
+        "http://localhost:4173/net-worth-calculator.html",
+        "http://localhost:4173/rent-vs-buy.html",
+        "http://localhost:4173/cash-flow-planner.html"
       ],
       "numberOfRuns": 1,
       "settings": {
