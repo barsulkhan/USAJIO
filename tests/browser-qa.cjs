@@ -8,7 +8,7 @@ const pages = [
   'compound-interest.html','loan-calculator.html','monthly-budget.html',
   'savings-goal.html','emergency-fund.html','debt-payoff.html',
   'mortgage-calculator.html','auto-loan-calculator.html','credit-card-payoff.html',
-  'retirement-calculator.html','student-loan-payoff.html','net-worth-calculator.html','credit-card-minimum-payment.html','rent-vs-buy.html'
+  'retirement-calculator.html','student-loan-payoff.html','net-worth-calculator.html','credit-card-minimum-payment.html','rent-vs-buy.html','cash-flow-planner.html'
 ];
 const mime = {'.html':'text/html; charset=utf-8','.css':'text/css','.js':'text/javascript','.svg':'image/svg+xml','.xml':'application/xml','.txt':'text/plain'};
 const server = http.createServer((req,res) => {
@@ -47,7 +47,7 @@ const server = http.createServer((req,res) => {
     const homeCards=await page.locator('.tool-card a[href]').count();
     if(homeCards<12) throw new Error('Homepage calculator navigation links missing: '+homeCards);
     const directHomeCards=await page.locator('#calculators .tool-grid > .tool-card').count();
-    if(directHomeCards!==14) throw new Error('Homepage must show 14 separate calculator cards; found '+directHomeCards);
+    if(directHomeCards!==15) throw new Error('Homepage must show 15 separate calculator cards; found '+directHomeCards);
 
     for(const file of pages){
       const response=await page.goto('http://127.0.0.1:4173/'+file);
@@ -93,6 +93,59 @@ const server = http.createServer((req,res) => {
     await page.locator('#ccmp-floor').fill('0');
     await page.locator('#ccmp-calc').click();
     if(!(await page.locator('#ccmp-status').innerText()).includes('does not reduce the balance')) throw new Error('Non-amortizing minimum-payment rule must be flagged');
+
+    // Weekly cash-flow planner: recurring events, daily shortfalls, month-end clamp and stale-result invalidation.
+    await page.goto('http://127.0.0.1:4173/cash-flow-planner.html');
+    const removeAllCashFlowEntries=async()=>{const buttons=page.locator('#cf-entries button');while(await buttons.count())await buttons.first().click();};
+    const addCashFlowEntry=async(kind,name,amount,date,frequency)=>{
+      await page.locator(kind==='income'?'#cf-add-income':'#cf-add-expense').click();
+      const row=page.locator('.cf-entry').last();
+      await row.locator('input[aria-label="Entry description"]').fill(name);
+      await row.locator('select[aria-label="Entry type"]').selectOption(kind);
+      await row.locator('input[aria-label="Entry amount"]').fill(String(amount));
+      await row.locator('input[aria-label="Next expected date"]').fill(date);
+      await row.locator('select[aria-label="Repeat frequency"]').selectOption(frequency);
+    };
+    const cashFlowStart=await page.locator('#cf-start-date').inputValue();
+    await removeAllCashFlowEntries();
+    await page.locator('#cf-start-balance').fill('1000');
+    await addCashFlowEntry('income','Weekly pay',500,cashFlowStart,'weekly');
+    await addCashFlowEntry('expense','One-time bill',300,cashFlowStart,'once');
+    await page.locator('#cf-calc').click();
+    near(Number((await page.locator('#cf-ending').innerText()).replace(/[^0-9.-]/g,'')),2700,'Weekly cash-flow ending balance');
+    if(await page.locator('#cf-schedule tr').count()!==4) throw new Error('Four-week cash-flow forecast should render four rows');
+    if(Number((await page.locator('#cf-schedule tr').first().locator('td').nth(1).innerText()).replace(/[^0-9.-]/g,''))!==500) throw new Error('Weekly income total is incorrect');
+    if(Number((await page.locator('#cf-schedule tr').first().locator('td').nth(2).innerText()).replace(/[^0-9.-]/g,''))!==300) throw new Error('One-time expense total is incorrect');
+    await removeAllCashFlowEntries();
+    await page.locator('#cf-start-balance').fill('100');
+    const shortfallIncomeDate=await page.evaluate(value=>{const d=new Date(value+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+2);return d.toISOString().slice(0,10);},cashFlowStart);
+    await addCashFlowEntry('expense','Early bill',150,cashFlowStart,'once');
+    await addCashFlowEntry('income','Later paycheck',200,shortfallIncomeDate,'once');
+    await page.locator('#cf-calc').click();
+    near(Number((await page.locator('#cf-ending').innerText()).replace(/[^0-9.-]/g,'')),150,'Cash-flow same-week recovery balance');
+    near(Number((await page.locator('#cf-lowest').innerText()).replace(/[^0-9.-]/g,'')),-50,'Cash-flow lowest daily balance');
+    if(await page.locator('#cf-shortfall-count').innerText()!=='1') throw new Error('Cash-flow planner must detect an intrawweek shortfall even if week-end balance recovers');
+    if(!(await page.locator('#cf-status').innerText()).includes('Potential shortfall')) throw new Error('Cash-flow shortfall warning is missing');
+    await page.locator('#cf-add-expense').click();
+    if(!(await page.locator('#cf-results').isHidden())) throw new Error('Adding a cash-flow entry must invalidate stale results');
+    await removeAllCashFlowEntries();
+    await page.locator('#cf-start-date').fill('2026-01-31');
+    await page.locator('#cf-start-balance').fill('100');
+    await page.locator('#cf-weeks').selectOption('8');
+    await addCashFlowEntry('expense','Monthly rent',10,'2026-01-31','monthly');
+    await page.locator('#cf-calc').click();
+    let monthlyOut=0;
+    for(const row of await page.locator('#cf-schedule tr').all()){
+      monthlyOut+=Number((await row.locator('td').nth(2).innerText()).replace(/[^0-9.-]/g,''));
+    }
+    near(monthlyOut,20,'Month-end recurrence clamp (Jan 31 to Feb 28)');
+    await page.locator('.cf-entry input[aria-label="Entry amount"]').fill('0');
+    await page.locator('#cf-calc').click();
+    if(!(await page.locator('#cf-status').innerText()).includes('greater than zero')) throw new Error('Zero cash-flow entry amount must be rejected');
+    await page.setViewportSize({width:320,height:800});
+    await page.goto('http://127.0.0.1:4173/cash-flow-planner.html');
+    if(await page.evaluate(()=>document.documentElement.scrollWidth)>320) throw new Error('Cash-flow planner overflows a 320px viewport');
+    await page.setViewportSize({width:1365,height:900});
 
     // Reproducible financial-math and input-boundary matrix for all 13 tools.
     const money = async id => {
@@ -643,7 +696,7 @@ const server = http.createServer((req,res) => {
     console.log('ACCESSIBILITY AUDIT: '+JSON.stringify(accessibilityFindings,null,2));
     const blocking=accessibilityFindings.filter(x=>x.impact==='critical'||x.impact==='serious');
     if(blocking.length) throw new Error('Accessibility violations (serious/critical): '+JSON.stringify(blocking));
-    console.log('PASS: homepage, 14 calculator default interactions, live result announcements, mobile menu, 390px overflow, local HTML links and axe WCAG 2.1 A/AA audit.');
+    console.log('PASS: homepage, 15 calculator default interactions, live result announcements, mobile menu, 390px overflow, local HTML links and axe WCAG 2.1 A/AA audit.');
   } finally {
     await browser.close();
     await new Promise(resolve=>server.close(resolve));
