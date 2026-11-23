@@ -685,6 +685,7 @@ const server = http.createServer((req,res) => {
     // Private finance workspace: encrypted vault, entry flows, lock/unlock and responsive layout.
     await page.goto('http://127.0.0.1:4173/finance-workspace.html');
     await page.waitForLoadState('networkidle');
+    await page.waitForFunction(()=>document.querySelector('#vault-pass')?.autocomplete==='new-password');
     await page.locator('#vault-pass').fill('qa-workspace-passphrase-2026');
     await page.locator('#vault-confirm').fill('qa-workspace-passphrase-2026');
     await page.locator('#vault-ack').check();
