@@ -1,17 +1,19 @@
 # USAJIO — Make Smarter Money Decisions
 
-A mobile-first global personal finance calculator and education website prototype.
+A responsive personal-finance education and planning website built with static HTML, CSS and JavaScript.
 
 ## Included
-- Responsive homepage and clean light design
-- Sixteen calculators: compound interest, loan payment, monthly budget, savings goal, emergency fund, debt payoff, mortgage, auto loan, credit-card payoff, credit-card minimum payment, retirement, student-loan payoff, net worth, rent vs. buy and weekly cash flow planning and debt-to-income ratio
-- Currency display selector (USD, EUR, GBP, CAD, AUD, INR)
-- Nine money guides covering budgeting, cash flow, emergency savings, debt, credit, mortgages, auto financing, retirement and student loans
-- About, Contact, Privacy, Terms, Financial Disclaimer and Editorial Policy pages
-- SVG brand logo and favicon
+- Eighteen personal-finance calculators covering saving, budgeting, borrowing, debt, housing, credit and retirement.
+- Personal Finance Workspace dashboard for monthly cash flow, budget categories, savings goals, debt balances and net worth.
+- User-controlled browser-local dashboard storage with JSON backup export/import and reset.
+- Currency display selector (USD, EUR, GBP, CAD, AUD, INR).
+- Practical money guides and About, Contact, Privacy, Terms, Financial Disclaimer and Editorial Policy pages.
+- Responsive layouts, accessible form labels, keyboard operation and automated Playwright/axe browser checks.
 
 ## Run
-Open `index.html` in a modern browser. No build step is required.
+Open `index.html` in a modern browser. No build step or account is required.
 
-## Important
-Educational estimates only; not individualized financial, investment, tax or legal advice. Currency selection changes display formatting only and does not localize country rules. Review policy text and add verified contact details before public launch.
+## Privacy and limitations
+The dashboard stores the workspace in the current browser's local storage. It does not connect to banks or send workspace values to a USAJIO server. Browser storage is not an encrypted vault; use a trusted device and do not enter passwords, account numbers or other highly sensitive information. Export a JSON backup before clearing browser data or moving to another device. Calculator pages remain standalone tools and do not persist their entered values.
+
+All figures are educational estimates, not individualized financial, investment, tax or legal advice. Currency selection changes display formatting only and does not localize country-specific financial rules.
