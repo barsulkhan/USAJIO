@@ -19,7 +19,10 @@
         "http://localhost:4173/net-worth-calculator.html",
         "http://localhost:4173/rent-vs-buy.html",
         "http://localhost:4173/cash-flow-planner.html",
-        "http://localhost:4173/debt-to-income.html"
+        "http://localhost:4173/debt-to-income.html",
+        "http://localhost:4173/rent-affordability.html",
+        "http://localhost:4173/credit-utilization.html",
+        "http://localhost:4173/finance-dashboard.html"
       ],
       "numberOfRuns": 1,
       "settings": {
