@@ -142,7 +142,7 @@ const server = http.createServer((req,res) => {
     cashNear(Number((await page.locator('#cf-lowest').innerText()).replace(/[^0-9.-]/g,'')),-50,'Cash-flow lowest daily balance');
     if(await page.locator('#cf-shortfall-count').innerText()!=='1') throw new Error('Cash-flow planner must detect an intrawweek shortfall even if week-end balance recovers');
     if(!(await page.locator('#cf-status').innerText()).includes('Potential shortfall')) throw new Error('Cash-flow shortfall warning is missing');
-    if(await page.locator('#cf-buffer-days').innerText()!=='2') throw new Error('Cash-flow safety buffer should detect two below-buffer days');
+    if(await page.locator('#cf-buffer-days').innerText()!=='3') throw new Error('Cash-flow safety buffer should detect two below-buffer days');
     if(!(await page.locator('#cf-status').innerText()).includes('safety buffer')) throw new Error('Cash-flow safety-buffer warning is missing');
     await page.locator('#cf-add-expense').click();
     if(!(await page.locator('#cf-results').isHidden())) throw new Error('Adding a cash-flow entry must invalidate stale results');
