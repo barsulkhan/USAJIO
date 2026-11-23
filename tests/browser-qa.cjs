@@ -430,10 +430,10 @@ const server = http.createServer((req,res) => {
     if(!snowOrder.startsWith('Small low-rate')||!avalancheOrder.startsWith('Large high-rate')) throw new Error('Snowball and avalanche priority order incorrect: '+snowOrder+' / '+avalancheOrder);
     if(!(await textOf('snowball-months')).match(/^\d+$/)||!(await textOf('avalanche-months')).match(/^\d+$/)) throw new Error('Multi-debt payoff months missing');
     if((await textOf('snowball-interest'))==='—'||(await textOf('avalanche-interest'))==='—') throw new Error('Multi-debt interest results missing');
-    const payoffScheduleRows=page.locator('#multi-debt-schedule-body tr');
+    const multiDebtScheduleRows=page.locator('#multi-debt-schedule-body tr');
     const expectedMonths=Math.max(Number(await textOf('snowball-months')),Number(await textOf('avalanche-months')));
-    if(await payoffScheduleRows.count()!==expectedMonths) throw new Error('Month-by-month payoff schedule row count does not match the longest payoff timeline');
-    const finalScheduleCells=await payoffScheduleRows.last().locator('td').allInnerTexts();
+    if(await multiDebtScheduleRows.count()!==expectedMonths) throw new Error('Month-by-month payoff schedule row count does not match the longest payoff timeline');
+    const finalScheduleCells=await multiDebtScheduleRows.last().locator('td').allInnerTexts();
     if(!finalScheduleCells.slice(1,3).every(value=>value.includes('0.00')||value==='Debt-free')) throw new Error('Both payoff strategies should finish with zero remaining debt in the final schedule row');
     if(!(await page.locator('#multi-debt-schedule').locator('summary').innerText()).includes('month-by-month')) throw new Error('Monthly payoff schedule disclosure is missing');
     await page.locator('#multi-debt-extra').fill('75');
