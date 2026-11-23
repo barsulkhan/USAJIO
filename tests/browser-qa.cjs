@@ -183,7 +183,7 @@ const server = http.createServer((req,res) => {
     if(Math.abs(await rentMoney('ra-cash')-2400)>0.01)throw new Error('Rent affordability cash available should be $2,400');
     if(Math.abs(await rentMoney('ra-left')-400)>0.01)throw new Error('Rent affordability remaining cash should be $400');
     await page.locator('#ra-guideline').selectOption('35'); await page.locator('#ra-calc').click();
-    if(Math.abs(await rentMoney('ra-rent')-2200)>0.01)throw new Error('Rent affordability must cap rent at cash flow after utilities');
+    if(Math.abs(await rentMoney('ra-rent')-2100)>0.01)throw new Error('Rent affordability must apply the lower of cash flow and the gross-income guideline');
     await page.locator('#ra-net').fill('0'); await page.locator('#ra-calc').click();
     if(!(await page.locator('#ra-status').innerText()).includes('positive gross and take-home income'))throw new Error('Rent affordability must reject zero take-home income');
     await page.setViewportSize({width:320,height:800}); await page.goto('http://127.0.0.1:4173/rent-affordability.html');
