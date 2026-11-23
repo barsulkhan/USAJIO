@@ -644,16 +644,43 @@ const server = http.createServer((req,res) => {
     if(overflow) throw new Error('Homepage has horizontal overflow at 390px');
 
 
+    // Personal Finance Workspace: totals, editing, browser-local persistence and mobile fit.
+    await page.setViewportSize({width:1365,height:900});
+    await page.goto('http://127.0.0.1:4173/finance-dashboard.html');
+    near(await page.locator('#cashflow-total').innerText().then(v=>Number(v.replace(/[^0-9.-]/g,''))),1300,'Workspace default monthly cash flow');
+    near(await page.locator('#networth-total').innerText().then(v=>Number(v.replace(/[^0-9.-]/g,''))),14600,'Workspace default net worth');
+    await page.locator('#add-goal').click();
+    await page.locator('#entry-name').fill('Emergency buffer');
+    await page.locator('#entry-amount').fill('5000');
+    await page.locator('#entry-current').fill('1000');
+    await page.locator('#save-entry').click();
+    if(!/Emergency buffer/.test(await page.locator('#goals-list').innerText())) throw new Error('Workspace goal was not added');
+    near(await page.locator('#savings-total').innerText().then(v=>Number(v.replace(/[^0-9.-]/g,''))),1000,'Workspace saved goal total');
+    await page.locator('#add-debt').click();
+    await page.locator('#entry-name').fill('Auto loan');
+    await page.locator('#entry-amount').fill('7500');
+    await page.locator('#entry-rate').fill('5.5');
+    await page.locator('#save-entry').click();
+    near(await page.locator('#debt-total').innerText().then(v=>Number(v.replace(/[^0-9.-]/g,''))),7500,'Workspace debt total');
+    const workspaceStorage=await page.evaluate(()=>JSON.parse(localStorage.getItem('usajio-finance-workspace-v1')||'{}'));
+    if(workspaceStorage.goals?.length!==1||workspaceStorage.debts?.length!==1) throw new Error('Workspace data was not saved locally');
+    await page.reload();
+    if(!/Emergency buffer/.test(await page.locator('#goals-list').innerText())) throw new Error('Workspace goal did not persist after reload');
+    await page.setViewportSize({width:320,height:800});
+    const dashboardWidth=await page.evaluate(()=>document.documentElement.scrollWidth);
+    if(dashboardWidth>320) throw new Error('Finance dashboard overflow at 320px: '+dashboardWidth);
+    console.log('PASS: Finance Workspace cash-flow/net-worth calculations, savings/debt CRUD, local persistence and 320px mobile layout.');
+
     // Responsive and keyboard-only review across common phone/tablet widths.
     const responsiveWidths=[320,360,375,390,412,430,620,700,768,1024];
-    for(const file of ['index.html',...pages]){
+    for(const file of ['index.html','finance-dashboard.html',...pages]){
       await page.goto('http://127.0.0.1:4173/'+file);
       for(const width of responsiveWidths){
         await page.setViewportSize({width,height:844});
         const metrics=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,client:document.documentElement.clientWidth}));
         if(metrics.scroll>metrics.client+1) throw new Error(file+' horizontal overflow at '+width+'px: '+JSON.stringify(metrics));
       }
-      if(file!=='index.html'){
+      if(file!=='index.html'&&file!=='finance-dashboard.html'){
         const unlabeled=await page.locator('input,select,textarea').evaluateAll(elements=>elements.filter(el=>!(el.labels&&el.labels.length)&&!el.getAttribute('aria-label')&&!el.getAttribute('aria-labelledby')).map(el=>el.id||el.outerHTML.slice(0,100)));
         if(unlabeled.length) throw new Error(file+' has unlabeled form controls: '+unlabeled.join(', '));
         await page.setViewportSize({width:390,height:844});
