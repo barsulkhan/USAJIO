@@ -38,7 +38,7 @@ body{background:#fff;color:var(--ink);-webkit-font-smoothing:antialiased}
 .result-grid{gap:10px}
 .result-grid>div{border-color:#e6edf0;box-shadow:0 2px 8px rgba(16,38,78,.025);padding:14px}
 .result-grid small{font-size:11px;line-height:1.4}
-.result-grid strong{font-size:18px;letter-spacing:-.02em}
+.result-grid strong{font-size:clamp(12px,1.2vw,16px);letter-spacing:-.02em;white-space:nowrap;font-variant-numeric:tabular-nums}
 .disclaimer{line-height:1.65}
 .related-tools{padding-top:24px}
 .related-tools h2{font-size:22px;margin-bottom:14px}
