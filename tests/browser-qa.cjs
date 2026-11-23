@@ -707,6 +707,7 @@ const server = http.createServer((req,res) => {
     await page.locator('[name="target"]').fill('3000');
     await page.locator('[name="saved"]').fill('500');
     await page.locator('#save-entry').click();
+    await page.locator('[data-view="debts"]').click();
     await page.locator('[data-open-form="debt"]').first().click();
     await page.locator('[name="name"]').fill('QA Card');
     await page.locator('[name="balance"]').fill('1200');
@@ -718,7 +719,7 @@ const server = http.createServer((req,res) => {
     if(!stored||stored.algorithm!=='AES-GCM'||JSON.stringify(stored).includes('QA Salary Entry'))throw new Error('Finance workspace data was not stored as encrypted ciphertext');
     await page.setViewportSize({width:375,height:812});
     if(await page.evaluate(()=>document.documentElement.scrollWidth)>375)throw new Error('Finance workspace overflows a 375px viewport');
-    await page.locator('#lock-btn').click();
+    await page.locator('#lock-avatar').click();
     await page.locator('#vault-pass').fill('qa-workspace-passphrase-2026');
     await page.locator('#vault-submit').click();
     await page.waitForSelector('#app:not([hidden])');
