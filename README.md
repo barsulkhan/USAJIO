@@ -4,7 +4,7 @@ A mobile-first global personal finance calculator and education website prototyp
 
 ## Included
 - Responsive homepage and clean light design
-- Fifteen calculators: compound interest, loan payment, monthly budget, savings goal, emergency fund, debt payoff, mortgage, auto loan, credit-card payoff, credit-card minimum payment, retirement, student-loan payoff, net worth, rent vs. buy and weekly cash flow planning
+- Sixteen calculators: compound interest, loan payment, monthly budget, savings goal, emergency fund, debt payoff, mortgage, auto loan, credit-card payoff, credit-card minimum payment, retirement, student-loan payoff, net worth, rent vs. buy and weekly cash flow planning and debt-to-income ratio
 - Currency display selector (USD, EUR, GBP, CAD, AUD, INR)
 - Nine money guides covering budgeting, cash flow, emergency savings, debt, credit, mortgages, auto financing, retirement and student loans
 - About, Contact, Privacy, Terms, Financial Disclaimer and Editorial Policy pages

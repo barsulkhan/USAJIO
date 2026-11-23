@@ -61,8 +61,10 @@
     const balanceInput=$('cf-start-balance').value.trim();
     if(!balanceInput) throw new Error('Enter a starting balance.');
     const startBalance=Number(balanceInput);
+    const bufferInput=$('cf-buffer').value.trim(), safetyBuffer=bufferInput===''?NaN:Number(bufferInput);
     const weeks=Number($('cf-weeks').value);
     if(!Number.isFinite(startBalance)||startBalance<0) throw new Error('Starting balance must be zero or greater.');
+    if(!Number.isFinite(safetyBuffer)||safetyBuffer<0) throw new Error('Safety buffer must be zero or greater.');
     if(![4,8,13].includes(weeks)) throw new Error('Choose a forecast length of 4, 8 or 13 weeks.');
     const items=readEntries(start);
     const days=weeks*7, end=addDays(start,days-1), byDay=new Map();
@@ -78,7 +80,7 @@
         else date=addMonthClamped(date,item.date.getUTCDate());
       }
     }
-    let balance=Math.round(startBalance*100)/100, lowest=balance, shortfallWeeks=0;
+    let balance=Math.round(startBalance*100)/100, lowest=balance, shortfallWeeks=0, bufferBreachDays=0;
     const rows=[];
     for(let week=0;week<weeks;week++){
       let inflow=0,outflow=0,weekLow=balance;
@@ -86,18 +88,19 @@
         const date=addDays(start,week*7+day), events=byDay.get(isoFromDate(date))||[];
         for(const item of events){if(item.type==='income') inflow+=item.amount;else outflow+=item.amount;}
         balance=Math.round((balance+events.reduce((sum,item)=>sum+(item.type==='income'?item.amount:-item.amount),0))*100)/100;
-        lowest=Math.min(lowest,balance);weekLow=Math.min(weekLow,balance);
+        lowest=Math.min(lowest,balance);weekLow=Math.min(weekLow,balance);if(balance<safetyBuffer)bufferBreachDays++;
       }
       if(weekLow<0) shortfallWeeks++;
       rows.push({week:week+1,start:addDays(start,week*7),end:addDays(start,week*7+6),inflow:Math.round(inflow*100)/100,outflow:Math.round(outflow*100)/100,balance});
     }
-    return {rows,balance,lowest,shortfallWeeks};
+    return {rows,balance,lowest,shortfallWeeks,bufferBreachDays,safetyBuffer};
   };
   const formatDate=d=>new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',timeZone:'UTC'}).format(d);
   const render = data => {
     $('cf-ending').textContent=money(data.balance);
     $('cf-lowest').textContent=money(data.lowest);
     $('cf-shortfall-count').textContent=String(data.shortfallWeeks);
+    $('cf-buffer-days').textContent=String(data.bufferBreachDays);
     const body=$('cf-schedule'); body.replaceChildren();
     data.rows.forEach(row=>{
       const tr=document.createElement('tr');
@@ -107,13 +110,15 @@
     });
     results.hidden=false;
     const warning=data.shortfallWeeks? ' Potential shortfall: '+data.shortfallWeeks+' week(s) have a negative daily balance.':' No negative daily balance is projected.';
-    setStatus('Forecast calculated for '+data.rows.length+' weeks.'+warning,data.shortfallWeeks>0);
+    const bufferWarning=data.bufferBreachDays?' Balance falls below your '+money(data.safetyBuffer)+' safety buffer on '+data.bufferBreachDays+' day(s).':' Safety buffer maintained throughout the forecast.';
+    setStatus('Forecast calculated for '+data.rows.length+' weeks.'+warning+bufferWarning,data.shortfallWeeks>0||data.bufferBreachDays>0);
   };
   form.addEventListener('submit',event=>{event.preventDefault();results.hidden=true;try{render(project());}catch(error){setStatus(error.message,true);}});
   $('cf-currency').addEventListener('change',()=>{if(!results.hidden){try{render(project());}catch(error){setStatus(error.message,true);}}});
   $('cf-start-date').addEventListener('change',()=>{entries.querySelectorAll('input[type="date"]').forEach(input=>{if(input.value<=$('cf-start-date').value)input.value=$('cf-start-date').value;});});
   entries.addEventListener('input',()=>{if(!results.hidden){results.hidden=true;setStatus('Inputs changed. Project cash flow again to refresh the forecast.');}});
   entries.addEventListener('change',()=>{if(!results.hidden){results.hidden=true;setStatus('Inputs changed. Project cash flow again to refresh the forecast.');}});
+  $('cf-buffer').addEventListener('input',()=>{if(!results.hidden){results.hidden=true;setStatus('Inputs changed. Project cash flow again to refresh the forecast.');}});
   $('cf-start-balance').addEventListener('input',()=>{if(!results.hidden){results.hidden=true;setStatus('Inputs changed. Project cash flow again to refresh the forecast.');}});
   $('cf-start-date').addEventListener('input',()=>{if(!results.hidden){results.hidden=true;setStatus('Inputs changed. Project cash flow again to refresh the forecast.');}});
   $('cf-weeks').addEventListener('change',()=>{if(!results.hidden){results.hidden=true;setStatus('Inputs changed. Project cash flow again to refresh the forecast.');}});

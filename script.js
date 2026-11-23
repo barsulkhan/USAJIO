@@ -18,7 +18,7 @@
   if ($("year")) $("year").textContent = new Date().getFullYear();
   if ($("currency")) $("currency").addEventListener("change", event => {
     currency = event.target.value;
-    ["ci-calc","loan-calc","compare-calc","budget-calc","save-calc","ef-calc","debt-calc","mortgage-calc","auto-calc","card-calc","retirement-calc","student-calc","networth-calc","multi-debt-calc"].forEach(id => { if ($(id)) $(id).click(); });
+    ["ci-calc","loan-calc","compare-calc","budget-calc","save-calc","ef-calc","debt-calc","mortgage-calc","auto-calc","card-calc","retirement-calc","student-calc","networth-calc","multi-debt-calc","dti-calc"].forEach(id => { if ($(id)) $(id).click(); });
   });
 
   bind("ci-calc", () => {
@@ -258,10 +258,19 @@
   });
 
   bind("ef-calc", () => {
-    const cost=read("ef-cost",0,1e12), months=read("ef-months",1,24), current=read("ef-current",0,1e12);
-    if([cost,months,current].some(v=>v===null)){invalid(["ef-goal","ef-gap"]);return;}
-    const goal=cost*months;
-    put("ef-goal",fmt(goal)); put("ef-gap",fmt(Math.max(0,goal-current)));
+    const cost=read("ef-cost",0,1e12), months=read("ef-months",1,24), current=read("ef-current",0,1e12), contribution=read("ef-contribution",0,1e12);
+    if([cost,months,current,contribution].some(v=>v===null)){invalid(["ef-goal","ef-gap","ef-time"]);put("ef-scenario-note","Check all emergency fund inputs.");return;}
+    const goal=Math.round(cost*months*100)/100, gap=Math.max(0,Math.round((goal-current)*100)/100);
+    put("ef-goal",fmt(goal));put("ef-gap",fmt(gap));put("ef-time",gap===0?"Goal reached":contribution>0?String(Math.ceil(gap/contribution-1e-10))+" months":"Add a monthly amount");
+    put("ef-scenario-note",gap===0?"Your current savings meet or exceed this target.":contribution>0?"At "+fmt(contribution)+" per month, this is a simple no-interest estimate; actual progress may vary.":"Enter a positive monthly contribution to estimate a timeline.");
+  });
+
+  bind("dti-calc", () => {
+    const income=read("dti-income",0,1e12), ids=["dti-housing","dti-auto","dti-student","dti-card","dti-other"], payments=ids.map(id=>read(id,0,1e12));
+    if(income===null||income<=0||payments.some(v=>v===null)){invalid(["dti-total","dti-ratio"]);put("dti-status","Enter positive gross monthly income and non-negative monthly debt payments.");return;}
+    const total=Math.round(payments.reduce((sum,value)=>sum+value,0)*100)/100, ratio=total/income*100;
+    put("dti-total",fmt(total));put("dti-ratio",ratio.toFixed(1)+"%");
+    put("dti-status",ratio<=36?"Lower debt-to-income range (36% or less). General educational reference, not an approval rule.":ratio<=43?"Above 36% and up to 43%. Review your budget and lender-specific requirements.":"Above 43%. Consider reviewing monthly obligations; lenders use different criteria and other factors.");
   });
 
   bind("multi-debt-calc", () => {

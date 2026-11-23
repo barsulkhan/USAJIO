@@ -18,7 +18,8 @@
         "http://localhost:4173/student-loan-payoff.html",
         "http://localhost:4173/net-worth-calculator.html",
         "http://localhost:4173/rent-vs-buy.html",
-        "http://localhost:4173/cash-flow-planner.html"
+        "http://localhost:4173/cash-flow-planner.html",
+        "http://localhost:4173/debt-to-income.html"
       ],
       "numberOfRuns": 1,
       "settings": {
