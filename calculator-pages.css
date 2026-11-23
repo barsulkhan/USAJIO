@@ -146,3 +146,13 @@ button,.primary-btn,.nav a{min-height:42px}
 #multi-debt-difference{font-weight:600}
 @media(max-width:760px){.multi-debt-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:480px){.multi-debt-fields{grid-template-columns:1fr}.multi-debt-extra{grid-column:auto}.multi-debt-planner .scenario-cards{grid-template-columns:1fr}}
+
+
+/* Debt snowball vs. avalanche monthly comparison schedule */
+.payoff-jump{margin-left:14px}
+.multi-debt-schedule{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.multi-debt-schedule>summary{cursor:pointer;font-weight:700;color:var(--text);padding:8px 0}
+.multi-debt-schedule .schedule-table-wrap{max-width:100%;overflow-x:auto}
+.multi-debt-schedule .schedule-table{min-width:1050px}
+.multi-debt-schedule .schedule-table td{vertical-align:top}
+@media(max-width:700px){.payoff-jump{margin-left:0;display:block}.multi-debt-schedule .schedule-table{font-size:12px}.multi-debt-schedule .schedule-table th,.multi-debt-schedule .schedule-table td{padding:9px 10px}}
