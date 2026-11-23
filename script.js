@@ -525,7 +525,7 @@
   });
 
   ["ci-calc","loan-calc","compare-calc","budget-calc","save-calc","ef-calc","debt-calc","mortgage-calc","auto-calc","card-calc","retirement-calc","student-calc","networth-calc"].forEach(id=>{if($(id))$(id).click();});
-})();
+
   bind("ra-calc", () => {
     const gross=read("ra-gross",1,1e12), net=read("ra-net",1,1e12), debt=read("ra-debt",0,1e12), essentials=read("ra-essentials",0,1e12), savings=read("ra-savings",0,1e12), utilities=read("ra-utilities",0,1e12), guideline=Number($("ra-guideline")?.value);
     if([gross,net,debt,essentials,savings,utilities].some(v=>v===null)||![25,30,35].includes(guideline)){invalid(["ra-rent","ra-cash","ra-guide","ra-left"]);put("ra-status","Enter positive gross and take-home income and non-negative monthly costs.");return;}
@@ -533,3 +533,5 @@
     put("ra-rent",fmt(rent));put("ra-cash",fmt(cash));put("ra-guide",fmt(guide));put("ra-left",fmt(left));
     put("ra-status",cash<utilities?"Your listed commitments use up the available cash before utilities. Review expenses or savings goals before setting a rent budget.":rent===0?"Your current cash-flow estimate does not leave room for rent after utilities. Review your inputs before making a housing decision.":rent<guide?"Your cash-flow limit is lower than the selected gross-income guideline, so the suggested rent uses the more conservative cash-flow limit.":"The selected gross-income guideline is the lower limit. Check local housing costs and leave room for irregular expenses.");
   });
+
+})();
