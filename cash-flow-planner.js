@@ -29,15 +29,16 @@
     const amount=field('Amount','number',preset.amount||'100'); amount.input.required=true; amount.input.setAttribute('aria-label','Entry amount');
     const date=field('Next date','date',preset.date||$('cf-start-date').value); date.input.required=true; date.input.setAttribute('aria-label','Next expected date');
     const frequency=field('Repeats','select',preset.frequency||'monthly',[['once','One time'],['weekly','Weekly'],['biweekly','Every 2 weeks'],['monthly','Monthly']]); frequency.input.setAttribute('aria-label','Repeat frequency');
-    const remove=document.createElement('button'); remove.type='button'; remove.textContent='Remove'; remove.setAttribute('aria-label','Remove '+(preset.name||kind)+' entry'); remove.addEventListener('click',()=>{row.remove();});
+    const remove=document.createElement('button'); remove.type='button'; remove.textContent='Remove'; remove.setAttribute('aria-label','Remove '+(preset.name||kind)+' entry'); remove.addEventListener('click',()=>{row.remove();invalidate();});
     [name,type,amount,date,frequency].forEach(x=>row.append(x.wrap)); row.append(remove); entries.append(row);
   };
-  $('cf-add-income').addEventListener('click',()=>addEntry('income'));
-  $('cf-add-expense').addEventListener('click',()=>addEntry('expense'));
+  $('cf-add-income').addEventListener('click',()=>{addEntry('income');invalidate();});
+  $('cf-add-expense').addEventListener('click',()=>{addEntry('expense');invalidate();});
   addEntry('income',{name:'Paycheck',amount:'1800',frequency:'biweekly'});
   addEntry('expense',{name:'Rent',amount:'950',frequency:'monthly'});
   addEntry('expense',{name:'Groceries',amount:'120',frequency:'weekly'});
   const setStatus=(message,error=false)=>{status.textContent=message;status.classList.toggle('error',error);};
+  const invalidate=()=>{if(!results.hidden){results.hidden=true;setStatus('Inputs changed. Project cash flow again to refresh the forecast.');}};
   const readEntries = start => {
     const rows=[...entries.querySelectorAll('.cf-entry')];
     if(!rows.length) throw new Error('Add at least one income or expense item.');
