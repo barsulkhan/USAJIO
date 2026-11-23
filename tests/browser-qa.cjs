@@ -218,8 +218,8 @@ const server = http.createServer((req,res) => {
     near(await money('loan-monthly'),100,'Zero-rate loan payment'); near(await money('loan-interest'),0,'Zero-rate loan interest'); near(await money('loan-total'),1200,'Zero-rate loan total');
     // Loan amortization schedule: ledger reconciles, extra principal accelerates payoff, zero rate works.
     await calculate('loan-calculator.html','loan-calc',{'loan-amount':10000,'loan-rate':7,'loan-years':5,'loan-extra':0});
-    const scheduleRows=page.locator('#loan-schedule tr');
-    if(await scheduleRows.count()!==60) throw new Error('Rounded scheduled payment should clear the loan in 60 months; found '+await scheduleRows.count());
+    const payoffScheduleRows=page.locator('#loan-schedule tr');
+    if(await payoffScheduleRows.count()!==60) throw new Error('Rounded scheduled payment should clear the loan in 60 months; found '+await payoffScheduleRows.count());
     near(await money('loan-monthly'),198.02,'Loan rounded scheduled payment',0.001);
     near(await money('loan-interest'),1880.67,'Loan schedule interest reconciliation');
     near(await money('loan-total'),11880.67,'Loan schedule total reconciliation');
@@ -252,7 +252,7 @@ const server = http.createServer((req,res) => {
     await set({'loan-amount':10000,'loan-rate':7,'loan-years':5,'loan-extra':0});
     await page.locator('#loan-calc').click();
 
-    const finalBalance=await scheduleRows.last().locator('td').nth(5).innerText();
+    const finalBalance=await payoffScheduleRows.last().locator('td').nth(5).innerText();
     near(Number(finalBalance.replace(/[^0-9.-]/g,'')),0,'Loan schedule final balance');
     await set({'loan-amount':10000,'loan-rate':7,'loan-years':5,'loan-extra':100}); await page.locator('#loan-calc').click();
     if(await page.locator('#loan-schedule tr').count()>=60) throw new Error('Extra payment should shorten loan payoff');
@@ -430,10 +430,10 @@ const server = http.createServer((req,res) => {
     if(!snowOrder.startsWith('Small low-rate')||!avalancheOrder.startsWith('Large high-rate')) throw new Error('Snowball and avalanche priority order incorrect: '+snowOrder+' / '+avalancheOrder);
     if(!(await textOf('snowball-months')).match(/^\d+$/)||!(await textOf('avalanche-months')).match(/^\d+$/)) throw new Error('Multi-debt payoff months missing');
     if((await textOf('snowball-interest'))==='—'||(await textOf('avalanche-interest'))==='—') throw new Error('Multi-debt interest results missing');
-    const scheduleRows=page.locator('#multi-debt-schedule-body tr');
+    const payoffScheduleRows=page.locator('#multi-debt-schedule-body tr');
     const expectedMonths=Math.max(Number(await textOf('snowball-months')),Number(await textOf('avalanche-months')));
-    if(await scheduleRows.count()!==expectedMonths) throw new Error('Month-by-month payoff schedule row count does not match the longest payoff timeline');
-    const finalScheduleCells=await scheduleRows.last().locator('td').allInnerTexts();
+    if(await payoffScheduleRows.count()!==expectedMonths) throw new Error('Month-by-month payoff schedule row count does not match the longest payoff timeline');
+    const finalScheduleCells=await payoffScheduleRows.last().locator('td').allInnerTexts();
     if(!finalScheduleCells.slice(1,3).every(value=>value.includes('0.00')||value==='Debt-free')) throw new Error('Both payoff strategies should finish with zero remaining debt in the final schedule row');
     if(!(await page.locator('#multi-debt-schedule').locator('summary').innerText()).includes('month-by-month')) throw new Error('Monthly payoff schedule disclosure is missing');
     await page.locator('#multi-debt-extra').fill('75');
