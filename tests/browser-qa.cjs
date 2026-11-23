@@ -434,7 +434,7 @@ const server = http.createServer((req,res) => {
     const expectedMonths=Math.max(Number(await textOf('snowball-months')),Number(await textOf('avalanche-months')));
     if(await multiDebtScheduleRows.count()!==expectedMonths) throw new Error('Month-by-month payoff schedule row count does not match the longest payoff timeline');
     const finalScheduleCells=await multiDebtScheduleRows.last().locator('td').allInnerTexts();
-    if(!finalScheduleCells.slice(1,3).every(value=>value.includes('0.00')||value==='Debt-free')) throw new Error('Both payoff strategies should finish with zero remaining debt in the final schedule row');
+    if(!finalScheduleCells.slice(1,3).every(value=>value.includes('0.00')||value==='Debt-free')) throw new Error('Final schedule balances should both be zero; actual cells: '+JSON.stringify(finalScheduleCells));
     if(!(await page.locator('#multi-debt-schedule').locator('summary').innerText()).includes('month-by-month')) throw new Error('Monthly payoff schedule disclosure is missing');
     await page.locator('#multi-debt-extra').fill('75');
     if(!(await page.locator('#multi-debt-results').isHidden())) throw new Error('Editing multi-debt inputs must invalidate old results');
