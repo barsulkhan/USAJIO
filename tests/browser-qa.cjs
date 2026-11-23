@@ -140,6 +140,15 @@ const server = http.createServer((req,res) => {
       monthlyOut+=Number((await row.locator('td').nth(2).innerText()).replace(/[^0-9.-]/g,''));
     }
     cashNear(monthlyOut,20,'Month-end recurrence clamp (Jan 31 to Feb 28)');
+    await page.locator('#cf-start-date').fill('2026-01-25');
+    await page.locator('#cf-start-balance').fill('100');
+    await page.locator('#cf-weeks').selectOption('13');
+    await addCashFlowEntry('expense','Month-end bill',10,'2026-01-31','monthly');
+    await page.locator('#cf-calc').click();
+    const monthNineOut=Number((await page.locator('#cf-schedule tr').nth(8).locator('td').nth(2).innerText()).replace(/[^0-9.-]/g,''));
+    const monthTenOut=Number((await page.locator('#cf-schedule tr').nth(9).locator('td').nth(2).innerText()).replace(/[^0-9.-]/g,''));
+    cashNear(monthNineOut,0,'Monthly recurrence should not drift from the original month-end day');
+    cashNear(monthTenOut,10,'Jan 31 recurrence should land on Mar 31 after February clamping');
     await page.locator('.cf-entry input[aria-label="Entry amount"]').fill('0');
     await page.locator('#cf-calc').click();
     if(!(await page.locator('#cf-status').innerText()).includes('greater than zero')) throw new Error('Zero cash-flow entry amount must be rejected');
