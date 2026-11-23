@@ -8,7 +8,7 @@ const pages = [
   'compound-interest.html','loan-calculator.html','monthly-budget.html',
   'savings-goal.html','emergency-fund.html','debt-payoff.html',
   'mortgage-calculator.html','auto-loan-calculator.html','credit-card-payoff.html',
-  'retirement-calculator.html','student-loan-payoff.html','net-worth-calculator.html','credit-card-minimum-payment.html','rent-vs-buy.html','cash-flow-planner.html','debt-to-income.html','rent-affordability.html'
+  'retirement-calculator.html','student-loan-payoff.html','net-worth-calculator.html','credit-card-minimum-payment.html','rent-vs-buy.html','cash-flow-planner.html','debt-to-income.html','rent-affordability.html','credit-utilization.html'
 ];
 const mime = {'.html':'text/html; charset=utf-8','.css':'text/css','.js':'text/javascript','.svg':'image/svg+xml','.xml':'application/xml','.txt':'text/plain'};
 const server = http.createServer((req,res) => {
@@ -47,7 +47,7 @@ const server = http.createServer((req,res) => {
     const homeCards=await page.locator('.tool-card a[href]').count();
     if(homeCards<12) throw new Error('Homepage calculator navigation links missing: '+homeCards);
     const directHomeCards=await page.locator('#calculators .tool-grid > .tool-card').count();
-    if(directHomeCards!==17) throw new Error('Homepage must show 16 separate calculator cards; found '+directHomeCards);
+    if(directHomeCards!==18) throw new Error('Homepage must show 18 separate calculator cards; found '+directHomeCards);
 
     for(const file of pages){
       const response=await page.goto('http://127.0.0.1:4173/'+file);
@@ -173,6 +173,23 @@ const server = http.createServer((req,res) => {
     await page.setViewportSize({width:320,height:800});
     await page.goto('http://127.0.0.1:4173/cash-flow-planner.html');
     if(await page.evaluate(()=>document.documentElement.scrollWidth)>320) throw new Error('Cash-flow planner overflows a 320px viewport');
+    await page.setViewportSize({width:1365,height:900});
+
+
+    // Credit utilization: per-card and aggregate math, target paydown, and invalid limits.
+    await page.goto('http://127.0.0.1:4173/credit-utilization.html');
+    await page.locator('#cu-calc').click();
+    const cuMoney=async id=>Number((await page.locator('#'+id).innerText()).replace(/[^0-9.-]/g,''));
+    if(Math.abs(await cuMoney('cu-total-balance')-2000)>0.01)throw new Error('Credit utilization default balance should be $2,000');
+    if(Math.abs(await cuMoney('cu-total-limit')-12000)>0.01)throw new Error('Credit utilization default limit should be $12,000');
+    if(await page.locator('#cu-total-util').innerText()!=='16.7%')throw new Error('Credit utilization default ratio should be 16.7%');
+    if(await page.locator('#cu-card-util-1').innerText()!=='24.0%')throw new Error('Per-card utilization should be 24.0%');
+    await page.locator('#cu-target').selectOption('10');await page.locator('#cu-calc').click();
+    if(Math.abs(await cuMoney('cu-paydown')-800)>0.01)throw new Error('Credit utilization 10% target paydown should be $800');
+    await page.locator('#cu-balance-1').fill('6000');await page.locator('#cu-calc').click();
+    if(!(await page.locator('#cu-status').innerText()).includes('between zero and its limit'))throw new Error('Credit utilization must reject a balance above its card limit');
+    await page.setViewportSize({width:320,height:800});await page.goto('http://127.0.0.1:4173/credit-utilization.html');
+    if(await page.evaluate(()=>document.documentElement.scrollWidth)>320)throw new Error('Credit utilization page overflows a 320px viewport');
     await page.setViewportSize({width:1365,height:900});
 
     // Rent affordability: guideline cap, cash-flow cap, and invalid income.
@@ -627,16 +644,43 @@ const server = http.createServer((req,res) => {
     if(overflow) throw new Error('Homepage has horizontal overflow at 390px');
 
 
+    // Personal Finance Workspace: totals, editing, browser-local persistence and mobile fit.
+    await page.setViewportSize({width:1365,height:900});
+    await page.goto('http://127.0.0.1:4173/finance-dashboard.html');
+    near(await page.locator('#cashflow-total').innerText().then(v=>Number(v.replace(/[^0-9.-]/g,''))),1300,'Workspace default monthly cash flow');
+    near(await page.locator('#networth-total').innerText().then(v=>Number(v.replace(/[^0-9.-]/g,''))),14600,'Workspace default net worth');
+    await page.locator('#add-goal').click();
+    await page.locator('#entry-name').fill('Emergency buffer');
+    await page.locator('#entry-amount').fill('5000');
+    await page.locator('#entry-current').fill('1000');
+    await page.locator('#save-entry').click();
+    if(!/Emergency buffer/.test(await page.locator('#goals-list').innerText())) throw new Error('Workspace goal was not added');
+    near(await page.locator('#savings-total').innerText().then(v=>Number(v.replace(/[^0-9.-]/g,''))),1000,'Workspace saved goal total');
+    await page.locator('#add-debt').click();
+    await page.locator('#entry-name').fill('Auto loan');
+    await page.locator('#entry-amount').fill('7500');
+    await page.locator('#entry-rate').fill('5.5');
+    await page.locator('#save-entry').click();
+    near(await page.locator('#debt-total').innerText().then(v=>Number(v.replace(/[^0-9.-]/g,''))),7500,'Workspace debt total');
+    const workspaceStorage=await page.evaluate(()=>JSON.parse(localStorage.getItem('usajio-finance-workspace-v1')||'{}'));
+    if(workspaceStorage.goals?.length!==1||workspaceStorage.debts?.length!==1) throw new Error('Workspace data was not saved locally');
+    await page.reload();
+    if(!/Emergency buffer/.test(await page.locator('#goals-list').innerText())) throw new Error('Workspace goal did not persist after reload');
+    await page.setViewportSize({width:320,height:800});
+    const dashboardWidth=await page.evaluate(()=>document.documentElement.scrollWidth);
+    if(dashboardWidth>320) throw new Error('Finance dashboard overflow at 320px: '+dashboardWidth);
+    console.log('PASS: Finance Workspace cash-flow/net-worth calculations, savings/debt CRUD, local persistence and 320px mobile layout.');
+
     // Responsive and keyboard-only review across common phone/tablet widths.
     const responsiveWidths=[320,360,375,390,412,430,620,700,768,1024];
-    for(const file of ['index.html',...pages]){
+    for(const file of ['index.html','finance-dashboard.html',...pages]){
       await page.goto('http://127.0.0.1:4173/'+file);
       for(const width of responsiveWidths){
         await page.setViewportSize({width,height:844});
         const metrics=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,client:document.documentElement.clientWidth}));
         if(metrics.scroll>metrics.client+1) throw new Error(file+' horizontal overflow at '+width+'px: '+JSON.stringify(metrics));
       }
-      if(file!=='index.html'){
+      if(file!=='index.html'&&file!=='finance-dashboard.html'){
         const unlabeled=await page.locator('input,select,textarea').evaluateAll(elements=>elements.filter(el=>!(el.labels&&el.labels.length)&&!el.getAttribute('aria-label')&&!el.getAttribute('aria-labelledby')).map(el=>el.id||el.outerHTML.slice(0,100)));
         if(unlabeled.length) throw new Error(file+' has unlabeled form controls: '+unlabeled.join(', '));
         await page.setViewportSize({width:390,height:844});
@@ -738,7 +782,7 @@ const server = http.createServer((req,res) => {
     for(const href of ['about.html','contact.html','privacy.html','terms.html','disclaimer.html','editorial.html']){
       if(!homepageSource.includes('href="'+href+'"')) throw new Error('Homepage footer is missing '+href);
     }
-    if(!homepageSource.includes('17 useful calculators')) throw new Error('Homepage calculator count is not 17');
+    if(!homepageSource.includes('18 useful calculators')) throw new Error('Homepage calculator count is not 18');
     if(!homepageSource.includes('id="resources"')) throw new Error('Resources navigation target is missing');
     if(!homepageSource.includes('cash-flow-budget-guide.html')) throw new Error('Homepage is missing the cash-flow guide link');
     if(!homepageSource.includes('debt-to-income.html')) throw new Error('Homepage is missing the Debt-to-Income calculator link');

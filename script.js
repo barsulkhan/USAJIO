@@ -18,7 +18,7 @@
   if ($("year")) $("year").textContent = new Date().getFullYear();
   if ($("currency")) $("currency").addEventListener("change", event => {
     currency = event.target.value;
-    ["ci-calc","loan-calc","compare-calc","budget-calc","save-calc","ef-calc","debt-calc","mortgage-calc","auto-calc","card-calc","retirement-calc","student-calc","networth-calc","multi-debt-calc","dti-calc","ra-calc"].forEach(id => { if ($(id)) $(id).click(); });
+    ["ci-calc","loan-calc","compare-calc","budget-calc","save-calc","ef-calc","debt-calc","mortgage-calc","auto-calc","card-calc","retirement-calc","student-calc","networth-calc","multi-debt-calc","dti-calc","ra-calc","cu-calc"].forEach(id => { if ($(id)) $(id).click(); });
   });
 
   bind("ci-calc", () => {
@@ -525,6 +525,30 @@
   });
 
   ["ci-calc","loan-calc","compare-calc","budget-calc","save-calc","ef-calc","debt-calc","mortgage-calc","auto-calc","card-calc","retirement-calc","student-calc","networth-calc"].forEach(id=>{if($(id))$(id).click();});
+
+
+  bind("cu-calc", () => {
+    const cards=[1,2,3].map(index=>({
+      balance:read("cu-balance-"+index,0,1e12),
+      limit:read("cu-limit-"+index,0,1e12)
+    }));
+    const target=Number($("cu-target")?.value);
+    const outputIds=["cu-total-balance","cu-total-limit","cu-total-util","cu-available","cu-paydown"];
+    if(cards.some(card=>card.balance===null||card.limit===null)||cards.some(card=>card.limit<=0)||cards.some(card=>card.balance>card.limit)||![10,20,30].includes(target)){
+      invalid(outputIds);
+      put("cu-status","Enter a positive credit limit for each card and a balance between zero and its limit.");
+      [1,2,3].forEach(index=>put("cu-card-util-"+index,"—"));
+      return;
+    }
+    const balance=cards.reduce((sum,card)=>sum+card.balance,0);
+    const limit=cards.reduce((sum,card)=>sum+card.limit,0);
+    const utilization=limit?balance/limit*100:0;
+    const paydown=Math.max(0,balance-limit*target/100);
+    cards.forEach((card,index)=>put("cu-card-util-"+(index+1),(card.balance/card.limit*100).toFixed(1)+"%"));
+    put("cu-total-balance",fmt(balance));put("cu-total-limit",fmt(limit));
+    put("cu-total-util",utilization.toFixed(1)+"%");put("cu-available",fmt(limit-balance));put("cu-paydown",fmt(paydown));
+    put("cu-status",utilization===0?"No revolving balance is currently entered.":utilization<=target?"Your total utilization is already at or below the selected target.":"Paying down approximately "+fmt(paydown)+" across these balances would bring total utilization to "+target+"%, assuming credit limits stay unchanged.");
+  });
 
   bind("ra-calc", () => {
     const gross=read("ra-gross",1,1e12), net=read("ra-net",1,1e12), debt=read("ra-debt",0,1e12), essentials=read("ra-essentials",0,1e12), savings=read("ra-savings",0,1e12), utilities=read("ra-utilities",0,1e12), guideline=Number($("ra-guideline")?.value);
