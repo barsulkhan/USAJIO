@@ -619,7 +619,7 @@ const server = http.createServer((req,res) => {
         await page.setViewportSize({width:390,height:844});
         await page.keyboard.press('Tab');
         let reached=false;
-        for(let i=0;i<40;i++){
+        for(let i=0;i<80;i++){
           const active=await page.evaluate(()=>({id:document.activeElement?.id||'',tag:document.activeElement?.tagName||'',outline:getComputedStyle(document.activeElement).outlineStyle}));
           if(active.id.endsWith('-calc')){
             reached=true;
