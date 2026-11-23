@@ -727,7 +727,7 @@ const server = http.createServer((req,res) => {
     await page.evaluate(()=>indexedDB.deleteDatabase('usajio-private-workspace'));
     await page.setViewportSize({width:1365,height:900});
     console.log('PASS: private finance workspace encrypted vault, income/budget/goal/debt flows, ciphertext-only storage, lock/unlock persistence and 375px responsive layout.');
-\n    // Crawl every public HTML page and verify all local links, fragments and sitemap entries.
+    // Crawl every public HTML page and verify all local links, fragments and sitemap entries.
     const allHtmlFiles=fs.readdirSync(root).filter(name=>name.endsWith('.html')).sort();
     // Google Search Console ownership files are verification endpoints, not indexable site pages.
     const sitemapEligibleHtmlFiles=allHtmlFiles.filter(name=>!/^google[0-9a-f]+\.html$/i.test(name));
