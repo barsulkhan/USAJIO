@@ -11,7 +11,7 @@
   const dateFromIso = value => { const [y,m,d]=value.split('-').map(Number); return new Date(Date.UTC(y,m-1,d)); };
   const isoFromDate = d => [d.getUTCFullYear(),String(d.getUTCMonth()+1).padStart(2,'0'),String(d.getUTCDate()).padStart(2,'0')].join('-');
   const addDays = (date,n) => { const d=new Date(date); d.setUTCDate(d.getUTCDate()+n); return d; };
-  const addMonthClamped = date => { const y=date.getUTCFullYear(),m=date.getUTCMonth(),day=date.getUTCDate(); const first=new Date(Date.UTC(y,m+1,1)); const last=new Date(Date.UTC(first.getUTCFullYear(),first.getUTCMonth()+1,0)).getUTCDate(); return new Date(Date.UTC(first.getUTCFullYear(),first.getUTCMonth(),Math.min(day,last))); };
+  const addMonthClamped = (date,anchorDay) => { const y=date.getUTCFullYear(),m=date.getUTCMonth(); const first=new Date(Date.UTC(y,m+1,1)); const last=new Date(Date.UTC(first.getUTCFullYear(),first.getUTCMonth()+1,0)).getUTCDate(); return new Date(Date.UTC(first.getUTCFullYear(),first.getUTCMonth(),Math.min(anchorDay,last))); };
   const field = (label,type,value,options) => {
     const wrap=document.createElement('label'); wrap.append(document.createTextNode(label));
     let input;
@@ -58,7 +58,9 @@
     const startValue=$('cf-start-date').value;
     if(!startValue) throw new Error('Choose a forecast start date.');
     const start=dateFromIso(startValue);
-    const startBalance=Number($('cf-start-balance').value);
+    const balanceInput=$('cf-start-balance').value.trim();
+    if(!balanceInput) throw new Error('Enter a starting balance.');
+    const startBalance=Number(balanceInput);
     const weeks=Number($('cf-weeks').value);
     if(!Number.isFinite(startBalance)||startBalance<0) throw new Error('Starting balance must be zero or greater.');
     if(![4,8,13].includes(weeks)) throw new Error('Choose a forecast length of 4, 8 or 13 weeks.');
@@ -73,7 +75,7 @@
         if(item.frequency==='once') break;
         if(item.frequency==='weekly') date=addDays(date,7);
         else if(item.frequency==='biweekly') date=addDays(date,14);
-        else date=addMonthClamped(date);
+        else date=addMonthClamped(date,item.date.getUTCDate());
       }
     }
     let balance=Math.round(startBalance*100)/100, lowest=balance, shortfallWeeks=0;
