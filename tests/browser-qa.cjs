@@ -140,6 +140,7 @@ const server = http.createServer((req,res) => {
       monthlyOut+=Number((await row.locator('td').nth(2).innerText()).replace(/[^0-9.-]/g,''));
     }
     cashNear(monthlyOut,20,'Month-end recurrence clamp (Jan 31 to Feb 28)');
+    await removeAllCashFlowEntries();
     await page.locator('#cf-start-date').fill('2026-01-25');
     await page.locator('#cf-start-balance').fill('100');
     await page.locator('#cf-weeks').selectOption('13');
