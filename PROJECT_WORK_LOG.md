@@ -136,3 +136,13 @@ For every future task, append:
 - Live website deployment status verified from GitHub Actions. Direct page fetch via the web reader was not available in this session, so visual/manual live-browser confirmation is still outstanding.
 - Workflow warnings observed: Node.js 20 action runtime deprecation warning; npm/Node dependency deprecation warnings. No workflow failure resulted.
 - Follow-up: investigate Lighthouse Best Practices/Accessibility findings for Finance Dashboard and Best Practices findings for the two flagged pages; consider updating workflow action/runtime versions after checking compatibility. Sitemap processing, custom domain, GA4 property creation and Search Console indexing remain owner-dependent.
+
+
+### 2026-11-24 — Lighthouse detail review and accessibility follow-ups
+- Status: Targeted fixes implemented on branch; regression validation pending.
+- Reviewed the archived Lighthouse mobile/desktop JSON reports from CI run `45336419525`, not just the score summary.
+- Confirmed Finance Dashboard accessibility issue was insufficient text contrast (examples included #0b927a on #f5f7fb at 3.62:1, #8a96a8 on white at 2.99:1, and #8390a2 on white at 3.24:1). Updated muted/secondary text colors in `finance-dashboard.css` to darker values; added intrinsic logo dimensions in `finance-dashboard.html`.
+- Added aspect-ratio reservation for shared site logo in `styles.css` to reduce layout shift and size instability.
+- Updated GitHub Actions checkout/setup-node actions to v5 and Node.js runtime to 22 to address the observed Node 20 action runtime deprecation warning.
+- Lighthouse mobile best-practice 96 findings on Credit Card Minimum Payment and Monthly Spending Planner are associated with low font-size audit results; do not claim fixed until rerun confirms. The mobile homepage and Compound Interest performance scores are driven mainly by slower mobile first contentful paint/main-thread work; no risky broad performance refactor made without further profiling.
+- OpenSEO Lighthouse remains unavailable due insufficient credits; GitHub Actions Lighthouse artifacts were used for this detailed review.
