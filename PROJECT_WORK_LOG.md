@@ -146,3 +146,16 @@ For every future task, append:
 - Updated GitHub Actions checkout/setup-node actions to v5 and Node.js runtime to 22 to address the observed Node 20 action runtime deprecation warning.
 - Lighthouse mobile best-practice 96 findings on Credit Card Minimum Payment and Monthly Spending Planner are associated with low font-size audit results; do not claim fixed until rerun confirms. The mobile homepage and Compound Interest performance scores are driven mainly by slower mobile first contentful paint/main-thread work; no risky broad performance refactor made without further profiling.
 - OpenSEO Lighthouse remains unavailable due insufficient credits; GitHub Actions Lighthouse artifacts were used for this detailed review.
+
+
+### 2026-11-24 — PR #87 merged, deployment verified, and RPM research handoff saved
+- Status: Done for this quality follow-up and handoff documentation.
+- PR #87: https://github.com/barsulkhan/USAJIO/pull/87 — merged successfully via squash.
+- Merge commit: 3238143347ad3c98c338702f0c02d8b4b0f13a58.
+- PR head checks: Browser QA, Lighthouse mobile, and Lighthouse desktop all completed successfully.
+- GitHub Pages deployment run 45391501208 completed successfully for the merge commit.
+- Changes in PR: Finance Dashboard muted/secondary text contrast adjustments; logo dimensions/aspect-ratio reservation; GitHub Actions checkout/setup-node v5 and Node.js 22.
+- [x] Create durable next-chat handoff: NEXT_CHAT_HANDOFF.md. It records completed work, remaining owner-dependent tasks, repository links, known SEO/indexing/analytics status, and the user's next priority.
+- [ ] New priority for next chat: research highest-potential AdSense RPM finance sub-niches, specific calculator/guide topics, country mix (especially US vs India), advertiser intent, search demand/competition, and a prioritized content roadmap. Clearly distinguish RPM estimates from actual site RPM; do not equate Google Ads CPC with AdSense RPM. No actual USAJIO AdSense RPM or GA4 audience/revenue data is available in this context.
+- Handoff file commit: 2ae36088d06b1ad33d0034a3f747816a666e46d3.
+- Follow-up: start with RPM research in the new chat; do not begin publishing new pages until the research and priorities are presented.
