@@ -47,7 +47,7 @@ const server = http.createServer((req,res) => {
     const homeCards=await page.locator('.tool-card a[href]').count();
     if(homeCards<12) throw new Error('Homepage calculator navigation links missing: '+homeCards);
     const directHomeCards=await page.locator('#calculators .tool-grid > .tool-card').count();
-    if(directHomeCards!==18) throw new Error('Homepage must show 18 separate calculator cards; found '+directHomeCards);
+    if(directHomeCards!==19) throw new Error('Homepage must show 19 separate calculator cards; found '+directHomeCards);
 
     for(const file of pages){
       const response=await page.goto('http://127.0.0.1:4173/'+file);
