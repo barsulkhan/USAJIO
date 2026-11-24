@@ -766,7 +766,7 @@ const server = http.createServer((req,res) => {
     const afterInvalidImport=await page.evaluate(key=>localStorage.getItem(key),'usajio-monthly-spending-v1');
     if(afterInvalidImport!==beforeInvalidImport) throw new Error('Invalid monthly planner backup changed the saved financial data');
     await page.setViewportSize({width:320,height:800});
-    if(await page.evaluate(()=>document.documentElement.scrollWidth)>320) throw new Error('Monthly planner overflows a 320px mobile viewport');
+    const plannerOverflow=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,client:document.documentElement.clientWidth,elements:[...document.querySelectorAll('body *')].map(el=>({tag:el.tagName,id:el.id,cls:typeof el.className==='string'?el.className:'',left:Math.round(el.getBoundingClientRect().left),right:Math.round(el.getBoundingClientRect().right),width:Math.round(el.getBoundingClientRect().width),overflow:getComputedStyle(el).overflowX})).filter(x=>x.right>document.documentElement.clientWidth+1||x.left< -1).sort((a,b)=>b.right-a.right).slice(0,15)})); if(plannerOverflow.scroll>320) throw new Error('Monthly planner overflows a 320px mobile viewport: '+JSON.stringify(plannerOverflow));
     await page.setViewportSize({width:1365,height:900});
     console.log('PASS: monthly planner budget vs actual calculations, income/expense CRUD, search, CSV export, monthly history, browser-local persistence and 320px layout.');
 
