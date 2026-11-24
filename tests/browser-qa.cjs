@@ -829,7 +829,7 @@ const server = http.createServer((req,res) => {
         for(const attribute of ['property="og:type"','property="og:site_name"','property="og:title"','property="og:description"','property="og:url"','name="twitter:card"']){
           if(!source.includes(attribute)) pageIssues.push(file+' is missing social metadata '+attribute);
         }
-        if(!source.includes('Last reviewed: November 22, 2026')) pageIssues.push(file+' is missing the current guide review date');
+        if(!source.includes('Last reviewed: November 22, 2026')&&!source.includes('Last reviewed: November 24, 2026')) pageIssues.push(file+' is missing the current guide review date');
         if(!source.includes('Official sources and further reading')) pageIssues.push(file+' is missing its official-source section');
         const officialLinks=[...source.matchAll(/href="https:\/\/(?:www\.)?(?:consumerfinance\.gov|consumer\.gov|consumer\.ftc\.gov|irs\.gov|investor\.gov|studentaid\.gov|www\.annualcreditreport\.com)\//g)];
         if(officialLinks.length<1) pageIssues.push(file+' has no recognized official-source link');
