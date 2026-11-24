@@ -114,3 +114,25 @@ For every future task, append:
 - Updated the QA assertion to accept the new review date for `student-loan-guide.html` while retaining November 22 for the other guides, and aligned the guide's source-section heading with the site's test convention.
 - Follow-up Browser QA and Lighthouse workflows triggered for the new PR head; results pending at this log update.
 - Commits: `f3658d2dad0b79165a90ba7e4bf42aaf903db4ef`, `1aadbd7631b0e4286d2636504182ac836ea8709c`.
+
+
+### 2026-11-24 — Post-merge verification and small-task QA sweep
+- Status: Deployment and automated checks passed; minor Lighthouse follow-ups remain.
+- Release: Student Loan Guide PR #86 merged as `f3439f46ed79315bb1f0c701d17ea3c154451ab1`; GitHub Pages deployment run `45388904496` completed successfully.
+- Browser QA run: `45336419765` passed on PR head `a0c69c4`.
+- Verified browser checks from CI log:
+  - 12 calculator known-answer, zero-rate, boundary, invalid-input, deficit/negative, insufficient-payment and amortization checks.
+  - Finance Workspace cash-flow/net-worth calculations, savings/debt CRUD, local persistence and 320px layout.
+  - Monthly spending planner budget-vs-actual, income/expense CRUD, search, CSV export, monthly history, local persistence and 320px layout.
+  - Responsive widths, labeled controls, keyboard-only calculation/focus checks.
+  - 37 HTML pages plus Google verification endpoint: unique titles/descriptions/canonicals, H1, language, sitemap/robots, footer policy links, local paths/fragments.
+  - Browser-local handling checks for financial data: no unexpected non-read network requests, fetch/XHR/beacon, persistent storage, or financial values leaked into URLs/request bodies.
+  - axe WCAG 2.1 A/AA audit returned an empty violations list.
+- Lighthouse CI run: `45336419525` passed for mobile and desktop. It tested the homepage and all calculator pages.
+  - Mobile: homepage Performance 94, Accessibility 100, Best Practices 100, SEO 100; most calculator pages Performance 99–100, Accessibility 100, SEO 100. Noted lower scores: Compound Interest Performance 94, Credit Card Minimum Payment Best Practices 96.
+  - Desktop: homepage Performance 99, Accessibility 100, Best Practices 100, SEO 100; most calculator pages Performance 98–100, Accessibility 100, Best Practices 100, SEO 100.
+  - Finance Dashboard is not in the Lighthouse URL matrix; it scored Accessibility 96 on both profiles, and mobile Best Practices 96. Monthly Spending Planner mobile Best Practices 96. These are follow-up items, not blanket failures.
+- OpenSEO Lighthouse audit `173fb499-a130-4fd5-a968-3da9df876461` remains blocked by `INSUFFICIENT_CREDITS`; do not report it as a pass or reuse it as a score source.
+- Live website deployment status verified from GitHub Actions. Direct page fetch via the web reader was not available in this session, so visual/manual live-browser confirmation is still outstanding.
+- Workflow warnings observed: Node.js 20 action runtime deprecation warning; npm/Node dependency deprecation warnings. No workflow failure resulted.
+- Follow-up: investigate Lighthouse Best Practices/Accessibility findings for Finance Dashboard and Best Practices findings for the two flagged pages; consider updating workflow action/runtime versions after checking compatibility. Sitemap processing, custom domain, GA4 property creation and Search Console indexing remain owner-dependent.
