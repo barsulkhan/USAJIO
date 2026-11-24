@@ -86,3 +86,13 @@ For every future task, append:
 - Commit: recorded in the GitHub create-file response; commit SHA `08df92593a02bedb2235c28612d2c389f9016dd1`.
 - PR: not applicable (direct documentation commit).
 - Follow-up: sitemap processing, indexing requests, GA4 setup, calculator functional tests, and Lighthouse re-run remain open.
+
+
+### 2026-11-24 — Search Console sitemap fetch failure review
+- Status: In progress; Google fetch failure is confirmed from the owner's screenshot.
+- Evidence: Search Console Sitemaps screen shows `/sitemap.xml`, submitted 2026-11-24, Type `Unknown`, Last read blank, Status `Couldn't fetch`, Discovered pages 0, Discovered videos 0.
+- Repository files checked: `sitemap.xml` and `robots.txt`.
+- Findings: repository sitemap contains 37 absolute HTTPS URLs under `https://barsulkhan.github.io/USAJIO/`, uses the standard sitemaps.org `urlset` namespace and `loc` elements, and appears structurally well-formed on inspection. `robots.txt` allows all crawlers and declares the same sitemap URL.
+- Validation limitation: GitHub repository/raw file content is readable, but the live GitHub Pages sitemap URL could not be fetched through the available verification path in this session. Therefore the actual live HTTP response/content-type and Google's fetch error cause are not yet established.
+- Change: no sitemap or robots file modified; changing a seemingly valid sitemap without confirming the live response could make things worse.
+- Follow-up: verify that `https://barsulkhan.github.io/USAJIO/sitemap.xml` opens directly in a browser without login/download/error, then use Search Console's sitemap details/refresh or remove-and-resubmit only if it still fails. If the direct URL fails, investigate GitHub Pages deployment/path before resubmitting.
