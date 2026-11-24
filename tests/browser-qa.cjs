@@ -7,7 +7,7 @@ const root = path.resolve(__dirname, '..');
 const pages = [
   'compound-interest.html','loan-calculator.html','monthly-budget.html',
   'savings-goal.html','emergency-fund.html','debt-payoff.html',
-  'mortgage-calculator.html','auto-loan-calculator.html','credit-card-payoff.html',
+  'mortgage-calculator.html','mortgage-refinance-calculator.html','auto-loan-calculator.html','credit-card-payoff.html',
   'retirement-calculator.html','student-loan-payoff.html','net-worth-calculator.html','credit-card-minimum-payment.html','rent-vs-buy.html','cash-flow-planner.html','debt-to-income.html','rent-affordability.html','credit-utilization.html'
 ];
 const mime = {'.html':'text/html; charset=utf-8','.css':'text/css','.js':'text/javascript','.svg':'image/svg+xml','.xml':'application/xml','.txt':'text/plain'};
@@ -47,7 +47,7 @@ const server = http.createServer((req,res) => {
     const homeCards=await page.locator('.tool-card a[href]').count();
     if(homeCards<12) throw new Error('Homepage calculator navigation links missing: '+homeCards);
     const directHomeCards=await page.locator('#calculators .tool-grid > .tool-card').count();
-    if(directHomeCards!==18) throw new Error('Homepage must show 18 separate calculator cards; found '+directHomeCards);
+    if(directHomeCards!==19) throw new Error('Homepage must show 19 separate calculator cards; found '+directHomeCards);
 
     for(const file of pages){
       const response=await page.goto('http://127.0.0.1:4173/'+file);
@@ -66,6 +66,17 @@ const server = http.createServer((req,res) => {
       if(await results.getAttribute('aria-live')!=='polite') throw new Error(file+' result region is not announced politely');
     }
 
+
+    // Mortgage refinance: independently checked default payment, zero-rate and invalid-rate behavior.
+    await page.goto('http://127.0.0.1:4173/mortgage-refinance-calculator.html');
+    await page.locator('#refi-calc').click();
+    if(await page.locator('#refi-old-payment').innerText()!=='$2,023.86') throw new Error('Refinance current payment known answer mismatch');
+    if(await page.locator('#refi-new-payment').innerText()!=='$1,847.07') throw new Error('Refinance new payment known answer mismatch');
+    if(!(await page.locator('#refi-breakeven').innerText()).includes('34 months')) throw new Error('Refinance break-even should round up to 34 months');
+    await page.locator('#refi-new-rate').fill('0'); await page.locator('#refi-calc').click();
+    if(await page.locator('#refi-new-payment').innerText()!=='$933.33') throw new Error('Refinance zero-rate payment mismatch');
+    await page.locator('#refi-new-rate').fill('31'); await page.locator('#refi-calc').click();
+    if(!(await page.locator('#refi-status').innerText()).includes('Check the balance')) throw new Error('Refinance invalid rate was not rejected');
 
     // Debt-to-Income: known ratio and zero-income rejection.
     await page.goto('http://127.0.0.1:4173/debt-to-income.html');
@@ -844,7 +855,7 @@ const server = http.createServer((req,res) => {
     for(const href of ['about.html','contact.html','privacy.html','terms.html','disclaimer.html','editorial.html']){
       if(!homepageSource.includes('href="'+href+'"')) throw new Error('Homepage footer is missing '+href);
     }
-    if(!homepageSource.includes('18 useful calculators')) throw new Error('Homepage calculator count is not 18');
+    if(!homepageSource.includes('19 useful calculators')) throw new Error('Homepage calculator count is not 19');
     if(!homepageSource.includes('id="resources"')) throw new Error('Resources navigation target is missing');
     if(!homepageSource.includes('cash-flow-budget-guide.html')) throw new Error('Homepage is missing the cash-flow guide link');
     if(!homepageSource.includes('debt-to-income.html')) throw new Error('Homepage is missing the Debt-to-Income calculator link');

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Compare your current mortgage with a refinance offer. Estimate the new payment, monthly savings, closing-cost break-even and total interest.">
+<link rel="canonical" href="https://barsulkhan.github.io/USAJIO/mortgage-refinance-calculator.html">
+<meta property="og:type" content="website"><meta property="og:site_name" content="USAJIO"><meta property="og:title" content="Mortgage Refinance Calculator | USAJIO"><meta property="og:description" content="Compare mortgage payments, closing costs, break-even time and estimated interest before refinancing."><meta property="og:url" content="https://barsulkhan.github.io/USAJIO/mortgage-refinance-calculator.html">
+<meta name="twitter:card" content="summary">
+<title>Mortgage Refinance Calculator | USAJIO</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="calculator-pages.css"><link rel="stylesheet" href="premium.css"><link rel="stylesheet" href="mortgage-refinance.css">
+</head>
+<body>
+<header class="site-header"><a class="brand" href="index.html"><img class="brand-logo" src="assets/logo.svg" alt="USAJIO Personal Finance"></a><button class="menu-toggle" aria-label="Open menu" aria-expanded="false" onclick="const n=document.querySelector('.nav');n.classList.toggle('open');this.setAttribute('aria-expanded',n.classList.contains('open'))">☰</button><nav class="nav"><a href="index.html#calculators">All calculators</a><a href="index.html#guides">Money Guides</a><a href="index.html#about">About</a><a class="nav-cta" href="index.html#calculators">Explore tools</a></nav></header>
+<main>
+<section class="page-intro"><p class="eyebrow">MORTGAGE PLANNING</p><h1>Mortgage Refinance Calculator</h1><p>Compare your current mortgage with a new fixed-rate offer, including the monthly payment change, closing-cost break-even and estimated interest over each loan's remaining term.</p><a class="back-tools" href="index.html#calculators">← View all calculators</a></section>
+<section class="calculator-page refi-layout">
+<div class="calc-copy"><h2>Compare the whole trade-off</h2><p>A lower monthly payment does not automatically mean a lower total cost. A refinance may restart the repayment term, add fees or change how long you stay in debt.</p><p class="disclaimer">Use figures from your current mortgage statement and the lender's Loan Estimate. This tool does not fetch live rates or provide a lender quote.</p></div>
+<div class="calculator refi-calculator">
+<h2>Your current mortgage</h2>
+<div class="fields">
+<label>Remaining loan balance<input id="refi-balance" type="number" min="1" max="100000000" step=".01" value="280000" inputmode="decimal"></label>
+<label>Current interest rate (%)<input id="refi-current-rate" type="number" min="0" max="30" step=".01" value="7.25" inputmode="decimal"></label>
+<label>Remaining term (years)<input id="refi-current-term" type="number" min="1" max="40" step=".5" value="25" inputmode="decimal"></label>
+<label>Currency<select id="refi-currency"><option value="USD">USD ($)</option><option value="EUR">EUR (€)</option><option value="GBP">GBP (£)</option><option value="CAD">CAD ($)</option><option value="AUD">AUD ($)</option><option value="INR">INR (₹)</option></select></label>
+</div>
+<h2 class="refi-subhead">New refinance offer</h2>
+<div class="fields">
+<label>New interest rate (%)<input id="refi-new-rate" type="number" min="0" max="30" step=".01" value="6.25" inputmode="decimal"></label>
+<label>New loan term (years)<input id="refi-new-term" type="number" min="1" max="40" step=".5" value="25" inputmode="decimal"></label>
+<label>Estimated closing costs<input id="refi-costs" type="number" min="0" max="10000000" step=".01" value="6000" inputmode="decimal"></label>
+</div>
+<button class="primary-btn" id="refi-calc" type="button">Compare refinance</button>
+<p id="refi-status" class="refi-status" role="status" aria-live="polite"></p>
+<div id="refi-results" hidden>
+<div class="result-grid refi-result-grid" role="status" aria-live="polite" aria-atomic="true">
+<div><small>Current monthly P&amp;I</small><strong id="refi-old-payment">—</strong></div>
+<div><small>New monthly P&amp;I</small><strong id="refi-new-payment">—</strong></div>
+<div><small>Monthly payment change</small><strong id="refi-monthly-change">—</strong></div>
+<div><small>Closing-cost break-even</small><strong id="refi-breakeven">—</strong></div>
+<div><small>Estimated net interest savings</small><strong id="refi-net-savings">—</strong></div>
+</div>
+<p id="refi-verdict" class="result-note"></p>
+<h3>Annual loan balance and interest comparison</h3>
+<div class="schedule-table-wrap" role="region" aria-label="Annual mortgage refinance comparison" tabindex="0"><table class="schedule-table"><thead><tr><th scope="col">Year</th><th scope="col">Current balance</th><th scope="col">Current interest</th><th scope="col">New balance</th><th scope="col">New interest</th></tr></thead><tbody id="refi-schedule"><tr><td colspan="5">Compare offers to view the schedule.</td></tr></tbody></table></div>
+</div>
+<p class="disclaimer">Currency changes display formatting only; it does not convert currencies. Closing costs are assumed to be paid upfront, not added to the new loan balance.</p>
+</div>
+</section>
+<section class="methodology">
+<h2>How the mortgage refinance estimate works</h2>
+<p>For each loan, the calculator estimates a fixed monthly principal-and-interest payment using the remaining principal, annual interest rate and number of monthly payments. A zero-interest loan is divided evenly across its term. Monthly interest in the annual schedule is calculated from the opening balance and rounded to cents.</p>
+<p><strong>Monthly payment change</strong> is the current payment minus the new payment. A positive amount means the new payment is lower. <strong>Break-even time</strong> is estimated closing costs divided by positive monthly payment savings. It is a simple cash-flow estimate and does not include taxes, the time value of money or changes in property costs.</p>
+<p><strong>Estimated net interest savings</strong> compares the interest scheduled on each loan over its full remaining term, then subtracts the upfront closing costs. A positive result means the new scenario has lower estimated interest after costs; a negative result means it costs more under these assumptions. The comparison assumes you keep each loan for its full modeled term.</p>
+<h2>What to check before refinancing</h2>
+<ul>
+<li>Compare the same loan type and similar term across lenders, not just the advertised rate.</li>
+<li>Review lender fees, discount points, lender credits, prepayment penalties and the total cash due at closing.</li>
+<li>Check whether a lower payment comes from a lower rate or from extending the repayment term.</li>
+<li>Consider how long you expect to keep the home and whether you will stay past the estimated break-even period.</li>
+<li>Use the official Loan Estimate and ask the lender to explain any costs that are unclear.</li>
+</ul>
+<h2>Frequently asked questions</h2>
+<details><summary>What is the break-even point when refinancing?</summary><p>It is the approximate time required for monthly payment savings to equal the upfront closing costs. If the new payment is not lower, this simple payment-based method has no break-even point. It does not replace a full comparison of total loan costs.</p></details>
+<details><summary>Can a lower monthly payment cost more overall?</summary><p>Yes. Extending the repayment term can lower the monthly payment while increasing the total interest paid. Compare the interest totals and the remaining term, not only the monthly amount.</p></details>
+<details><summary>Does this include property taxes and homeowners insurance?</summary><p>No. This calculator compares principal and interest only. Property taxes, homeowners insurance, mortgage insurance, HOA charges and escrow amounts may change independently and are excluded.</p></details>
+<details><summary>Does USAJIO show live refinance rates?</summary><p>No. Enter the rate from a lender's current Loan Estimate. USAJIO does not connect to lenders, request credit information or submit an application.</p></details>
+<p class="source-note">Further reading: <a href="https://www.consumerfinance.gov/consumer-tools/mortgages/answers/key-terms/">CFPB mortgage refinance and closing-cost definitions</a> · <a href="https://files.consumerfinance.gov/f/documents/cfpb_should_i_refinance_handout.pdf">CFPB: Should I refinance?</a> · <a href="https://www.bankrate.com/mortgages/refinance-calculator/">Bankrate mortgage refinance calculator</a>.</p>
+<p class="disclaimer">Educational estimate only, not financial, tax, legal or mortgage advice. Actual payoff amounts, lender fees, interest accrual and loan terms can differ. Review the lender's Loan Estimate and your current loan documents.</p>
+</section>
+<section class="related-tools"><h2>Explore other tools</h2><a href="mortgage-calculator.html">Mortgage payment calculator</a><a href="loan-calculator.html">Loan payment calculator</a><a href="rent-vs-buy.html">Rent vs. buy calculator</a><a href="debt-to-income.html">Debt-to-income calculator</a><a href="index.html#calculators">All calculators</a></section>
+</main>
+<footer><a class="brand footer-brand" href="index.html"><img class="brand-logo" src="assets/logo.svg" alt="USAJIO"></a><div class="footer-links"><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="disclaimer.html">Disclaimer</a><a href="editorial.html">Editorial Policy</a></div><p>© <span id="year"></span> USAJIO. Educational information only.</p></footer>
+<script src="script.js"></script><script src="mortgage-refinance.js"></script>
+</body></html>
