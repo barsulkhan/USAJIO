@@ -7,3 +7,6 @@
 .transactions-panel,.history-panel{min-width:0;max-width:100%;overflow:hidden}
 .transaction-table-wrap,.history-table-wrap{display:block;width:100%;max-width:100%;min-width:0;overflow-x:auto;overscroll-behavior-x:contain}
 .transaction-table,.history-table{min-width:620px}
+
+/* Prevent wide table descendants from expanding the document viewport on phones. */
+@media(max-width:620px){html,body{max-width:100%;overflow-x:clip}}
