@@ -5,6 +5,7 @@ A responsive personal-finance education and planning website built with static H
 ## Included
 - Eighteen personal-finance calculators covering saving, budgeting, borrowing, debt, housing, credit and retirement.
 - Personal Finance Workspace dashboard for monthly cash flow, budget categories, savings goals, debt balances and net worth.
+- Monthly Spending Planner with transaction entry, category budgets, planned-vs-actual comparisons, category charts, monthly history, CSV export and JSON backup/restore.
 - User-controlled browser-local dashboard storage with JSON backup export/import and reset.
 - Currency display selector (USD, EUR, GBP, CAD, AUD, INR).
 - Practical money guides and About, Contact, Privacy, Terms, Financial Disclaimer and Editorial Policy pages.
