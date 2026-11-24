@@ -25,3 +25,6 @@
 .empty-state{color:#687588}
 .optional{color:#687588}
 .msp-footer button{color:#626f82}
+
+/* Deepen small green labels to meet WCAG AA contrast on the page surface. */
+.eyebrow,.local-label{color:#11745d}
