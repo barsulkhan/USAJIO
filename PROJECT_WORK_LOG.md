@@ -56,12 +56,13 @@ This file is the durable, append-only record of work performed on the USAJIO web
 - [ ] Review AdSense readiness only after policy/content/navigation checks.
 - [ ] Establish monthly SEO and analytics review.
 
-## Audit in progress
-- Audit ID: `173fb499-a130-4fd5-a968-3da9df876461`
-- Started: 2026-11-24
-- Scope: live homepage, 38 pages total, Lighthouse sample 20 pages.
-- Last known state at log creation: running; 6/38 pages crawled; Lighthouse 0/20 complete.
-- Next action: poll audit status; when complete, record issues, page results, and desktop/mobile Lighthouse findings here and in issue #85.
+## Latest audit result — 2026-11-24
+- [x] Audit `173fb499-a130-4fd5-a968-3da9df876461` completed its crawl: 38/38 pages.
+- [x] All 38 pages returned HTTP 200, were indexable, had a title and one H1; all images in the crawl sample had alt text. No missing-title or broken-page issue was reported.
+- [x] Audit issue report contained one informational item only: `/index.html` canonicalizes to `/` (expected; no action required).
+- [ ] Lighthouse did not run successfully: 20/20 sampled checks failed with `INSUFFICIENT_CREDITS` (0 completed). No new performance/accessibility/SEO scores are available from this audit.
+- [ ] Sitemap membership remains unresolved: all 38 crawled URLs were reported `inSitemap: false`. Confirm actual sitemap submission/fetching in Search Console.
+- Next action: owner submits sitemap in Search Console; separately arrange Lighthouse credits or run an alternative Lighthouse check before claiming fresh scores.
 
 ## Change log template
 For every future task, append:
@@ -74,3 +75,14 @@ For every future task, append:
 - Commit:
 - PR:
 - Follow-up:
+
+
+### 2026-11-24 — Persistent work log and audit reconciliation
+- Status: Done (work log created); audit follow-ups remain open.
+- Files/URLs: `PROJECT_WORK_LOG.md`; live site audit across 38 URLs.
+- Change: created a durable repository work log with project rules, verified historical work, indexing observations, owner-dependent tasks, and a reusable change-log template.
+- Validation: fetched the committed file; audit `173fb499-a130-4fd5-a968-3da9df876461` reports 38/38 pages crawled. Issue report has one expected informational canonical note and no errors/warnings.
+- Lighthouse validation: blocked; all 20 mobile and 20 desktop sampled results report `INSUFFICIENT_CREDITS`; no fresh Lighthouse scores were produced.
+- Commit: recorded in the GitHub create-file response; commit SHA `08df92593a02bedb2235c28612d2c389f9016dd1`.
+- PR: not applicable (direct documentation commit).
+- Follow-up: sitemap processing, indexing requests, GA4 setup, calculator functional tests, and Lighthouse re-run remain open.
