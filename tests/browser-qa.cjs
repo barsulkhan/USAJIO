@@ -749,6 +749,13 @@ const server = http.createServer((req,res) => {
     await page.locator('#date').fill(prior+'-12');
     await page.locator('#transaction-form button[type="submit"]').click();
     if(await page.locator('#history-rows tr').count()!==2) throw new Error('Monthly planner history should retain two distinct months');
+    const backupDownload=page.waitForEvent('download');
+    await page.locator('#export-backup').click();
+    if(!(await backupDownload)) throw new Error('Monthly planner JSON backup export did not download');
+    const restoredData={version:1,currency:'USD',budgets:{[plannerMonth]:{Housing:900}},transactions:[{id:'restored-qa-entry',description:'Restored rent payment',amount:700,date:plannerMonth+'-03',type:'expense',category:'Housing',note:'restore QA',createdAt:Date.now()}]};
+    await page.locator('#import-backup').setInputFiles({name:'usajio-test-backup.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({app:'USAJIO Monthly Spending Planner',version:1,data:restoredData}))});
+    await page.waitForFunction(()=>{try{return JSON.parse(localStorage.getItem('usajio-monthly-spending-v1')||'{}').transactions?.[0]?.id==='restored-qa-entry'}catch{return false}});
+    if(await page.locator('#spent-total').innerText()!=='$700.00') throw new Error('Monthly planner JSON backup restore did not update the displayed totals');
     await page.setViewportSize({width:320,height:800});
     if(await page.evaluate(()=>document.documentElement.scrollWidth)>320) throw new Error('Monthly planner overflows a 320px mobile viewport');
     await page.setViewportSize({width:1365,height:900});
