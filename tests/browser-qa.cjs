@@ -756,6 +756,15 @@ const server = http.createServer((req,res) => {
     await page.locator('#import-backup').setInputFiles({name:'usajio-test-backup.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({app:'USAJIO Monthly Spending Planner',version:1,data:restoredData}))});
     await page.waitForFunction(()=>{try{return JSON.parse(localStorage.getItem('usajio-monthly-spending-v1')||'{}').transactions?.[0]?.id==='restored-qa-entry'}catch{return false}});
     if(await page.locator('#spent-total').innerText()!=='$700.00') throw new Error('Monthly planner JSON backup restore did not update the displayed totals');
+    await page.locator('#currency').selectOption('INR');
+    if(!((await page.locator('#spent-total').innerText()).includes('₹'))) throw new Error('Monthly planner display currency selector did not update currency formatting');
+    await page.locator('#currency').selectOption('USD');
+    const beforeInvalidImport=await page.evaluate(key=>localStorage.getItem(key),'usajio-monthly-spending-v1');
+    const invalidData={version:1,currency:'USD',budgets:{},transactions:[{id:'invalid-category',description:'Bad category',amount:10,date:plannerMonth+'-02',type:'expense',category:'Salary',createdAt:Date.now()}]};
+    await page.locator('#import-backup').setInputFiles({name:'invalid-usaJIO-backup.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({version:1,data:invalidData}))});
+    await page.waitForFunction(()=>document.querySelector('#toast')?.textContent.includes('could not be restored'));
+    const afterInvalidImport=await page.evaluate(key=>localStorage.getItem(key),'usajio-monthly-spending-v1');
+    if(afterInvalidImport!==beforeInvalidImport) throw new Error('Invalid monthly planner backup changed the saved financial data');
     await page.setViewportSize({width:320,height:800});
     if(await page.evaluate(()=>document.documentElement.scrollWidth)>320) throw new Error('Monthly planner overflows a 320px mobile viewport');
     await page.setViewportSize({width:1365,height:900});
