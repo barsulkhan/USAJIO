@@ -1,6 +1,6 @@
 # USAJIO — AdSense Readiness Work Plan
 
-**Last reviewed:** 2026-11-22  
+**Last reviewed:** 2026-11-24  
 **Project:** USAJIO only  
 **Current hosting URL:** https://barsulkhan.github.io/USAJIO/  
 **AdSense Publisher ID supplied by owner:** pub-2956763554929412  
@@ -41,7 +41,7 @@ Google makes the final eligibility and site-review decision; this plan is prepar
 | Privacy | Conditional ad disclosures added | Keep accurate before ads; finalise the actual provider, cookie, personalisation and consent details only after the real ad configuration is selected |
 | Terms / disclaimer | Both exist | Maintain clear educational-only status and calculator limitations |
 | Navigation / UX | Prior QA passed for homepage/calculators | Run full-site mobile, keyboard, link, content and accessibility QA after remaining content work |
-| Crawlability | Search Console showed sitemap "Couldn't fetch" / "Sitemap could not be read" despite submission confirmation | Diagnose and fix sitemap fetch separately; verify robots.txt, canonical URLs and internal links |
+| Crawlability | Sitemap fetch is unresolved on the temporary GitHub Pages URL; owner asked to defer this work until a custom domain is purchased | Do not spend further time troubleshooting the temporary-host sitemap. After domain connection, update and verify robots.txt, canonical URLs, sitemap and internal links together |
 | Site-specific domain | Not yet purchased | After purchase: connect domain to GitHub Pages, enable HTTPS, set one canonical host and update canonical URLs, sitemap and robots.txt consistently |
 | AdSense site registration | Deliberately deferred | Only after custom domain is connected: add the custom domain in AdSense and follow the exact verification method shown in that account |
 | Ad code | Deliberately not installed | After domain connection and when AdSense requests it, add the exact code supplied for Publisher ID above |
@@ -87,3 +87,10 @@ Google makes the final eligibility and site-review decision; this plan is prepar
 - USAJIO only. Never modify InfoJano.
 - Do not purchase a domain, service or subscription without the owner's explicit instruction.
 - Do not add the site to AdSense before the custom domain is purchased and connected.
+
+
+## Owner decision — 2026-11-24
+- Sitemap/Search Console fetch troubleshooting on the temporary GitHub Pages URL is paused at the owner's direction.
+- Do not spend further effort or credits trying to force sitemap processing before the custom domain is purchased.
+- After the custom domain is purchased and connected, revisit canonical URLs, sitemap.xml, robots.txt, Search Console sitemap submission and indexing as one coordinated domain-migration task.
+- Continue pre-domain work that improves the product itself: original guide content, calculator accuracy/usability, accessibility, responsive QA, privacy/editorial quality and analytics preparation.
