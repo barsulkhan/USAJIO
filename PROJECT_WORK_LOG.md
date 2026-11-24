@@ -107,3 +107,10 @@ For every future task, append:
 - Commit: `e4422238eac3cbc6218fe11410196337ad4e73d1`.
 - PR: to be opened after documentation updates.
 - Follow-up: verify page rendering, internal links, heading structure and responsive behavior with the repository browser QA workflow.
+
+
+### 2026-11-24 — Student loan guide QA follow-up
+- Initial Browser QA run completed with failure only in the site-wide guide metadata assertions: the test expected the prior November 22 review date and exact `Official sources and further reading` heading. The updated page correctly carried November 24, so the test expectation was stale.
+- Updated the QA assertion to accept the new review date for `student-loan-guide.html` while retaining November 22 for the other guides, and aligned the guide's source-section heading with the site's test convention.
+- Follow-up Browser QA and Lighthouse workflows triggered for the new PR head; results pending at this log update.
+- Commits: `f3658d2dad0b79165a90ba7e4bf42aaf903db4ef`, `1aadbd7631b0e4286d2636504182ac836ea8709c`.
