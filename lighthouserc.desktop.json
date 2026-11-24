@@ -22,7 +22,8 @@
         "http://localhost:4173/debt-to-income.html",
         "http://localhost:4173/rent-affordability.html",
         "http://localhost:4173/credit-utilization.html",
-        "http://localhost:4173/finance-dashboard.html"
+        "http://localhost:4173/finance-dashboard.html",
+        "http://localhost:4173/monthly-spending-planner.html"
       ],
       "numberOfRuns": 1,
       "settings": {
