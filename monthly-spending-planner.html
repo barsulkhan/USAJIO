@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Plan a monthly budget, record income and spending, compare planned versus actual expenses, and review private monthly history in your browser.">
+<link rel="canonical" href="https://barsulkhan.github.io/USAJIO/monthly-spending-planner.html">
+<meta property="og:type" content="website"><meta property="og:site_name" content="USAJIO"><meta property="og:title" content="Monthly Spending Planner | USAJIO"><meta property="og:description" content="Plan monthly spending and compare your budget with actual transactions."><meta property="og:url" content="https://barsulkhan.github.io/USAJIO/monthly-spending-planner.html">
+<meta name="twitter:card" content="summary"><meta name="theme-color" content="#f4f7fb">
+<title>Monthly Spending Planner | USAJIO</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="monthly-spending-planner.css">
+</head>
+<body>
+<header class="msp-header"><a class="msp-brand" href="index.html"><img src="assets/logo.svg" alt="USAJIO"></a><nav aria-label="Main navigation"><a href="index.html">Home</a><a href="finance-dashboard.html">Finance dashboard</a><a href="#budget">Budget</a><a href="#transactions">Transactions</a><a href="#history">History</a></nav></header>
+<main class="msp-shell">
+<section class="msp-intro"><div><p class="eyebrow">PLAN · TRACK · REVIEW</p><h1>Monthly spending <span>planner</span></h1><p>Give every category a plan, record what actually happened, and learn from each month.</p></div><div class="month-control"><label for="month">Planning month</label><input id="month" type="month"><label for="currency">Display currency</label><select id="currency"><option value="USD">USD · $</option><option value="INR">INR · ₹</option><option value="EUR">EUR · €</option><option value="GBP">GBP · £</option><option value="CAD">CAD · $</option><option value="AUD">AUD · $</option></select><span class="local-label">Private · saved in this browser · display only, no conversion</span></div></section>
+<section class="privacy-note" aria-label="Privacy information"><span aria-hidden="true">⌑</span><div><strong>Your financial entries stay on this device</strong><p>This planner uses this browser's local storage only. It does not connect to banks or send transactions to USAJIO. Browser storage is not encrypted; use a trusted device and avoid account numbers, passwords or other highly sensitive details. Export a backup before clearing browser data.</p></div></section>
+<section class="summary-grid" aria-label="Monthly totals">
+<article class="summary-card"><span>Income recorded</span><strong id="income-total">$0</strong><small id="income-note">Actual income this month</small></article>
+<article class="summary-card"><span>Spending recorded</span><strong id="spent-total">$0</strong><small id="spent-note">Actual expenses this month</small></article>
+<article class="summary-card"><span>Budget remaining</span><strong id="remaining-total">$0</strong><small id="remaining-note">Planned expense budget minus actual spending</small></article>
+<article class="summary-card summary-accent"><span>Net cash flow</span><strong id="cashflow-total">$0</strong><small>Recorded income minus spending</small></article>
+</section>
+<section class="msp-grid">
+<article class="panel" id="budget"><div class="panel-head"><div><p class="eyebrow">YOUR MONTHLY PLAN</p><h2>Planned vs. actual</h2><p>Set a limit for each spending category. Actuals update when you add expense transactions.</p></div><button id="save-budgets" class="button button-primary" type="button">Save budget</button></div>
+<div class="budget-table-wrap"><table class="budget-table"><thead><tr><th scope="col">Category</th><th scope="col">Planned</th><th scope="col">Actual</th><th scope="col">Difference</th></tr></thead><tbody id="budget-rows"></tbody><tfoot><tr><th scope="row">Total spending</th><td id="budget-planned-total">$0</td><td id="budget-actual-total">$0</td><td id="budget-difference-total">$0</td></tr></tfoot></table></div>
+<div class="chart-panel"><div class="panel-head compact"><div><h3>Category spending</h3><p>Actual spending compared with each planned amount</p></div><span class="legend"><i></i> Actual <b></b> Planned</span></div><div id="category-chart" class="category-chart" aria-label="Category spending comparison"></div></div></article>
+<article class="panel" id="add-entry"><div class="panel-head"><div><p class="eyebrow">KEEP YOUR RECORD CURRENT</p><h2>Add a transaction</h2><p>Record income or an expense. Use the transaction date to assign it to a month.</p></div></div>
+<form id="transaction-form" novalidate>
+<label>Description<input id="description" name="description" maxlength="80" required placeholder="e.g. Grocery store"></label>
+<div class="form-row"><label>Type<select id="type" name="type"><option value="expense">Expense</option><option value="income">Income</option></select></label><label>Category<select id="category" name="category"></select></label></div>
+<div class="form-row"><label>Amount<input id="amount" name="amount" type="number" min="0.01" max="1000000000" step="0.01" inputmode="decimal" required placeholder="0.00"></label><label>Date<input id="date" name="date" type="date" required></label></div>
+<label>Note <span class="optional">(optional)</span><input id="note" name="note" maxlength="120" placeholder="A short note"></label>
+<p id="form-error" class="form-error" role="alert" hidden></p><button class="button button-primary full" type="submit">Add transaction</button>
+</form></article></section>
+<section class="panel transactions-panel" id="transactions"><div class="panel-head"><div><p class="eyebrow">MONTHLY ACTIVITY</p><h2>Transactions</h2><p id="transaction-caption">Transactions for the selected month</p></div><div class="table-actions"><input id="transaction-search" type="search" aria-label="Search transactions" placeholder="Search"><button id="export-csv" class="button button-light" type="button">Export CSV</button></div></div>
+<div class="transaction-table-wrap"><table class="transaction-table"><thead><tr><th scope="col">Date</th><th scope="col">Description</th><th scope="col">Category</th><th scope="col">Type</th><th scope="col">Amount</th><th scope="col"><span class="sr-only">Action</span></th></tr></thead><tbody id="transaction-rows"></tbody></table></div><p id="empty-transactions" class="empty-state">No transactions for this month yet. Add your first income or expense above.</p></section>
+<section class="panel history-panel" id="history"><div class="panel-head"><div><p class="eyebrow">SEE THE BIGGER PICTURE</p><h2>Monthly history</h2><p>Completed and current months with recorded activity.</p></div><div class="table-actions"><label for="import-backup" class="button button-light">Import backup</label><input id="import-backup" type="file" accept="application/json,.json" hidden><button id="export-backup" class="button button-light" type="button">Export backup</button></div></div><div class="history-table-wrap"><table class="history-table"><thead><tr><th scope="col">Month</th><th scope="col">Income</th><th scope="col">Spending</th><th scope="col">Net</th><th scope="col">Budget used</th></tr></thead><tbody id="history-rows"></tbody></table></div><p id="empty-history" class="empty-state">Your monthly history will appear after you record transactions.</p></section>
+<footer class="msp-footer"><p><strong>Educational planning tool.</strong> Actuals depend on the transactions you enter and are not verified against financial institutions. This is not financial, tax, investment or legal advice.</p><a href="privacy.html">Privacy</a><a href="disclaimer.html">Disclaimer</a><a href="index.html">USAJIO home</a><button id="reset-planner" type="button">Delete planner data</button></footer>
+</main><div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script src="monthly-spending-planner.js"></script>
+</body></html>

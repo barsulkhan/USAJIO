@@ -708,6 +708,68 @@ const server = http.createServer((req,res) => {
     console.log('PASS: 10 responsive widths across homepage and all calculators; labeled controls and keyboard-only calculation/focus checks.');
 
 
+    // Monthly spending planner: category budgets, actual transactions, monthly history, CSV/backup export and local-only storage.
+    await page.goto('http://127.0.0.1:4173/monthly-spending-planner.html');
+    await page.waitForLoadState('networkidle');
+    await auditA11y('monthly-spending-planner.html');
+    const plannerMonth=await page.locator('#month').inputValue();
+    await page.locator('#budget-rows input[data-budget="Groceries"]').fill('500');
+    await page.locator('#budget-rows input[data-budget="Housing"]').fill('1200');
+    await page.locator('#save-budgets').click();
+    await page.locator('#description').fill('QA grocery purchase');
+    await page.locator('#type').selectOption('expense');
+    await page.locator('#category').selectOption('Groceries');
+    await page.locator('#amount').fill('125.50');
+    await page.locator('#date').fill(plannerMonth+'-08');
+    await page.locator('#transaction-form button[type="submit"]').click();
+    if(await page.locator('#spent-total').innerText()!=='$125.50') throw new Error('Monthly planner expense total is incorrect');
+    if(await page.locator('#budget-actual-total').innerText()!=='$125.50') throw new Error('Monthly planner category actual is incorrect');
+    if(await page.locator('#budget-difference-total').innerText()!=='$1,574.50') throw new Error('Monthly planner planned-vs-actual difference is incorrect');
+    await page.locator('#description').fill('QA paycheck');
+    await page.locator('#type').selectOption('income');
+    await page.locator('#category').selectOption('Salary');
+    await page.locator('#amount').fill('2500');
+    await page.locator('#date').fill(plannerMonth+'-01');
+    await page.locator('#transaction-form button[type="submit"]').click();
+    if(await page.locator('#income-total').innerText()!=='$2,500.00') throw new Error('Monthly planner income total is incorrect');
+    if(await page.locator('#cashflow-total').innerText()!=='$2,374.50') throw new Error('Monthly planner net cash flow is incorrect');
+    await page.locator('#transaction-search').fill('grocery');
+    if(await page.locator('#transaction-rows tr').count()!==1) throw new Error('Monthly planner transaction search failed');
+    await page.locator('#transaction-search').fill('');
+    await page.locator('#export-csv').click();
+    const plannerStored=await page.evaluate(key=>JSON.parse(localStorage.getItem(key)), 'usajio-monthly-spending-v1');
+    if(!plannerStored||plannerStored.transactions.length!==2||plannerStored.transactions.some(t=>!t.date||!t.category)) throw new Error('Monthly planner did not persist valid browser-local transaction records');
+    const priorMonth=new Date(plannerMonth+'-01T00:00:00Z');
+    priorMonth.setUTCMonth(priorMonth.getUTCMonth()-1);
+    const prior=priorMonth.toISOString().slice(0,7);
+    await page.locator('#description').fill('QA previous month expense');
+    await page.locator('#type').selectOption('expense');
+    await page.locator('#category').selectOption('Utilities');
+    await page.locator('#amount').fill('40');
+    await page.locator('#date').fill(prior+'-12');
+    await page.locator('#transaction-form button[type="submit"]').click();
+    if(await page.locator('#history-rows tr').count()!==2) throw new Error('Monthly planner history should retain two distinct months');
+    const backupDownload=page.waitForEvent('download');
+    await page.locator('#export-backup').click();
+    if(!(await backupDownload)) throw new Error('Monthly planner JSON backup export did not download');
+    const restoredData={version:1,currency:'USD',budgets:{[plannerMonth]:{Housing:900}},transactions:[{id:'restored-qa-entry',description:'Restored rent payment',amount:700,date:plannerMonth+'-03',type:'expense',category:'Housing',note:'restore QA',createdAt:Date.now()}]};
+    await page.locator('#import-backup').setInputFiles({name:'usajio-test-backup.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({app:'USAJIO Monthly Spending Planner',version:1,data:restoredData}))});
+    await page.waitForFunction(()=>{try{return JSON.parse(localStorage.getItem('usajio-monthly-spending-v1')||'{}').transactions?.[0]?.id==='restored-qa-entry'}catch{return false}});
+    if(await page.locator('#spent-total').innerText()!=='$700.00') throw new Error('Monthly planner JSON backup restore did not update the displayed totals');
+    await page.locator('#currency').selectOption('INR');
+    if(!((await page.locator('#spent-total').innerText()).includes('₹'))) throw new Error('Monthly planner display currency selector did not update currency formatting');
+    await page.locator('#currency').selectOption('USD');
+    const beforeInvalidImport=await page.evaluate(key=>localStorage.getItem(key),'usajio-monthly-spending-v1');
+    const invalidData={version:1,currency:'USD',budgets:{},transactions:[{id:'invalid-category',description:'Bad category',amount:10,date:plannerMonth+'-02',type:'expense',category:'Salary',createdAt:Date.now()}]};
+    await page.locator('#import-backup').setInputFiles({name:'invalid-usaJIO-backup.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({version:1,data:invalidData}))});
+    await page.waitForFunction(()=>document.querySelector('#toast')?.textContent.includes('could not be restored'));
+    const afterInvalidImport=await page.evaluate(key=>localStorage.getItem(key),'usajio-monthly-spending-v1');
+    if(afterInvalidImport!==beforeInvalidImport) throw new Error('Invalid monthly planner backup changed the saved financial data');
+    await page.setViewportSize({width:320,height:800});
+    const plannerOverflow=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,client:document.documentElement.clientWidth,elements:[...document.querySelectorAll('body *')].map(el=>({tag:el.tagName,id:el.id,cls:typeof el.className==='string'?el.className:'',left:Math.round(el.getBoundingClientRect().left),right:Math.round(el.getBoundingClientRect().right),width:Math.round(el.getBoundingClientRect().width),overflow:getComputedStyle(el).overflowX})).filter(x=>x.right>document.documentElement.clientWidth+1||x.left< -1).sort((a,b)=>b.right-a.right).slice(0,15)})); if(plannerOverflow.scroll>320) throw new Error('Monthly planner overflows a 320px mobile viewport: '+JSON.stringify(plannerOverflow));
+    await page.setViewportSize({width:1365,height:900});
+    console.log('PASS: monthly planner budget vs actual calculations, income/expense CRUD, search, CSV export, monthly history, browser-local persistence and 320px layout.');
+
     // Crawl every public HTML page and verify all local links, fragments and sitemap entries.
     const allHtmlFiles=fs.readdirSync(root).filter(name=>name.endsWith('.html')).sort();
     // Google Search Console ownership files are verification endpoints, not indexable site pages.
