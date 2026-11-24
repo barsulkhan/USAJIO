@@ -15,6 +15,6 @@ A responsive personal-finance education and planning website built with static H
 Open `index.html` in a modern browser. No build step or account is required.
 
 ## Privacy and limitations
-The dashboard stores the workspace in the current browser's local storage. It does not connect to banks or send workspace values to a USAJIO server. Browser storage is not an encrypted vault; use a trusted device and do not enter passwords, account numbers or other highly sensitive information. Export a JSON backup before clearing browser data or moving to another device. Calculator pages remain standalone tools and do not persist their entered values.
+The dashboard and Monthly Spending Planner store workspace and transaction records in the current browser's local storage. They do not connect to banks or send financial records to a USAJIO server. Browser storage is not an encrypted vault; use a trusted device and do not enter passwords, account numbers or other highly sensitive information. Export a JSON backup before clearing browser data or moving to another device. Calculator pages remain standalone tools and do not persist their entered values.
 
 All figures are educational estimates, not individualized financial, investment, tax or legal advice. Currency selection changes display formatting only and does not localize country-specific financial rules.
