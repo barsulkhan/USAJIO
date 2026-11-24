@@ -46,7 +46,7 @@ This file is the durable, append-only record of work performed on the USAJIO web
 - IndexNow was not submitted; project hosting is under /USAJIO while the key file requirement is at the host root.
 
 ## Current open work (do not mark complete without evidence)
-- [ ] Submit sitemap.xml in Search Console and verify processing. Owner action required:
+- [ ] After custom-domain purchase and connection, update and submit the custom-domain sitemap in Search Console. Deferred until domain purchase:
   https://search.google.com/search-console/sitemaps?resource_id=https%3A%2F%2Fbarsulkhan.github.io%2FUSAJIO%2F
 - [ ] Request indexing for priority URLs in Search Console after sitemap processing is confirmed. Owner action required.
 - [ ] Recheck the 15 unknown URLs and credit-card-payoff.html after a meaningful interval or new sitemap/indexing action.
@@ -96,3 +96,14 @@ For every future task, append:
 - Validation limitation: GitHub repository/raw file content is readable, but the live GitHub Pages sitemap URL could not be fetched through the available verification path in this session. Therefore the actual live HTTP response/content-type and Google's fetch error cause are not yet established.
 - Change: no sitemap or robots file modified; changing a seemingly valid sitemap without confirming the live response could make things worse.
 - Follow-up: verify that `https://barsulkhan.github.io/USAJIO/sitemap.xml` opens directly in a browser without login/download/error, then use Search Console's sitemap details/refresh or remove-and-resubmit only if it still fails. If the direct URL fails, investigate GitHub Pages deployment/path before resubmitting.
+
+
+### 2026-11-24 — Student loan guide content upgrade
+- Status: Implemented on branch; awaiting review and browser QA.
+- File: `student-loan-guide.html`.
+- Change: expanded the guide with loan inventory steps, daily-interest explanation, capitalization caveats, subsidized vs. unsubsidized distinction, July 1, 2026 federal repayment-plan eligibility context, federal/private differences, refinancing trade-offs, extra-payment considerations, borrower-hardship and scam precautions, and a practical checklist.
+- Sources: Federal Student Aid repayment-plan guidance, IDR FAQs, interest-rate/daily-interest page and repayment calculator; CFPB federal/private repayment and refinance guidance. Links are included in the guide.
+- Validation: reviewed existing calculator disclaimer and guide structure before editing; checked source material on official Federal Student Aid and CFPB pages. Automated browser QA has not yet run for this branch.
+- Commit: `e4422238eac3cbc6218fe11410196337ad4e73d1`.
+- PR: to be opened after documentation updates.
+- Follow-up: verify page rendering, internal links, heading structure and responsive behavior with the repository browser QA workflow.
