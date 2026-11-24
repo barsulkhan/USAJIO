@@ -2,3 +2,8 @@
 
 /* Constrain the stacked header navigation to the viewport on narrow phones. */
 @media(max-width:620px){.msp-header nav{width:100%;max-width:100%;flex-wrap:wrap}.msp-header nav a{white-space:normal;overflow-wrap:anywhere}}
+
+/* Keep wide data tables scrollable inside their own panels on small screens. */
+.transactions-panel,.history-panel{min-width:0;max-width:100%;overflow:hidden}
+.transaction-table-wrap,.history-table-wrap{display:block;width:100%;max-width:100%;min-width:0;overflow-x:auto;overscroll-behavior-x:contain}
+.transaction-table,.history-table{min-width:620px}
