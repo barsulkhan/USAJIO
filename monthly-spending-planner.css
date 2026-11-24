@@ -18,3 +18,10 @@
   .transaction-table td:nth-child(2){min-width:0}
   .transaction-table .row-delete{padding:4px 3px;font-size:9px}
 }
+
+/* Keep secondary text readable at WCAG AA contrast on light surfaces. */
+:root{--muted:#626f82}
+.budget-table th,.transaction-table th,.history-table th{color:#626f82}
+.empty-state{color:#687588}
+.optional{color:#687588}
+.msp-footer button{color:#626f82}
